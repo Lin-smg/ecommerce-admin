@@ -6,7 +6,8 @@ const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+    curUserInfo: null
   }
 }
 
@@ -24,23 +25,29 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_CURUSERINFO: (state, info) => {
+    state.curUserInfo = info
   }
 }
 
 const actions = {
   // user login
-  login({ commit }, userInfo) {
-    const { username, password } = userInfo
-    return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
+  login({ commit }, token) {
+    const data = { token: 'admin-token' }
+    commit('SET_TOKEN', data.token)
+    setToken(token)
+    // const { username, password } = userInfo
+    // return new Promise((resolve, reject) => {
+    //   login({ username: username.trim(), password: password }).then(response => {
+    //     const { data } = response
+    //     commit('SET_TOKEN', data.token)
+    //     setToken(data.token)
+    //     resolve()
+    //   }).catch(error => {
+    //     reject(error)
+    //   })
+    // })
   },
 
   // get user info
@@ -85,6 +92,11 @@ const actions = {
       commit('RESET_STATE')
       resolve()
     })
+  },
+
+  // get current user info
+  setCurUserInfo({ commit }, info) {
+    commit('SET_CURUSERINFO', info)
   }
 }
 
