@@ -104,20 +104,22 @@ export default {
         'password': this.loginForm.password
       }
 
-      const res = await http.sendForPost('auth/login', req)
-      let token = null
-      console.log('user info', JSON.stringify(res.data))
-      if (res) {
-        token = res.data.token
-      }
-      if (token) {
-        console.log('login success')
-        this.userService.setUserInfo(res.data)
-        this.$store.dispatch('user/login', token)
-        this.$router.push({ path: '/' })
-      } else {
-        console.log('fail')
-      }
+      this.$store.dispatch('user/login', 'token')
+      this.$router.push({ path: '/' })
+      // const res = await http.sendForPost('auth/login', req)
+      // let token = null
+      // console.log('user info', JSON.stringify(res.data))
+      // if (res) {
+      //   token = res.data.token
+      // }
+      // if (token) {
+      //   console.log('login success')
+      //   this.userService.setUserInfo(res.data)
+      //   this.$store.dispatch('user/login', token)
+      //   this.$router.push({ path: '/' })
+      // } else {
+      //   console.log('fail')
+      // }
     },
     showPwd() {
       if (this.passwordType === 'password') {
