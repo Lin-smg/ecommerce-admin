@@ -56,6 +56,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/user',
+    component: Layout,
+    redirect: '/user',
+    children: [{
+      path: 'index',
+      permission: 'M001',
+      name: 'Dashboard',
+      component: () => import('@/views/user/index'),
+      meta: { title: 'User(Example)', icon: 'dashboard' }
+    }]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
@@ -162,6 +175,9 @@ export const constantRoutes = [
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
+// for (const i of store.getters.curUserInfo.user.groups) {
+//   console.log(i)
+// }
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support

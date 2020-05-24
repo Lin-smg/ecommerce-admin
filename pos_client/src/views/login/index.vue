@@ -34,14 +34,14 @@
           name="password"
           tabindex="2"
           auto-complete="on"
-          @keyup.enter.native="handleLogin"
+          @keyup.enter.native="login"
         />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="login">Login</el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
@@ -54,6 +54,9 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+// import { http } from '../../utils/http'
+
+import * as http from '@/utils/http'
 
 export default {
   name: 'Login',
@@ -95,6 +98,27 @@ export default {
     }
   },
   methods: {
+    async login() {
+      const req = {
+        'userid': this.loginForm.username,
+        'password': this.loginForm.password
+      }
+
+      const res = await http.sendForPost('auth/login', req)
+      let token = null
+      console.log('user info', JSON.stringify(res.data))
+      if (res) {
+        token = res.data.token
+      }
+      if (token) {
+        console.log('login success')
+        this.userService.setUserInfo(res.data)
+        this.$store.dispatch('user/login', token)
+        this.$router.push({ path: '/' })
+      } else {
+        console.log('fail')
+      }
+    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''

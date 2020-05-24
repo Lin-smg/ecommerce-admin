@@ -30,6 +30,7 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
+    proxy: 'https://nest-permissions-seed.herokuapp.com/',
     port: port,
     open: true,
     overlay: {
