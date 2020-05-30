@@ -4,7 +4,7 @@
       <el-tab-pane label="All Users" name="view">
         <div>
           <el-input v-model="searchValue" placeholder="Please input" style="width: 250px; float: right">
-            <el-button slot="append" icon="el-icon-search" />
+            <el-button slot="append" icon="el-icon-search" @click="searchClick" />
           </el-input>
         </div>
         <div>
@@ -108,16 +108,100 @@
           />
         </div>
       </el-tab-pane>
-      <el-tab-pane label="Create User" name="create">
-        <!--        <h3>Create Form</h3>-->
 
+      <!-- user create tab-->
+      <el-tab-pane label="Create User" name="create">
         <el-form ref="createForm" label-width="220px" style="width: 500px">
-          <el-form-item label="Name" prop="name">
-            <el-input v-model="userCreateForm.name" type="text" placeholder="user name" autocomplete="off" />
-          </el-form-item>
           <el-form-item label="User Id" prop="userId">
             <el-input v-model="userCreateForm.userId" type="text" placeholder="user id" autocomplete="off" />
           </el-form-item>
+          <el-form-item label="Password" prop="password">
+            <el-input v-model="userCreateForm.password" type="text" placeholder="user id" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="Name" prop="name">
+            <el-input v-model="userCreateForm.name" type="text" placeholder="user name" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="Email" prop="email">
+            <el-input v-model="userCreateForm.email" type="text" placeholder="email" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="Phone no." prop="phone">
+            <el-input v-model="userCreateForm.phone" type="number" placeholder="phone" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="Position" prop="position">
+            <el-input v-model="userCreateForm.position" type="text" placeholder="position" autocomplete="off" />
+          </el-form-item>
+
+          <el-form-item label="Department" prop="dept">
+            <el-select v-model="userCreateForm.department" placeholder="Select" style="width: 280px">
+              <el-option
+                v-for="item in deptOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+
+          <div style="margin-left: 50px; width: 700px">
+            <span>Department Permission</span>
+            <div style="border: 1px solid rgb(174, 178, 183); padding: 10px">
+              <el-checkbox-group v-model="userCreateForm.deptPermission">
+                <el-checkbox v-for="(item,i) in deptOptions" :key="i" :label="item.label" />
+              </el-checkbox-group>
+            </div>
+          </div>
+
+          <br>
+
+          <PermissionList :user-create-form="userCreateForm" :permission-group-list="permissionGroupList" />
+         <!-- <div style="margin-left: 50px; width: 700px">
+            <span>Permission</span>
+            <div style="border: 1px solid rgb(174, 178, 183); padding: 10px">
+              <el-form-item label="Permission Group" prop="permissionGroup">
+                <el-select v-model="userCreateForm.department" placeholder="Select" style="width: 280px">
+                  <el-option
+                    v-for="item in deptOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
+              </el-form-item>
+
+              <el-row>
+                <el-col :span="6">
+                  <el-checkbox style="float: left">User Menu</el-checkbox>
+                </el-col>
+                <el-col :span="18">
+                  <el-checkbox-group v-model="userCreateForm.deptPermission" style="float: left">
+                    <el-checkbox label="add" />
+                    <el-checkbox label="update" />
+                    <el-checkbox label="delete" />
+                    <el-checkbox label="excel" />
+                  </el-checkbox-group>
+                </el-col>
+              </el-row>
+
+              <br>
+
+              <el-row>
+                <el-col :span="6">
+                  <el-checkbox style="float: left">Company Menu</el-checkbox>
+                </el-col>
+                <el-col :span="18">
+                  <el-checkbox-group v-model="userCreateForm.deptPermission" style="float: left">
+                    <el-checkbox label="add" />
+                    <el-checkbox label="update" />
+                    <el-checkbox label="delete" />
+                    <el-checkbox label="excel" />
+                  </el-checkbox-group>
+                </el-col>
+              </el-row>
+
+            </div>
+          </div>
+-->
+          <br>
 
           <el-form-item>
             <el-button type="primary" @click="createOk">Create</el-button>
@@ -126,9 +210,9 @@
         </el-form>
 
       </el-tab-pane>
-      <el-tab-pane label="Update User" name="update" :disabled="true">
-        <!--        <h3>Update Form</h3>-->
 
+      <!-- user update tab -->
+      <el-tab-pane label="Update User" name="update" :disabled="true">
         <el-form ref="updateForm" label-width="220px" style="width: 500px">
           <el-form-item label="Name" prop="name">
             <el-input v-model="userUpdateForm.name" type="text" placeholder="user name" autocomplete="off" />
@@ -149,87 +233,12 @@
 </template>
 
 <script>
-import * as http from '@/utils/http'
+import { User } from '../../mixinsFile/user'
+import PermissionList from '../../components/PermissionList/index'
 export default {
   name: 'Index',
-  data() {
-    return {
-      activeName: 'view',
-      pageSize: 10,
-      pageIndex: 1,
-      usersData: [],
-      totalCount: 0,
-      userCreateForm: {
-        name: '',
-        userId: ''
-      },
-      userUpdateForm: {
-        name: '',
-        userId: ''
-      },
-      searchValue: ''
-    }
-  },
-  created() {
-    this.getUsers()
-  },
-  methods: {
-    async getUsers() {
-      const params = {
-        order: 'ASC',
-        page: this.pageIndex,
-        take: this.pageSize
-      }
-      const res = await http.sendForGet('users/users', params)
-      this.usersData = res.data.data
-      this.pageIndex = res.data.meta.page - 1
-      this.pageSize = res.data.meta.take
-      this.totalCount = res.data.meta.itemCount
-      console.log('request', params)
-      console.log('user data', JSON.stringify(res.data))
-    },
-
-    createOk() {
-
-    },
-
-    createReset() {
-
-    },
-
-    deleteUser(data) {
-      console.log('delete', data)
-    },
-
-    updateOk() {
-
-    },
-
-    updateReset() {
-
-    },
-
-    updateUser(data) {
-      console.log('update', data)
-      this.userUpdateForm.name = data.username
-      this.userUpdateForm.userId = data.userid
-      this.handleTab('update')
-    },
-
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.getUsers()
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val
-      this.getUsers()
-    },
-
-    handleTab(tab) {
-      console.log(tab)
-      this.activeName = tab
-    }
-  }
+  components: { PermissionList },
+  mixins: [User]
 }
 </script>
 

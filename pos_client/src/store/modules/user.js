@@ -7,7 +7,8 @@ const getDefaultState = () => {
     token: getToken(),
     name: '',
     avatar: '',
-    curUserInfo: null
+    curUserInfo: null,
+    allPermission: []
   }
 }
 
@@ -28,6 +29,9 @@ const mutations = {
   },
   SET_CURUSERINFO: (state, info) => {
     state.curUserInfo = info
+  },
+  SET_ALLPERMISSION: (state, permission) => {
+    state.allPermission = permission
   }
 }
 
@@ -97,6 +101,11 @@ const actions = {
   // get current user info
   setCurUserInfo({ commit }, info) {
     commit('SET_CURUSERINFO', info)
+  },
+
+  // set permission
+  setAllPermission({ commit }, permission) {
+    commit('SET_ALLPERMISSION', permission)
   }
 }
 
