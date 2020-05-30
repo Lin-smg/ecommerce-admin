@@ -56,6 +56,19 @@ export const constantRoutes = [
   },
 
   {
+    path: '/pos',
+    component: Layout,
+    redirect: '/pos',
+    children: [{
+      path: 'index',
+      permission: 'M001',
+      name: 'POS',
+      component: () => import('@/views/pos/index'),
+      meta: { title: 'POS', icon: 'dashboard' }
+    }]
+  },
+
+  {
     path: '/user',
     component: Layout,
     redirect: '/user',
@@ -184,9 +197,23 @@ const createRouter = () => new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
-
+window.onpopstate = function() {
+  console.log('back')
+}
 const router = createRouter()
-
+router.beforeEach((to, from, next) => {
+  // const IsItABackButton = window.popStateDetected
+  if (from.name === 'POS' && localStorage.getItem('back') === 'true') {
+    next(false)
+    localStorage.setItem('back', false)
+    return ''
+  }
+  // if (IsItABackButton) {
+  //   next(false)
+  //   return ''
+  // }
+  next()
+})
 // Detail see: https://github.com/vuejs/vue-router/issues/1234#issuecomment-357941465
 export function resetRouter() {
   const newRouter = createRouter()
