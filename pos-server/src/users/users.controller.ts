@@ -1,7 +1,7 @@
 
-import { Controller, Get, HttpCode, HttpStatus, Query, ValidationPipe, Body, Param, ParseIntPipe, DefaultValuePipe, Post, UseGuards, UseInterceptors, Put } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Query, Body, Param, ParseIntPipe, DefaultValuePipe, Post, UseGuards, UseInterceptors, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiTags, ApiResponse, ApiQuery, ApiBody, ApiConsumes, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiQuery, ApiBody, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
 import { OutUsersPageDto } from './dto/out-users-page.dto';
 import { plainToClass } from 'class-transformer';
 import { InCreateUsersDto } from './dto/in-create-users.dto';
