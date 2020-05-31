@@ -1,5 +1,6 @@
-import { login, logout, getInfo } from '@/api/user'
+import { getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { loginPost } from '@/utils/http'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
@@ -37,21 +38,19 @@ const mutations = {
 
 const actions = {
   // user login
-  login({ commit }, token) {
-    const data = { token: 'admin-token' }
-    commit('SET_TOKEN', data.token)
-    setToken(token)
-    // const { username, password } = userInfo
-    // return new Promise((resolve, reject) => {
-    //   login({ username: username.trim(), password: password }).then(response => {
-    //     const { data } = response
-    //     commit('SET_TOKEN', data.token)
-    //     setToken(data.token)
-    //     resolve()
-    //   }).catch(error => {
-    //     reject(error)
-    //   })
-    // })
+  login({ commit }, userInfo) {
+    const { userid, password } = userInfo
+    return new Promise((resolve, reject) => {
+      loginPost('auth/login', { userid: userid.trim(), password: password }).then(response => {
+        const { data } = response
+        console.log(data.token.accessToken)
+        commit('SET_TOKEN', data.token.accessToken)
+        setToken(data.token.accessToken)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
   },
 
   // get user info
@@ -78,14 +77,19 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      removeToken() // must remove  token  first
+      resetRouter()
+      commit('RESET_STATE')
+      resolve()
+
+      // logout(state.token).then(() => {
+      //   removeToken() // must remove  token  first
+      //   resetRouter()
+      //   commit('RESET_STATE')
+      //   resolve()
+      // }).catch(error => {
+      //   reject(error)
+      // })
     })
   },
 

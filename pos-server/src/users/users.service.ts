@@ -101,8 +101,9 @@ export class UsersService {
                 }
             }
             qb = qb.skip((options.curPage - 1) * options.perPage).take(options.perPage);
+            // eslint-disable-next-line prefer-const
             objects = await qb.getManyAndCount();
-            let metaPage = {
+            const metaPage = {
                 perPage: options.perPage,
                 totalPages: options.perPage > objects[1] ? 1 : Math.ceil(objects[1] / options.perPage),
                 totalResults: objects[1],
