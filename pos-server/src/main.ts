@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AllExceptionsFilter } from './common/exceptions/all-exception-filter';
 
 
 async function bootstrap() {
@@ -15,7 +16,9 @@ async function bootstrap() {
   //Validation
   app.useGlobalPipes(new ValidationPipe());
   //Interceptor
-  // app.useGlobalInterceptors(new TransformInterceptor());
+  //app.useGlobalInterceptors(new TransformInterceptor());
+  //Exception Filter
+  app.useGlobalFilters(new AllExceptionsFilter);
   // Cors
   if (configService.get('MODE') === 'development') {
     app.enableCors();

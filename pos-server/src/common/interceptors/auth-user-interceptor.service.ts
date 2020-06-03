@@ -5,7 +5,6 @@ import {
     NestInterceptor,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { User } from '../../users/users.entity';
 import { AuthService } from '../../auth/auth.service';
 
 @Injectable()

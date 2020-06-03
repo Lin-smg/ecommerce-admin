@@ -1,7 +1,7 @@
 
 import { Controller, Get, HttpCode, HttpStatus, Query, Body, Param, ParseIntPipe, DefaultValuePipe, Post, UseGuards, UseInterceptors, Put } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiTags, ApiResponse, ApiQuery, ApiBody, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import { ApiTags, ApiResponse, ApiQuery, ApiBody, ApiBearerAuth, ApiParam, ApiOkResponse } from '@nestjs/swagger';
 import { OutUsersPageDto } from './dto/out-users-page.dto';
 import { plainToClass } from 'class-transformer';
 import { InCreateUsersDto } from './dto/in-create-users.dto';
@@ -12,6 +12,11 @@ import { JwtAuthGuard } from '../common/guards/auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { PermissionsType } from '../common/constants/permissions-type';
 import { Permissions } from '../common/decorators/permissions.decorator';
+import { LoginUserInfoDto } from './dto/login-userinfo.dto';
+import { AuthUser } from '../common/decorators/auth-user.decorator';
+import { UsersDto } from './dto/users.dto';
+import { PermissionService } from '../permission/permission.service';
+import { PermissionGroupService } from '../permission/permission-group.service';
 
 @Controller('users')
 @ApiTags('users')
@@ -20,7 +25,10 @@ import { Permissions } from '../common/decorators/permissions.decorator';
 @ApiBearerAuth()
 export class UsersController {
     //Servie Constructor
-    constructor(private readonly userService: UsersService) { }
+    constructor(private readonly userService: UsersService,
+        private readonly permissionService: PermissionService,
+        private readonly permissionGroupService: PermissionGroupService,
+) { }
 
     //Create User
     @HttpCode(HttpStatus.OK)
@@ -133,5 +141,25 @@ export class UsersController {
         } catch (error) {
             throw error;
         }
+    }
+
+    @Get('info')
+    @HttpCode(HttpStatus.OK)
+    @ApiOkResponse({
+        type: LoginUserInfoDto,
+        description: 'User info with access token',
+    })
+    async getUserInfo(
+        @AuthUser()user:User
+    ): Promise<LoginUserInfoDto> {
+        try {
+            const userInfo = await this.userService.findByUserId({userid: user.userid})
+            const permissions = await this.permissionService.getAllPermission();  
+            const permissionsGroup = await this.permissionGroupService.getAllPermissionGroup();
+            return new LoginUserInfoDto(plainToClass(UsersDto,userInfo), permissions, permissionsGroup );     
+        } catch (error) {
+         throw error;   
+        }
+               
     }
 }

@@ -97,7 +97,7 @@
 
           <el-pagination
             v-if="usersData.length > 0"
-            :page-sizes="[10,20,30]"
+            :page-sizes="[5,10,20,30]"
             :page-size="pageSize"
             :page-index="pageIndex"
             layout="sizes, prev, pager, next"
@@ -154,7 +154,7 @@
           <br>
 
           <PermissionList :user-create-form="userCreateForm" :permission-group-list="permissionGroupList" />
-         <!-- <div style="margin-left: 50px; width: 700px">
+          <!-- <div style="margin-left: 50px; width: 700px">
             <span>Permission</span>
             <div style="border: 1px solid rgb(174, 178, 183); padding: 10px">
               <el-form-item label="Permission Group" prop="permissionGroup">

@@ -75,9 +75,9 @@ export const constantRoutes = [
     children: [{
       path: 'index',
       permission: 'M001',
-      name: 'Dashboard',
+      name: 'User',
       component: () => import('@/views/user/index'),
-      meta: { title: 'User(Example)', icon: 'dashboard' }
+      meta: { title: 'User(Example)', icon: 'user' }
     }]
   },
 

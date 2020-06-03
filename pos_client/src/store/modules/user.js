@@ -1,6 +1,5 @@
-import { getInfo } from '@/api/user'
+import { getInfo, login } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { loginPost } from '@/utils/http'
 import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
@@ -22,8 +21,8 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_NAME: (state, name) => {
-    state.name = name
+  SET_USERID: (state, userid) => {
+    state.userid = userid
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
@@ -41,13 +40,12 @@ const actions = {
   login({ commit }, userInfo) {
     const { userid, password } = userInfo
     return new Promise((resolve, reject) => {
-      loginPost('auth/login', { userid: userid.trim(), password: password }).then(response => {
-        const { data } = response
-        console.log(data.token.accessToken)
-        commit('SET_TOKEN', data.token.accessToken)
-        setToken(data.token.accessToken)
+      login({ userid: userid.trim(), password: password }).then(response => {
+        commit('SET_TOKEN', response.token.accessToken)
+        setToken(response.token.accessToken)
         resolve()
       }).catch(error => {
+        console.log(error)
         reject(error)
       })
     })
@@ -56,18 +54,12 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
+      getInfo().then(response => {
+        commit('SET_USERID', response.user.userid)
+        commit('SET_AVATAR', response.user.avatar)
+        commit('SET_CURUSERINFO', response.user)
+        commit('SET_ALLPERMISSION', response.permission)
+        resolve(response)
       }).catch(error => {
         reject(error)
       })

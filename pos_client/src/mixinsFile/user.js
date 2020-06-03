@@ -1,4 +1,4 @@
-import * as http from '@/utils/http'
+import { getUserList } from '@/api/user'
 export const User = {
   name: 'Index',
   data() {
@@ -57,17 +57,30 @@ export const User = {
         per_page: this.pageSize,
         q: this.searchValue ? this.searchValue : ''
       }
-      const res = await http.sendForGet('users', params)
-      this.usersData = res.data.users
-      this.pageIndex = res.data.meta.curPage
-      this.pageSize = res.data.meta.perPage
-      this.totalCount = res.data.meta.totalResults
-      console.log('request', params)
-      console.log('user data', res)
-      console.log('user count', this.totalCount)
+
+      this.listLoading = true
+      getUserList(params).then(response => {
+        this.usersData = response.data
+        this.pageIndex = response.meta.curPage
+        this.pageSize = response.meta.perPage
+        this.totalCount = response.meta.totalResults
+        this.listLoading = false
+        console.log('request', params)
+        console.log('user data', response)
+        console.log('user count', this.totalCount)
+      })
     },
 
-    searchClick(){
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.getUsers()
+    },
+    handleCurrentChange(val) {
+      this.pageIndex = val
+      this.getUsers()
+    },
+
+    searchClick() {
       this.getUsers()
     },
 
@@ -96,15 +109,6 @@ export const User = {
       this.userUpdateForm.name = data.username
       this.userUpdateForm.userId = data.userid
       this.handleTab('update')
-    },
-
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.getUsers()
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val
-      this.getUsers()
     },
 
     handleTab(tab) {

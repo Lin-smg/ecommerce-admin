@@ -30,14 +30,22 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
-    proxy: 'https://nest-permissions-seed.herokuapp.com/',
+    proxy: {
+      [process.env.VUE_APP_BASE_API]: {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_BASE_API]: ''
+        }
+      }
+    },
     port: port,
     open: true,
     overlay: {
       warnings: false,
-      errors: true
+      errors: false
     },
-    before: require('./mock/mock-server.js')
+    after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that

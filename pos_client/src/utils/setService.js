@@ -4,6 +4,5 @@ import Vue from 'vue'
 
 export function setService(localVue) {
   const vueValue = localVue || Vue
-  vueValue.prototype.userService = userService;
-
+  vueValue.prototype.userService = userService
 }
