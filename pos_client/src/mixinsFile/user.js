@@ -9,14 +9,15 @@ export const User = {
       usersData: [],
       totalCount: 0,
       userCreateForm: {
-        userId: '',
+        userid: '',
         password: '',
-        name: '',
+        username: '',
         email: '',
         phone: '',
         position: '',
         department: '',
-        deptPermission: []
+        deptPermissions: [],
+        permissions: []
       },
       userUpdateForm: {
         name: '',
@@ -48,7 +49,25 @@ export const User = {
   created() {
     this.getUsers()
   },
+  computed: {
+    groups() {
+      return groupBy(this.$store.getters.allPermission, 'menuCode')
+    }
+  },
   methods: {
+
+    handleCheckedPermissionChange(value) {
+      var checkedList = this.userCreateForm.permissions
+      const uniqueCheckList = new Set()
+      checkedList.forEach(element => {
+        const checkedValueMenuCode = element.toString().substring(0, 4)
+        uniqueCheckList.add(checkedValueMenuCode + 'B00')
+        uniqueCheckList.add(element)
+      })
+      this.userCreateForm.permissions = []
+      this.userCreateForm.permissions = Array.from(uniqueCheckList)
+    },
+
     async getUsers() {
       const params = {
         group: '',
@@ -75,6 +94,7 @@ export const User = {
       this.pageSize = val
       this.getUsers()
     },
+
     handleCurrentChange(val) {
       this.pageIndex = val
       this.getUsers()
@@ -84,8 +104,22 @@ export const User = {
       this.getUsers()
     },
 
-    createOk() {
-
+    async createOk() {
+      // this.$refs.userCreateForm.validate(valid => {
+      //   if (valid) {
+      this.loading = true
+      this.$store.dispatch('user/createUser', this.userCreateForm).then(() => {
+        this.handleTab('view')
+        this.getUsers()
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
     },
 
     createReset() {
@@ -117,4 +151,15 @@ export const User = {
     }
   }
 
+}
+
+function groupBy(array, key) {
+  const result = {}
+  array.forEach(item => {
+    if (!result[item[key]]) {
+      result[item[key]] = []
+    }
+    result[item[key]].push(item)
+  })
+  return result
 }

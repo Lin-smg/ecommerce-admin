@@ -96,32 +96,7 @@ export default {
     }
   },
   methods: {
-    // async login() {
-    //   const req = {
-    //     'userid': this.loginForm.userid,
-    //     'password': this.loginForm.password
-    //   }
 
-    //   // this.$store.dispatch('user/login', 'token') // local only
-    //   // this.$router.push({ path: '/' }) // local only
-    //   this.loading = true
-    //   const res = await http.sendForPost('auth/login', req)
-    //   let token = null
-    //   console.log('user info', JSON.stringify(res.data))
-    //   if (res) {
-    //     token = res.data.token
-    //   }
-    //   if (token) {
-    //     console.log('login success')
-    //     this.userService.setUserInfo(res.data)
-    //     this.$store.dispatch('user/login', token)
-    //     this.$router.push({ path: '/' })
-    //     this.loading = false
-    //   } else {
-    //     this.loading = false
-    //     return false
-    //   }
-    // },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -137,7 +112,6 @@ export default {
         if (valid) {
           this.loading = true
           this.$store.dispatch('user/login', this.loginForm).then(() => {
-            console.log('*******************')
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
           }).catch(() => {

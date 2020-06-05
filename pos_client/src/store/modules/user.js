@@ -1,4 +1,4 @@
-import { getInfo, login } from '@/api/user'
+import { getInfo, login, createUser } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -52,8 +52,8 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
+  async getInfo({ commit, state }) {
+    return await new Promise((resolve, reject) => {
       getInfo().then(response => {
         commit('SET_USERID', response.user.userid)
         commit('SET_AVATAR', response.user.avatar)
@@ -66,6 +66,18 @@ const actions = {
     })
   },
 
+  // Create User
+  async createUser({ commit }, userForm) {
+    return await new Promise((resolve, reject) => {
+      createUser(userForm).then(response => {
+        resolve(resolve)
+      }).catch(error => {
+        console.log(error)
+        reject(error)
+      })
+    })
+  },
+
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
@@ -73,15 +85,6 @@ const actions = {
       resetRouter()
       commit('RESET_STATE')
       resolve()
-
-      // logout(state.token).then(() => {
-      //   removeToken() // must remove  token  first
-      //   resetRouter()
-      //   commit('RESET_STATE')
-      //   resolve()
-      // }).catch(error => {
-      //   reject(error)
-      // })
     })
   },
 
@@ -103,6 +106,7 @@ const actions = {
   setAllPermission({ commit }, permission) {
     commit('SET_ALLPERMISSION', permission)
   }
+
 }
 
 export default {

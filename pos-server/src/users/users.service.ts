@@ -72,7 +72,7 @@ export class UsersService {
         } catch (error) {
             userOfUserId = undefined;
         }
-        if (userOfUserId && userOfUserId.user.userid === options.userid) {
+        if (userOfUserId && userOfUserId.userid === options.userid) {
             throw new ConflictException(`User with userId "${options.userid}" is exists`);
         }
     }

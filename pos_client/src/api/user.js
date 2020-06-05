@@ -23,6 +23,14 @@ export function getUserList(params) {
   })
 }
 
+export function createUser(data) {
+  return request({
+    url: '/users',
+    method: 'post',
+    data
+  })
+}
+
 // export function logout() {
 //   return request({
 //     url: '/vue-admin-template/user/logout',

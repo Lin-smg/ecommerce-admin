@@ -74,10 +74,22 @@ export const constantRoutes = [
     redirect: '/user',
     children: [{
       path: 'index',
-      permission: 'M001',
       name: 'User',
       component: () => import('@/views/user/index'),
       meta: { title: 'User(Example)', icon: 'user' }
+    }]
+  },
+
+  {
+    path: '/company',
+    component: Layout,
+    redirect: '/company',
+    children: [{
+      path: 'index',
+      permission: 'M001B00',
+      name: 'Company',
+      component: () => import('@/views/company/index'),
+      meta: { title: 'Company', icon: 'tree' }
     }]
   },
 
