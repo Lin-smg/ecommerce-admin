@@ -6,40 +6,21 @@
         <el-form-item label="Permission Group" prop="permissionGroup">
           <el-select v-model="permissionGroup" placeholder="Select" style="width: 280px">
             <el-option
-              v-for="item in permissionGroupList"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="item in allPermission"
+              :key="item.permissionName"
+              :label="item.permissionName"
+              :value="item.permissionName"
             />
           </el-select>
+
+          <div style="height:25px;" />
+          <el-checkbox-group v-model="userCreateForm.permission">
+            <div v-for="group in groups" :key="group.menuCode">
+              <el-checkbox v-for="item in group" :key="item.permissionCode" :label="item.permissionCode" style="width:140px;" @change="handleCheckedPermissionChange">{{ item.permissionName }}</el-checkbox>
+            </div>
+          </el-checkbox-group>
+
         </el-form-item>
-
-        <el-row v-for="permission in allPermission">
-<!--          <el-col :span="6">-->
-<!--            <el-checkbox style="float: left">{{ permission.menuCode }}</el-checkbox>-->
-<!--          </el-col>-->
-          <el-col :span="18">
-            <el-checkbox-group v-model="userCreateForm.deptPermission" style="float: left">
-              <el-checkbox v-for="i in permission.info" :label="i.permissionName" />
-            </el-checkbox-group>
-          </el-col>
-        </el-row>
-
-        <br>
-
-<!--        <el-row>-->
-<!--          <el-col :span="6">-->
-<!--            <el-checkbox style="float: left">Company Menu</el-checkbox>-->
-<!--          </el-col>-->
-<!--          <el-col :span="18">-->
-<!--            <el-checkbox-group v-model="userCreateForm.deptPermission" style="float: left">-->
-<!--              <el-checkbox label="add" />-->
-<!--              <el-checkbox label="update" />-->
-<!--              <el-checkbox label="delete" />-->
-<!--              <el-checkbox label="excel" />-->
-<!--            </el-checkbox-group>-->
-<!--          </el-col>-->
-<!--        </el-row>-->
 
       </div>
     </div>
@@ -50,40 +31,54 @@
 import store from '@/store'
 export default {
   name: 'Index',
-  props: {
-    userCreateForm: {
-      type: Object,
-      required: true
-    },
-    // deptOptions: {
-    //   type: Array,
-    //   required: true
-    // },
-    // permissionGroup: {
-    //   type: Object,
-    //   required: true
-    // },
-    permissionGroupList: {
-      type: Array,
-      required: true
-    }
-  },
+  // props: {
+  //   userCreateForm: {
+  //     type: Object,
+  //     required: true
+  //   }
+  // },
   data() {
     return {
-      permissionGroup: '',
-      allPermission: []
+      userCreateForm: {
+        permission: []
+      }
+    }
+  },
+  computed: {
+    groups() {
+      return groupBy(this.allPermission, 'menuCode')
     }
   },
   created() {
-    this.allPermission = this.$store.getters.allPermission
-    console.log('per per per', this.allPermission)
+    this.allPermission = store.getters.allPermission
+  },
+  methods: {
+    handleCheckedPermissionChange(value) {
+      var checkedList = this.userCreateForm.permission
+      const uniqueCheckList = new Set()
+      checkedList.forEach(element => {
+        const checkedValueMenuCode = element.toString().substring(0, 4)
+        uniqueCheckList.add(checkedValueMenuCode + 'B00')
+        uniqueCheckList.add(element)
+      })
+      this.userCreateForm.permission = []
+      this.userCreateForm.permission = Array.from(uniqueCheckList)
+    }
   }
+}
+
+function groupBy(array, key) {
+  const result = {}
+  array.forEach(item => {
+    if (!result[item[key]]) {
+      result[item[key]] = []
+    }
+    result[item[key]].push(item)
+  })
+  return result
 }
 </script>
 
 <style scoped>
-  .permission-container {
-    /*margin: 10px*/
-  }
 
 </style>

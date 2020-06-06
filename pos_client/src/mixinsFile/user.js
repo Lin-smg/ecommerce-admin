@@ -1,4 +1,4 @@
-import * as http from '@/utils/http'
+import { getUserList } from '@/api/user'
 export const User = {
   name: 'Index',
   data() {
@@ -9,14 +9,15 @@ export const User = {
       usersData: [],
       totalCount: 0,
       userCreateForm: {
-        userId: '',
+        userid: '',
         password: '',
-        name: '',
+        username: '',
         email: '',
         phone: '',
         position: '',
         department: '',
-        deptPermission: []
+        deptPermissions: [],
+        permissions: []
       },
       userUpdateForm: {
         name: '',
@@ -48,7 +49,25 @@ export const User = {
   created() {
     this.getUsers()
   },
+  computed: {
+    groups() {
+      return groupBy(this.$store.getters.allPermission, 'menuCode')
+    }
+  },
   methods: {
+
+    handleCheckedPermissionChange(value) {
+      var checkedList = this.userCreateForm.permissions
+      const uniqueCheckList = new Set()
+      checkedList.forEach(element => {
+        const checkedValueMenuCode = element.toString().substring(0, 4)
+        uniqueCheckList.add(checkedValueMenuCode + 'B00')
+        uniqueCheckList.add(element)
+      })
+      this.userCreateForm.permissions = []
+      this.userCreateForm.permissions = Array.from(uniqueCheckList)
+    },
+
     async getUsers() {
       const params = {
         group: '',
@@ -57,22 +76,50 @@ export const User = {
         per_page: this.pageSize,
         q: this.searchValue ? this.searchValue : ''
       }
-      const res = await http.sendForGet('users', params)
-      this.usersData = res.data.users
-      this.pageIndex = res.data.meta.curPage
-      this.pageSize = res.data.meta.perPage
-      this.totalCount = res.data.meta.totalResults
-      console.log('request', params)
-      console.log('user data', res)
-      console.log('user count', this.totalCount)
+
+      this.listLoading = true
+      getUserList(params).then(response => {
+        this.usersData = response.data
+        this.pageIndex = response.meta.curPage
+        this.pageSize = response.meta.perPage
+        this.totalCount = response.meta.totalResults
+        this.listLoading = false
+        console.log('request', params)
+        console.log('user data', response)
+        console.log('user count', this.totalCount)
+      })
     },
 
-    searchClick(){
+    handleSizeChange(val) {
+      this.pageSize = val
       this.getUsers()
     },
 
-    createOk() {
+    handleCurrentChange(val) {
+      this.pageIndex = val
+      this.getUsers()
+    },
 
+    searchClick() {
+      this.getUsers()
+    },
+
+    async createOk() {
+      // this.$refs.userCreateForm.validate(valid => {
+      //   if (valid) {
+      this.loading = true
+      this.$store.dispatch('user/createUser', this.userCreateForm).then(() => {
+        this.handleTab('view')
+        this.getUsers()
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
     },
 
     createReset() {
@@ -98,19 +145,21 @@ export const User = {
       this.handleTab('update')
     },
 
-    handleSizeChange(val) {
-      this.pageSize = val
-      this.getUsers()
-    },
-    handleCurrentChange(val) {
-      this.pageIndex = val
-      this.getUsers()
-    },
-
     handleTab(tab) {
       console.log(tab)
       this.activeName = tab
     }
   }
 
+}
+
+function groupBy(array, key) {
+  const result = {}
+  array.forEach(item => {
+    if (!result[item[key]]) {
+      result[item[key]] = []
+    }
+    result[item[key]].push(item)
+  })
+  return result
 }

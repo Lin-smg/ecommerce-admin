@@ -97,7 +97,7 @@
 
           <el-pagination
             v-if="usersData.length > 0"
-            :page-sizes="[10,20,30]"
+            :page-sizes="[5,10,20,30]"
             :page-size="pageSize"
             :page-index="pageIndex"
             layout="sizes, prev, pager, next"
@@ -113,13 +113,13 @@
       <el-tab-pane label="Create User" name="create">
         <el-form ref="createForm" label-width="220px" style="width: 500px">
           <el-form-item label="User Id" prop="userId">
-            <el-input v-model="userCreateForm.userId" type="text" placeholder="user id" autocomplete="off" />
+            <el-input v-model="userCreateForm.userid" type="text" placeholder="user id" autocomplete="off" />
           </el-form-item>
           <el-form-item label="Password" prop="password">
             <el-input v-model="userCreateForm.password" type="text" placeholder="user id" autocomplete="off" />
           </el-form-item>
           <el-form-item label="Name" prop="name">
-            <el-input v-model="userCreateForm.name" type="text" placeholder="user name" autocomplete="off" />
+            <el-input v-model="userCreateForm.username" type="text" placeholder="user name" autocomplete="off" />
           </el-form-item>
           <el-form-item label="Email" prop="email">
             <el-input v-model="userCreateForm.email" type="text" placeholder="email" autocomplete="off" />
@@ -145,63 +145,24 @@
           <div style="margin-left: 50px; width: 700px">
             <span>Department Permission</span>
             <div style="border: 1px solid rgb(174, 178, 183); padding: 10px">
-              <el-checkbox-group v-model="userCreateForm.deptPermission">
+              <el-checkbox-group v-model="userCreateForm.deptPermissions">
                 <el-checkbox v-for="(item,i) in deptOptions" :key="i" :label="item.label" />
               </el-checkbox-group>
             </div>
           </div>
 
           <br>
-
-          <PermissionList :user-create-form="userCreateForm" :permission-group-list="permissionGroupList" />
-         <!-- <div style="margin-left: 50px; width: 700px">
+          <div style="margin-left: 50px; width: 700px">
             <span>Permission</span>
             <div style="border: 1px solid rgb(174, 178, 183); padding: 10px">
-              <el-form-item label="Permission Group" prop="permissionGroup">
-                <el-select v-model="userCreateForm.department" placeholder="Select" style="width: 280px">
-                  <el-option
-                    v-for="item in deptOptions"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value"
-                  />
-                </el-select>
-              </el-form-item>
-
-              <el-row>
-                <el-col :span="6">
-                  <el-checkbox style="float: left">User Menu</el-checkbox>
-                </el-col>
-                <el-col :span="18">
-                  <el-checkbox-group v-model="userCreateForm.deptPermission" style="float: left">
-                    <el-checkbox label="add" />
-                    <el-checkbox label="update" />
-                    <el-checkbox label="delete" />
-                    <el-checkbox label="excel" />
-                  </el-checkbox-group>
-                </el-col>
-              </el-row>
-
-              <br>
-
-              <el-row>
-                <el-col :span="6">
-                  <el-checkbox style="float: left">Company Menu</el-checkbox>
-                </el-col>
-                <el-col :span="18">
-                  <el-checkbox-group v-model="userCreateForm.deptPermission" style="float: left">
-                    <el-checkbox label="add" />
-                    <el-checkbox label="update" />
-                    <el-checkbox label="delete" />
-                    <el-checkbox label="excel" />
-                  </el-checkbox-group>
-                </el-col>
-              </el-row>
-
+              <el-checkbox-group v-model="userCreateForm.permissions">
+                <div v-for="group in groups" :key="group.menuCode">
+                  <el-checkbox v-for="item in group" :key="item.permissionCode" :label="item.permissionCode" style="width:140px;" @change="handleCheckedPermissionChange">{{ item.permissionName }}</el-checkbox>
+                </div>
+              </el-checkbox-group>
             </div>
           </div>
--->
-          <br>
+          <!-- <PermissionList v-model="userCreateForm.permission" :user-create-form="userCreateForm" /> -->
 
           <el-form-item>
             <el-button type="primary" @click="createOk">Create</el-button>
@@ -234,10 +195,10 @@
 
 <script>
 import { User } from '../../mixinsFile/user'
-import PermissionList from '../../components/PermissionList/index'
+// import PermissionList from '../../components/PermissionList/index'
 export default {
   name: 'Index',
-  components: { PermissionList },
+  // components: { PermissionList },
   mixins: [User]
 }
 </script>

@@ -6,15 +6,15 @@
         <h3 class="title">Login Form</h3>
       </div>
 
-      <el-form-item prop="username">
+      <el-form-item prop="userid">
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
-          ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
-          name="username"
+          ref="userid"
+          v-model="loginForm.userid"
+          placeholder="userid"
+          name="userid"
           type="text"
           tabindex="1"
           auto-complete="on"
@@ -44,7 +44,7 @@
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="login">Login</el-button>
 
       <div class="tips">
-        <span style="margin-right:20px;">username: admin</span>
+        <span style="margin-right:20px;">userid: admin</span>
         <span> password: any</span>
       </div>
 
@@ -53,23 +53,21 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+// import { validuserid } from '@/utils/validate'
 // import { http } from '../../utils/http'
-
-import * as http from '@/utils/http'
 
 export default {
   name: 'Login',
   data() {
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
-    }
+    // const validateuserid = (rule, value, callback) => {
+    //   if (!validuserid(value)) {
+    //     callback(new Error('Please enter the correct user name'))
+    //   } else {
+    //     callback()
+    //   }
+    // }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
+      if (value.length < 5) {
         callback(new Error('The password can not be less than 6 digits'))
       } else {
         callback()
@@ -77,11 +75,11 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        userid: 'admin',
+        password: 'admin'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        userid: [{ required: true, trigger: 'blur' }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       loading: false,
@@ -98,30 +96,7 @@ export default {
     }
   },
   methods: {
-    async login() {
-      const req = {
-        'userid': this.loginForm.username,
-        'password': this.loginForm.password
-      }
 
-      // this.$store.dispatch('user/login', 'token') // local only
-      // this.$router.push({ path: '/' }) // local only
-
-      const res = await http.sendForPost('auth/login', req)
-      let token = null
-      console.log('user info', JSON.stringify(res.data))
-      if (res) {
-        token = res.data.token
-      }
-      if (token) {
-        console.log('login success')
-        this.userService.setUserInfo(res.data)
-        this.$store.dispatch('user/login', token)
-        this.$router.push({ path: '/' })
-      } else {
-        console.log('fail')
-      }
-    },
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
@@ -132,7 +107,7 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
+    async login() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true

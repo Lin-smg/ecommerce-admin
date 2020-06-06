@@ -33,7 +33,7 @@ export class AuthService {
             const user = await this.usersService.findByUserId({ userid: userLoginDto.userid });
             const isValid = await this.cryptoService.compare(userLoginDto.password, user.password);
             if (!isValid) {
-                throw new UnauthorizedException(`Userid or Password is wrong`);
+                throw new UnauthorizedException(`Userid or Password is wrong`);                
             }
             return plainToClass(User, user);
         } catch (error) {

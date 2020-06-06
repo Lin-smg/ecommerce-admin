@@ -14,7 +14,7 @@ export class UsersService {
     
     constructor(
         @InjectRepository(User)
-        public readonly userRepository: Repository<User>,
+        private readonly userRepository: Repository<User>,
         private readonly cryptoService: CryptoService,
     ) { }
 
@@ -72,7 +72,7 @@ export class UsersService {
         } catch (error) {
             userOfUserId = undefined;
         }
-        if (userOfUserId && userOfUserId.user.userid === options.userid) {
+        if (userOfUserId && userOfUserId.userid === options.userid) {
             throw new ConflictException(`User with userId "${options.userid}" is exists`);
         }
     }
@@ -101,8 +101,9 @@ export class UsersService {
                 }
             }
             qb = qb.skip((options.curPage - 1) * options.perPage).take(options.perPage);
+            // eslint-disable-next-line prefer-const
             objects = await qb.getManyAndCount();
-            let metaPage = {
+            const metaPage = {
                 perPage: options.perPage,
                 totalPages: options.perPage > objects[1] ? 1 : Math.ceil(objects[1] / options.perPage),
                 totalResults: objects[1],

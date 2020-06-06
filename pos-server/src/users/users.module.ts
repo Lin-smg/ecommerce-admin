@@ -4,12 +4,14 @@ import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users.entity';
 import { CryptoModule } from './crypto/crypto.module';
+import { PermissionModule } from '../permission/permission.module';
 
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     CryptoModule,
+    PermissionModule
   ],
   controllers: [UsersController],
   exports: [UsersService],

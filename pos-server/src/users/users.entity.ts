@@ -1,8 +1,5 @@
-import { Entity, Column, BeforeInsert, } from "typeorm";
+import { Entity, Column, } from "typeorm";
 import { BaseEntity } from "../common/base.entity";
-import { AuthUser } from "../common/decorators/auth-user.decorator";
-
-
 @Entity({ name: 'users' })
 export class User extends BaseEntity {
     

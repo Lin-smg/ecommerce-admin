@@ -1,9 +1,8 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post} from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginPayloadDto } from './dto/login-payload.dto';
 import { UserLoginDto } from './dto/user-login.dto';
-import { UsersService } from '../users/users.service';
 import { plainToClass } from 'class-transformer';
 import { UsersDto } from '../users/dto/users.dto';
 import { PermissionService } from '../permission/permission.service';
@@ -28,10 +27,15 @@ export class AuthController {
     async userLogin(
         @Body() userLoginDto: UserLoginDto,
     ): Promise<LoginPayloadDto> {
-        const userEntity = await this.authService.validateUser(userLoginDto);
-        const token = await this.authService.createToken(userEntity);
-        const permissions = await this.permissionService.getAllPermission();  
-        const permissionsGroup = await this.permissionGroupService.getAllPermissionGroup();
-        return new LoginPayloadDto(plainToClass(UsersDto,userEntity), token, permissions, permissionsGroup );        
+        try {
+            const userEntity = await this.authService.validateUser(userLoginDto);
+            const token = await this.authService.createToken(userEntity);
+            const permissions = await this.permissionService.getAllPermission();  
+            const permissionsGroup = await this.permissionGroupService.getAllPermissionGroup();
+            return new LoginPayloadDto(plainToClass(UsersDto,userEntity), token, permissions, permissionsGroup );     
+        } catch (error) {
+         throw error;   
+        }
+               
     }
 }

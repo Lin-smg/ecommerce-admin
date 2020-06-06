@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { getInfo, login, createUser } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -21,8 +21,8 @@ const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_NAME: (state, name) => {
-    state.name = name
+  SET_USERID: (state, userid) => {
+    state.userid = userid
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
@@ -37,39 +37,42 @@ const mutations = {
 
 const actions = {
   // user login
-  login({ commit }, token) {
-    const data = { token: 'admin-token' }
-    commit('SET_TOKEN', data.token)
-    setToken(token)
-    // const { username, password } = userInfo
-    // return new Promise((resolve, reject) => {
-    //   login({ username: username.trim(), password: password }).then(response => {
-    //     const { data } = response
-    //     commit('SET_TOKEN', data.token)
-    //     setToken(data.token)
-    //     resolve()
-    //   }).catch(error => {
-    //     reject(error)
-    //   })
-    // })
+  login({ commit }, userInfo) {
+    const { userid, password } = userInfo
+    return new Promise((resolve, reject) => {
+      login({ userid: userid.trim(), password: password }).then(response => {
+        commit('SET_TOKEN', response.token.accessToken)
+        setToken(response.token.accessToken)
+        resolve()
+      }).catch(error => {
+        console.log(error)
+        reject(error)
+      })
+    })
   },
 
   // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
+  async getInfo({ commit, state }) {
+    return await new Promise((resolve, reject) => {
+      getInfo().then(response => {
+        commit('SET_USERID', response.user.userid)
+        commit('SET_AVATAR', response.user.avatar)
+        commit('SET_CURUSERINFO', response.user)
+        commit('SET_ALLPERMISSION', response.permission)
+        resolve(response)
       }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  // Create User
+  async createUser({ commit }, userForm) {
+    return await new Promise((resolve, reject) => {
+      createUser(userForm).then(response => {
+        resolve(resolve)
+      }).catch(error => {
+        console.log(error)
         reject(error)
       })
     })
@@ -78,14 +81,10 @@ const actions = {
   // user logout
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      removeToken() // must remove  token  first
+      resetRouter()
+      commit('RESET_STATE')
+      resolve()
     })
   },
 
@@ -107,6 +106,7 @@ const actions = {
   setAllPermission({ commit }, permission) {
     commit('SET_ALLPERMISSION', permission)
   }
+
 }
 
 export default {
