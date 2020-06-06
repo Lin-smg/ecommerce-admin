@@ -7,6 +7,7 @@ import { SharedModule } from './shared/shared.module';
 import { contextMiddleware } from './common/middlewares';
 import { PermissionModule } from './permission/permission.module';
 import { CategoryModule } from './category/category.module';
+import { CompanyModule } from './company/company.module';
 
 @Module({
   imports: [   
@@ -33,6 +34,7 @@ import { CategoryModule } from './category/category.module';
     AuthModule,
     PermissionModule,
     CategoryModule,
+    CompanyModule,
    
   ],
 

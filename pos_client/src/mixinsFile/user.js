@@ -17,7 +17,7 @@ export const User = {
         position: '',
         department: '',
         deptPermissions: [],
-        permissions: []
+        permissions: ['M000B00']
       },
       userUpdateForm: {
         name: '',

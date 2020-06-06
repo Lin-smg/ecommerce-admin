@@ -1,4 +1,4 @@
-import { Entity, Column, BeforeInsert, } from "typeorm";
+import { Entity, Column } from "typeorm";
 import { BaseEntity } from "../common/base.entity";
 
 @Entity({ name: 'permissions' })
