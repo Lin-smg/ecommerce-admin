@@ -19,7 +19,7 @@ export class CompanyService {
    async create(options: { item: InCompanyDto; }){
         try {
             const departmentList = options.item.department;
-            const oldDepartmentList = options.item.olddepartment;
+         //   const oldDepartmentList = options.item.olddepartment;
             const companyDto = plainToClass(CompanyDto,options.item);
             const company = await this.getExistingCompany(companyDto.companyCode);
             if(company){
@@ -27,10 +27,10 @@ export class CompanyService {
             }else{
                 await this.companyReposiory.save(plainToClass(Company,companyDto));
             }
-           const toDeleteDept = await this.getToDeleteDept({old: oldDepartmentList,new: departmentList})
-           for (let department of toDeleteDept){
-               if(await )
-           }
+        //   const toDeleteDept = await this.getToDeleteDepartment({old: oldDepartmentList,new: departmentList})
+        //    for (let department of toDeleteDept){
+               
+        //    }
             for (const i in departmentList) {
                const departmentDto = plainToClass(DepartmentDto,departmentList[i]);
                departmentDto.companyCode = options.item.companyCode;
@@ -42,6 +42,10 @@ export class CompanyService {
             throw error;
         }
        }
+    // async getToDeleteDepartment(options: { old: DepartmentDto[]; new: DepartmentDto[]; }) {
+       
+    //    return { delete: deleteList, insert: null}
+    // }
     async getExistingCompany(companyCode: string) {
         let result;
         try {
