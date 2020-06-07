@@ -7,11 +7,11 @@ values('M000B00','Dashboard','M000','Dashboard','B00','Menu');
 insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
 values('M001B00','Company','M001','Company','B00','Menu');
 insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
-values('M001B01','Company','M001','Company','B01','New');
+values('M001B01','New','M001','Company','B01','New');
 insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
-values('M001B02','Company','M001','Company','B02','Edit');
+values('M001B02','Edit','M001','Company','B02','Edit');
 insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
-values('M001B03','Company','M001','Company','B03','Delete');
+values('M001B03','Delete','M001','Company','B03','Delete');
 
 insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
 values('M002B00','Permission Group','M002','Permission Group','B00','Menu');
