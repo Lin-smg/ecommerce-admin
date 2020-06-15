@@ -11,6 +11,12 @@ export class CompanyDto{
 
     @ApiProperty()
     companyType: string;
+    
+    @ApiProperty()
+    companyPhone: string;
+
+    @ApiProperty()
+    companyEmail: string;
 
     @ApiProperty()
     companyAddress: string;

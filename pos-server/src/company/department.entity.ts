@@ -13,6 +13,9 @@ export class Department extends BaseEntity{
     @Column({ name:'dept_address' , nullable: false })
     deptAddress: string;
 
+    @Column({ name:'dept_phone' , nullable: false })
+    deptPhone: string;
+
     @Column({ name:'company_code' , nullable: false })
     companyCode: string;
 
