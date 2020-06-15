@@ -35,6 +35,7 @@ export class UsersService {
         }
     }
 
+    
     //Create
     async create(options: { item: User }) {
         try {
@@ -77,6 +78,18 @@ export class UsersService {
         }
     }
 
+    async findByDeptCode(deptCode: string) {
+        try {
+            return await this.userRepository.findOneOrFail({
+                where: {
+                    department: deptCode
+                },
+            });       
+         } catch (error) {
+        return undefined;
+        }
+    }
+    
 
     // Find
     async getUsers(
