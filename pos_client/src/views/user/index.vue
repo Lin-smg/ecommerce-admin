@@ -157,7 +157,7 @@
             <div style="border: 1px solid rgb(174, 178, 183); padding: 10px">
               <el-checkbox-group v-model="userCreateForm.permissions">
                 <div v-for="group in groups" :key="group.menuCode">
-                  <el-checkbox v-for="item in group" :key="item.permissionCode" :label="item.permissionCode" style="width:140px;" @change="handleCheckedPermissionChange">{{ item.permissionName }}</el-checkbox>
+                  <el-checkbox v-for="item in group" :key="item.permissionCode" :label="item.permissionCode" style="width:140px;" :disabled="item.permissionCode==='M000B00'?true:false" @change="handleCheckedPermissionChange">{{ item.permissionName }}</el-checkbox>
                 </div>
               </el-checkbox-group>
             </div>

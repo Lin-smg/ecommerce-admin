@@ -128,7 +128,7 @@ export const Unit = {
       this.unitUpdateForm.childUnitId = this.selectedUpdatedObject.id
       this.unitUpdateForm.childUnitName = this.selectedUpdatedObject.unitName
       this.loading = true
-      this.$store.dispatch('unit/createUnit', this.unitUpdateForm).then(() => {
+      this.$store.dispatch('unit/updateUnit', this.unitUpdateForm).then(() => {
         this.unitUpdateForm = this.initUpdateForm()
         this.handleTab('view')
         this.getUnits()
