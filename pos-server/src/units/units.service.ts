@@ -61,7 +61,7 @@ export class UnitsService {
         try {
             await this.findById({ id: options.id });  
             await this.unitsRepository.update({id: options.id},options.item);
-           
+            return options.item;
         } catch (error) {
             if(error.code === '23505'){
                 throw new NotAcceptableException('Unit Name is already exists.')

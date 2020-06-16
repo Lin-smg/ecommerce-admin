@@ -19,7 +19,7 @@ export function getUnitList(params) {
 export function updateUnit(id, data) {
   return request({
     url: `/units/${id}`,
-    method: 'post',
+    method: 'put',
     data
   })
 }
