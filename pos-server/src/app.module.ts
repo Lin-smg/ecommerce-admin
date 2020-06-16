@@ -8,6 +8,7 @@ import { contextMiddleware } from './common/middlewares';
 import { PermissionModule } from './permission/permission.module';
 import { CategoryModule } from './category/category.module';
 import { CompanyModule } from './company/company.module';
+import { WarehouseModule } from './warehouse/warehouse.module';
 import { UnitsModule } from './units/units.module';
 
 @Module({
@@ -36,7 +37,8 @@ import { UnitsModule } from './units/units.module';
     PermissionModule,
     CategoryModule,
     CompanyModule,
-    UnitsModule,
+    WarehouseModule,
+    UnitsModule
    
   ],
 

@@ -81,6 +81,17 @@ export const constantRoutes = [
   },
 
   {
+    path: '/warehouse',
+    component: Layout,
+    redirect: '/warehouse',
+    children: [{
+      path: 'index',
+      name: 'Warehouse',
+      component: () => import('@/views/warehouse/index'),
+      meta: { title: 'Warehouse', icon: 'user' }
+    }]
+  },
+  {
     path: '/unit',
     component: Layout,
     redirect: '/unit',
@@ -89,6 +100,7 @@ export const constantRoutes = [
       name: 'UnitOfMeasure',
       component: () => import('@/views/unit/index'),
       meta: { title: 'UnitOfMeasure', icon: 'user' }
+
     }]
   },
 
