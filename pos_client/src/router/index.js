@@ -91,6 +91,18 @@ export const constantRoutes = [
       meta: { title: 'Warehouse', icon: 'user' }
     }]
   },
+  {
+    path: '/unit',
+    component: Layout,
+    redirect: '/unit',
+    children: [{
+      path: 'index',
+      name: 'UnitOfMeasure',
+      component: () => import('@/views/unit/index'),
+      meta: { title: 'UnitOfMeasure', icon: 'user' }
+
+    }]
+  },
 
   {
     path: '/company',

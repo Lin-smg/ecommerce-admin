@@ -20,9 +20,9 @@ export class InCompanyDto{
     companyLogo: string
 
     @ApiProperty({ type: DepartmentDto, isArray: true })
-    department: DepartmentDto[];
+    departments: DepartmentDto[];
 
     @ApiProperty({ type: DepartmentDto, isArray: true })
-    olddepartment: DepartmentDto[];
+    olddepartments: DepartmentDto[];
 
 }
