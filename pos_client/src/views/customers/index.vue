@@ -14,6 +14,7 @@
         <div>
           <el-table
             border
+            v-loading = "listLoading"
             :data="customersData"
             style="width: 100%;background-color: #e9e3e3"
             highlight-current-row
@@ -23,7 +24,7 @@
                 <span>Name</span>
               </template>
               <template slot-scope="{row}">
-                <span>{{ row.customerName }}</span>
+                <span>{{ row.name }}</span>
               </template>
             </el-table-column>
 
@@ -64,7 +65,7 @@
                   confirm-button-text="OK"
                   cancel-button-text="No, Thanks"
                   title="Are you sure to delete this?"
-                  @onConfirm="deleteCustomers(row.id)"
+                  @onConfirm="deleteCustomer(row)"
                 >
                   <el-button slot="reference" size="mini" type="danger">delete</el-button>
                 </el-popconfirm>
@@ -90,7 +91,7 @@
       <el-tab-pane label="Create Customers" name="create">
         <el-form ref="createForm" label-width="220px" style="width: 500px">
           <el-form-item label="Name :" prop="name">
-            <el-input v-model="customersCreateForm.customerName" type="text" autocomplete="off" />
+            <el-input v-model="customersCreateForm.name" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="E-Mail :" prop="email">
@@ -169,7 +170,7 @@
       <el-tab-pane label="Update Customers" name="update" :disabled="true">
         <el-form ref="createForm" label-width="220px" style="width: 500px">
           <el-form-item label="Name :" prop="name">
-            <el-input v-model="customersCreateForm.customerName" type="text" autocomplete="off" />
+            <el-input v-model="customersCreateForm.name" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="E-Mail :" prop="email">
@@ -238,7 +239,7 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="updateCustomers">Update</el-button>
+            <el-button type="primary" @click="updateCustomerOk">Update</el-button>
             <el-button @click="resetUpdateCustomers">Reset</el-button>
           </el-form-item>
         </el-form>

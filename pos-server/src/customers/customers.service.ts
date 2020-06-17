@@ -40,7 +40,7 @@ export class CustomersService {
         try {
             await this.findById({ id: options.id });  
             await this.customersRepository.update({id: options.id},options.item);
-           
+            return options.item
            } catch (error) {
              throw error;  
            }
@@ -79,6 +79,9 @@ export class CustomersService {
         try {
             let objects: [Customers[], number];
             let qb = this.customersRepository.createQueryBuilder('customer');
+            qb = qb.where('customer.delFlg = :d',{
+                d: '0'
+            });
             if (options.q) {
                 qb = qb.where('customer.name like :q', {
                     q: `%${options.q}%`,
