@@ -10,6 +10,7 @@ import { CategoryModule } from './category/category.module';
 import { CompanyModule } from './company/company.module';
 import { WarehouseModule } from './warehouse/warehouse.module';
 import { UnitsModule } from './units/units.module';
+import { CustomersModule } from './customers/customers.module';
 
 @Module({
   imports: [   
@@ -38,7 +39,8 @@ import { UnitsModule } from './units/units.module';
     CategoryModule,
     CompanyModule,
     WarehouseModule,
-    UnitsModule
+    UnitsModule,
+    CustomersModule
    
   ],
 
