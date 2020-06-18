@@ -3,7 +3,6 @@
     <el-row :gutter="20">
       <el-col :span="8">
         <el-card class="box-card">
-          <!-- <img src="https://logomaster.ai/static/media/sample.c8bf2b04.svg" style="width: 200px"> -->
           <div
             style="text-align:center"
             @mouseover="imgEdit = true"
@@ -11,20 +10,15 @@
           >
 
             <el-upload
-              v-if="imgUpload"
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action="http://localhost:3000/shared/companyIMG"
               :show-file-list="false"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
             >
-              <img v-if="imageUrl" class="avatar">
+              <img v-if="imageUrl" :src="imageUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
-
-            <el-image
-              v-if="!imgUpload"
-              style="width: 200px; height: 200px"
-              :src="'https://logomaster.ai/static/media/sample.c8bf2b04.svg'"
-            />
             <i v-if="imgEdit && !imgUpload" class="el-icon-edit" style="position: absolute; color: #132584; font-size: 25px; top: 200px" @click="imgUpload = true" />
             <i v-if="imgEdit && imgUpload" class="el-icon-delete" style="position: absolute; color: #132584; font-size: 25px; top: 170px; left: 270px" @click="imgUpload = false" />
           </div>
