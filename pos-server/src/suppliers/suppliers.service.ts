@@ -72,6 +72,9 @@ export class SuppliersService {
         try {
             let objects: [Suppliers[], number];
             let qb = this.suppliersRepository.createQueryBuilder('supplier');
+            qb = qb.where('supplier.delFlg = :d',{
+                d: '0'
+            });
             if (options.q) {
                 qb = qb.where('supplier.name like :q', {
                     q: `%${options.q}%`,

@@ -1,4 +1,4 @@
-import { getUserList } from "@/api/user";
+import { getSupplierList } from "@/api/supplier";
 export const User = {
   name: "Index",
   data() {
@@ -9,7 +9,7 @@ export const User = {
       suppliersData: [],
       totalCount: 0,
       suppliersCreateForm: {
-        supplierName: "",
+        name: "",
         email: "",
         phone: "",
         imageUrl: "",
@@ -28,7 +28,7 @@ export const User = {
     };
   },
   created() {
-    this.getCustomers();
+    this.getSuppliers();
   },
   computed: {
     groups() {
@@ -38,26 +38,80 @@ export const User = {
   methods: {
     handleTab(tab) {
       this.activeName = tab;
+      if (this.activeName === "view") {
+        this.getSuppliers();
+      }
+      if (this.activeName === "create") {
+        this.resetCreateSupplierForm();
+      }
     },
 
-    getCustomers() {
-      this.suppliersData = [
-        {
-          supplierName: "Mama"
-        }
-      ];
+    resetCreateSupplierForm() {
+      this.suppliersCreateForm.name = "";
+      this.suppliersCreateForm.email = "";
+      this.suppliersCreateForm.phone = "";
+      this.suppliersCreateForm.imageUrl = "";
+      this.suppliersCreateForm.addressOne = "";
+      this.suppliersCreateForm.addressTwo = "";
+      this.suppliersCreateForm.city = "";
+      this.suppliersCreateForm.stateOrProvince = "";
+      this.suppliersCreateForm.zipCode = "";
+      this.suppliersCreateForm.country = "";
+      this.suppliersCreateForm.comments = "";
+      this.suppliersCreateForm.internalNotes = "";
+      this.suppliersCreateForm.companyName = "";
+      this.suppliersCreateForm.account = "";
     },
 
-    createCustomers() {},
+    async getSuppliers() {
+      const params = {
+        group: "",
+        sort: "",
+        cur_page: this.pageIndex,
+        per_page: this.pageSize,
+        q: this.searchValue ? this.searchValue : ""
+      };
 
-    resetCreateCustomers() {},
+      this.listLoading = true;
+      getSupplierList(params).then(response => {
+        this.suppliersData = response.data;
+        this.pageIndex = response.meta.curPage;
+        this.pageSize = response.meta.perPage;
+        this.totalCount = response.meta.totalResults;
+        this.listLoading = false;
+        console.log("request", params);
+        console.log("Supplier data", response);
+      });
+    },
 
-    updateCustomers() {},
+    async createSupplier() {
+      console.log('Create data=>', this.suppliersCreateForm);
+      this.$store
+        .dispatch("supplier/createSupplier", this.suppliersCreateForm)
+        .then(() => {
+          this.handleTab("view");
+        })
+        .catch(() => {
+          console.log("Create supplier error");
+        });
+    },
 
-    resetUpdateCustomers() {},
-
-    updateCustomers() {
+    updateSupplier(row) {
       this.handleTab("update");
+      this.suppliersCreateForm = row;
+      console.log("Update supplier =>", this.suppliersCreateForm);
+    },
+
+    async updateSupplierOk() {
+      this.$store
+        .dispatch("supplier/updateSupplier", this.suppliersCreateForm)
+        .then(() => {
+          this.resetCreateSupplierForm();
+          this.handleTab("view");
+        })
+        .catch(() => {
+          console.log('Update supplier error')
+        });
     },
 
     handleSizeChange(val) {
@@ -71,16 +125,24 @@ export const User = {
     },
 
     searchClick() {
-      this.getCustomers();
+      this.getSuppliers();
     },
 
-    deleteCustomers(data) {
+    async deleteSupplier(data) {
       console.log("delete", data);
+      this.$store
+        .dispatch("supplier/deleteSupplier", data)
+        .then(() => {
+          this.handleTab("view");
+        })
+        .catch(() => {
+          console.log("Delete supplier error");
+        });
     },
 
     handleAvatarSuccess(res, file) {
       console.log("Image Upload");
-      this.customersCreateForm.imageUrl = URL.createObjectURL(file.raw);
+      this.suppliersCreateForm.imageUrl = URL.createObjectURL(file.raw);
     },
 
     beforeAvatarUpload(file) {
@@ -97,15 +159,15 @@ export const User = {
       return isJPG && isLt2M;
     }
   }
-}
+};
 
 function groupBy(array, key) {
-  const result = {}
+  const result = {};
   array.forEach(item => {
     if (!result[item[key]]) {
-      result[item[key]] = []
+      result[item[key]] = [];
     }
-    result[item[key]].push(item)
-  })
-  return result
+    result[item[key]].push(item);
+  });
+  return result;
 }
