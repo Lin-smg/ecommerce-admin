@@ -141,6 +141,30 @@ export const constantRoutes = [
   },
 
   {
+    path: '/customers',
+    component: Layout,
+    redirect: '/customers',
+    children: [{
+      path: 'index',
+      name: 'Customers',
+      component: () => import('@/views/customers/index'),
+      meta: { title: 'Customers', icon: 'user' }
+    }]
+  },
+
+  {
+    path: '/suppliers',
+    component: Layout,
+    redirect: '/suppliers',
+    children: [{
+      path: 'index',
+      name: 'Suppliers',
+      component: () => import('@/views/suppliers/index'),
+      meta: { title: 'Suppliers', icon: 'user' }
+    }]
+  },
+
+  {
     path: '/example',
     component: Layout,
     redirect: '/example/table',
