@@ -39,10 +39,9 @@ export const User = {
   methods: {
     handleTab(tab) {
       this.activeName = tab;
-      if(this.activeName === 'view'){
+      if (this.activeName === "view") {
         this.getCustomers();
-      }
-      else if(this.activeName === 'create'){
+      } else if (this.activeName === "create") {
         this.resetCreateCustomersForm();
       }
     },
@@ -96,10 +95,6 @@ export const User = {
         });
     },
 
-    resetCreateCustomers() {},
-
-    resetUpdateCustomers() {},
-
     updateCustomers(row) {
       this.handleTab("update");
       this.customersCreateForm = row;
@@ -114,7 +109,7 @@ export const User = {
           this.handleTab("view");
         })
         .catch(() => {
-          console.log('Update customer error')
+          console.log("Update customer error");
         });
     },
 
@@ -132,13 +127,16 @@ export const User = {
       this.getCustomers();
     },
 
-    deleteCustomer(data) {
+    async deleteCustomer(data) {
       console.log("delete", data);
-      this.$store.dispatch('customer/deleteCustomer', data).then(() => {
-        this.handleTab('view')
-      }).catch(() => {
-        console.log('Delete customer error')
-      })
+      this.$store
+        .dispatch("customer/deleteCustomer", data)
+        .then(() => {
+          this.handleTab("view");
+        })
+        .catch(() => {
+          console.log("Delete customer error");
+        });
     },
 
     handleAvatarSuccess(res, file) {

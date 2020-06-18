@@ -14,6 +14,7 @@
         <div>
           <el-table
             border
+            v-loading = "listLoading"
             :data="suppliersData"
             style="width: 100%;background-color: #e9e3e3"
             highlight-current-row
@@ -23,7 +24,7 @@
                 <span>Name</span>
               </template>
               <template slot-scope="{row}">
-                <span>{{ row.supplierName }}</span>
+                <span>{{ row.name }}</span>
               </template>
             </el-table-column>
 
@@ -59,12 +60,12 @@
                 <span>Operations</span>
               </template>
               <template slot-scope="{row}">
-                <el-button size="mini" @click="updateCustomers(row)">update</el-button>
+                <el-button size="mini" @click="updateSupplier(row)">update</el-button>
                 <el-popconfirm
                   confirm-button-text="OK"
                   cancel-button-text="No, Thanks"
                   title="Are you sure to delete this?"
-                  @onConfirm="deleteCustomers(row.id)"
+                  @onConfirm="deleteSupplier(row)"
                 >
                   <el-button slot="reference" size="mini" type="danger">delete</el-button>
                 </el-popconfirm>
@@ -90,7 +91,7 @@
       <el-tab-pane label="Create Suppliers" name="create">
         <el-form ref="createForm" label-width="220px" style="width: 500px">
           <el-form-item label="Name :" prop="name">
-            <el-input v-model="suppliersCreateForm.supplierName" type="text" autocomplete="off" />
+            <el-input v-model="suppliersCreateForm.name" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="E-Mail :" prop="email">
@@ -159,8 +160,8 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="createCustomers">Create</el-button>
-            <el-button @click="resetCreateCustomers">Reset</el-button>
+            <el-button type="primary" @click="createSupplier">Create</el-button>
+            <el-button @click="resetCreateSupplierForm">Reset</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -169,7 +170,7 @@
       <el-tab-pane label="Update Suppliers" name="update" :disabled="true">
         <el-form ref="createForm" label-width="220px" style="width: 500px">
           <el-form-item label="Name :" prop="name">
-            <el-input v-model="suppliersCreateForm.supplierName" type="text" autocomplete="off" />
+            <el-input v-model="suppliersCreateForm.name" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="E-Mail :" prop="email">
@@ -238,8 +239,8 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="updateCustomers">Update</el-button>
-            <el-button @click="resetUpdateCustomers">Reset</el-button>
+            <el-button type="primary" @click="updateSupplierOk">Update</el-button>
+            <el-button @click="resetCreateSupplierForm">Reset</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>

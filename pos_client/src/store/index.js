@@ -8,6 +8,8 @@ import warehouse from './modules/warehouse'
 import unit from './modules/unit'
 import permission from './modules/permission'
 import customer from './modules/customer'
+import supplier from './modules/supplier'
+
 
 Vue.use(Vuex)
 
@@ -19,7 +21,8 @@ const store = new Vuex.Store({
     unit,
     permission,
     warehouse,
-    customer
+    customer,
+    supplier
   },
   getters
 

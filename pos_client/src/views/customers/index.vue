@@ -161,7 +161,7 @@
 
           <el-form-item>
             <el-button type="primary" @click="createCustomers">Create</el-button>
-            <el-button @click="resetCreateCustomers">Reset</el-button>
+            <el-button @click="resetCreateCustomersForm">Reset</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -240,7 +240,7 @@
 
           <el-form-item>
             <el-button type="primary" @click="updateCustomerOk">Update</el-button>
-            <el-button @click="resetUpdateCustomers">Reset</el-button>
+            <el-button @click="resetCreateCustomersForm">Reset</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
