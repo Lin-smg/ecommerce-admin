@@ -128,19 +128,6 @@ export const constantRoutes = [
   },
 
   {
-    path: '/profile',
-    component: Layout,
-    redirect: '/profile',
-    children: [{
-      path: 'index',
-      permission: 'M001B00',
-      name: 'Profile',
-      component: () => import('@/views/profile/index'),
-      meta: { title: 'Profile', icon: 'tree' }
-    }]
-  },
-
-  {
     path: '/customers',
     component: Layout,
     redirect: '/customers',

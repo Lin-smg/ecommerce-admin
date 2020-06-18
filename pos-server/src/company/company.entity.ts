@@ -4,10 +4,10 @@ import { BaseEntity } from "../common/base.entity";
 @Entity()
 export class Company extends BaseEntity {
 
-    @Column({ name:'company_code' ,unique: true, nullable: false })
+    @Column({ name:'company_code' , nullable: false })
     companyCode: string;
 
-    @Column({ name:'company_name' ,unique: true, nullable: false })
+    @Column({ name:'company_name' , nullable: false })
     companyName: string;
 
     @Column({ name:'company_type', nullable: true })

@@ -14,15 +14,15 @@ export class InCompanyDto{
     companyType: string;
 
     @ApiProperty()
+    companyPhone: string;
+
+    @ApiProperty()
+    companyEmail: string;
+
+    @ApiProperty()
     companyAddress: string;
 
     @ApiProperty()
     companyLogo: string
-
-    @ApiProperty({ type: DepartmentDto, isArray: true })
-    departments: DepartmentDto[];
-
-    @ApiProperty({ type: DepartmentDto, isArray: true })
-    olddepartments: DepartmentDto[];
 
 }

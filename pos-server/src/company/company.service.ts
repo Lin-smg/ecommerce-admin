@@ -11,6 +11,7 @@ import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class CompanyService {
+    
     constructor(
         @InjectRepository(Company)
         private readonly companyReposiory: Repository<Company>,
@@ -19,34 +20,14 @@ export class CompanyService {
         private readonly usersService: UsersService,
     ) { }
    async create(options: { item: InCompanyDto; }){
-        try {
-            const departmentList = options.item.departments;
-            const oldDepartmentList = options.item.olddepartments;
-            const companyDto = plainToClass(CompanyDto,options.item);
-            const toDeleteDept = await this.getToDeleteDepartment({old: oldDepartmentList,new: departmentList})       
-            
-            const company = await this.getExistingCompany(companyDto.companyCode);
-            
+        try { 
+            const company = await this.getExistingCompany(options.item.companyCode);            
             if(company){
-                await this.companyReposiory.update(plainToClass(Company,companyDto),{companyCode:company.companyCode});
+                await this.companyReposiory.update(plainToClass(Company,options.item),{companyCode:company.companyCode});
             }else{
-                await this.companyReposiory.save(plainToClass(Company,companyDto));
+                return this.companyReposiory.save(plainToClass(Company,options.item));
             }
-            
-            for (const data of departmentList) {
-                if(!toDeleteDept.includes(data.deptCode)){
-                    const departmentDto = plainToClass(DepartmentDto,data);
-                    departmentDto.companyCode = company.companyCode;
-                    if(this.getExistingDept(departmentDto.deptCode)){
-                        await this.departmentReposiory.update(plainToClass(Department,departmentDto),{deptCode:departmentDto.deptCode})   
-                    }else{
-                        await this.departmentReposiory.save(plainToClass(Department,departmentDto));
-                    }
-                   
-                }
-            }
-
-
+            return company;
         } catch (error) {
             throw error;
         }
@@ -63,6 +44,22 @@ export class CompanyService {
             }
         }          
         return deleteDeptCodeList;
+    }
+    async getCompany() {
+        let result;
+        try {
+            result = await this.companyReposiory.findOne();
+            if(result){
+                return {
+                    data:  plainToClass(CompanyDto,result)
+                }
+            }else{
+                return {
+                    data: plainToClass(CompanyDto, ''),
+                }
+            }
+                    } catch (error) {
+            return { data: plainToClass(CompanyDto, '')}        }
     }
     async findDeparmentCodeInOther(deptCode: string) {
        if(this.usersService.findByDeptCode(deptCode)){

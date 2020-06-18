@@ -4,7 +4,7 @@ import { CompanyService } from './company.service';
 import { Company } from './company.entity';
 import { Department } from './department.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [

@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Post, Body, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Body, UseGuards, UseInterceptors, Get } from '@nestjs/common';
 import { CompanyService } from './company.service';
 import { ApiResponse, ApiBody, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { OutCompanyDto } from './dto/out-company.dto';
@@ -34,6 +34,27 @@ export class CompanyController {
                 await this.companyService.create({
                     item: dto
                 })
+            );
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    //Create Permission Group
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: OutCompanyDto,
+        description: 'The record has been successfully created.'
+    })
+    @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
+    //@Permissions(PermissionsType.USERS_CREATE)
+    @Get()
+    async getCompany() {
+    try {
+            return plainToClass(
+                OutCompanyDto,
+                await this.companyService.getCompany()
             );
         } catch (error) {
             throw error;
