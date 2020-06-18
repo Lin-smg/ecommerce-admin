@@ -9,6 +9,7 @@ import { PermissionModule } from './permission/permission.module';
 import { CategoryModule } from './category/category.module';
 import { CompanyModule } from './company/company.module';
 import { WarehouseModule } from './warehouse/warehouse.module';
+import { BrandModule } from './brand/brand.module';
 
 @Module({
   imports: [   
@@ -37,6 +38,7 @@ import { WarehouseModule } from './warehouse/warehouse.module';
     CategoryModule,
     CompanyModule,
     WarehouseModule,
+    BrandModule,
    
   ],
 
