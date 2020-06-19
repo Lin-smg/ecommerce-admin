@@ -1,4 +1,5 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { MulterModule } from '@nestjs/platform-express';
 import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -8,13 +9,21 @@ import { contextMiddleware } from './common/middlewares';
 import { PermissionModule } from './permission/permission.module';
 import { CategoryModule } from './category/category.module';
 import { CompanyModule } from './company/company.module';
+import { WarehouseModule } from './warehouse/warehouse.module';
+import { UnitsModule } from './units/units.module';
+import { CustomersModule } from './customers/customers.module';
+import { SuppliersModule } from './suppliers/suppliers.module';
 
 @Module({
   imports: [   
     ConfigModule.forRoot(),
     TypeOrmModule.forRootAsync(
       {
-        imports: [ConfigModule,SharedModule],
+        imports: [ConfigModule, 
+          SharedModule,
+          MulterModule.register({
+          dest: './files',
+        })],
         useFactory: (configService: ConfigService) => (
           {
             type: "postgres",
@@ -35,6 +44,10 @@ import { CompanyModule } from './company/company.module';
     PermissionModule,
     CategoryModule,
     CompanyModule,
+    WarehouseModule,
+    UnitsModule,
+    CustomersModule,
+    SuppliersModule
    
   ],
 

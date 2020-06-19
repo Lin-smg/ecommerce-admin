@@ -81,6 +81,40 @@ export const constantRoutes = [
   },
 
   {
+    path: '/warehouse',
+    component: Layout,
+    redirect: '/warehouse',
+    children: [{
+      path: 'index',
+      name: 'Warehouse',
+      component: () => import('@/views/warehouse/index'),
+      meta: { title: 'Warehouse', icon: 'user' }
+    }]
+  },
+  {
+    path: '/unit',
+    component: Layout,
+    redirect: '/unit',
+    children: [{
+      path: 'index',
+      name: 'UnitOfMeasure',
+      component: () => import('@/views/unit/index'),
+      meta: { title: 'UnitOfMeasure', icon: 'user' }
+
+    }]
+  },
+  {
+    path: '/permission',
+    component: Layout,
+    redirect: '/permission',
+    children: [{
+      path: 'index',
+      name: 'Permission Group',
+      component: () => import('@/views/permission/index'),
+      meta: { title: 'Permission Group', icon: 'user' }
+    }]
+  },
+  {
     path: '/company',
     component: Layout,
     redirect: '/company',
@@ -94,15 +128,26 @@ export const constantRoutes = [
   },
 
   {
-    path: '/profile',
+    path: '/customers',
     component: Layout,
-    redirect: '/profile',
+    redirect: '/customers',
     children: [{
       path: 'index',
-      permission: 'M001B00',
-      name: 'Profile',
-      component: () => import('@/views/profile/index'),
-      meta: { title: 'Profile', icon: 'tree' }
+      name: 'Customers',
+      component: () => import('@/views/customers/index'),
+      meta: { title: 'Customers', icon: 'user' }
+    }]
+  },
+
+  {
+    path: '/suppliers',
+    component: Layout,
+    redirect: '/suppliers',
+    children: [{
+      path: 'index',
+      name: 'Suppliers',
+      component: () => import('@/views/suppliers/index'),
+      meta: { title: 'Suppliers', icon: 'user' }
     }]
   },
 

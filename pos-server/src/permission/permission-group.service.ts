@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException, NotAcceptableException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plainToClass } from 'class-transformer';
@@ -36,10 +36,12 @@ export class PermissionGroupService {
         try {
             let objects: [PermissionGroup[], number];
             let qb = this.permissionGroupRepository.createQueryBuilder('permissiongroup');
+            qb = qb.where('permissiongroup.delFlg = :d', {
+                d: '0'
+            });
             if (options.q) {
-                qb = qb.where('user.username like :q or user.position like :q or user.userid = :id', {
+                qb = qb.andWhere('permissiongroup.groupCode like :q OR permissiongroup.groupName like :q', {
                     q: `%${options.q}%`,
-                    id: +options.q
                 });
             }
             options.sort = options.sort && new PermissionGroup().hasOwnProperty(options.sort.replace('-', '')) ? options.sort : '-id';
@@ -52,8 +54,9 @@ export class PermissionGroupService {
                 }
             }
             qb = qb.skip((options.curPage - 1) * options.perPage).take(options.perPage);
+            // eslint-disable-next-line prefer-const
             objects = await qb.getManyAndCount();
-            let metaPage = {
+            const metaPage = {
                 perPage: options.perPage,
                 totalPages: options.perPage > objects[1] ? 1 : Math.ceil(objects[1] / options.perPage),
                 totalResults: objects[1],
@@ -73,8 +76,39 @@ export class PermissionGroupService {
 
     async update(options: { groupcode: string; item: PermissionGroup; }): Promise<any> {
         try {
+            await this.findByGroupCodeData({ parameter: options.item.groupCode });
             await this.permissionGroupRepository.update({ groupCode: options.groupcode }, options.item);
-            return await this.findByGroupOrName({ parameter: options.item.groupCode });
+            return options.item;
+        } catch (error) {
+            throw error;
+        }
+    }
+    async findByGroupCodeData(options: { parameter: string; }) {
+        try {
+            return await this.permissionGroupRepository.findOneOrFail({
+                where: [
+                    { groupCode: options.parameter },
+                ]
+            });
+        } catch (error) {
+            throw new NotFoundException(`Group Permissions with "${options.parameter}" not found`);
+        }
+    }
+
+    // Delete
+    async delete(options: { item: PermissionGroup; }): Promise<any> {
+        try {
+           const pGroup = await this.findByGroupCodeData({ parameter: options.item.groupCode });
+
+           // pGroup.delFlg = '1';
+           // await this.permissionGroupRepository.update({ groupCode: options.item.groupCode }, pGroup);
+
+           //await this.permissionGroupRepository.delete(pGroup)
+
+           await this.permissionGroupRepository.createQueryBuilder().delete().from(PermissionGroup).where('groupCode = :code', {
+            code: pGroup.groupCode
+        }).execute();
+            return options.item;
         } catch (error) {
             throw error;
         }
@@ -94,8 +128,7 @@ export class PermissionGroupService {
             return options.item;
 
         } catch (error) {
-
-            throw error;
+            throw new NotAcceptableException(error.message);
         }
     }
     async isExistWithGropCodeAndName(options: { groupCode: string; groupName: string; }) {
@@ -103,14 +136,14 @@ export class PermissionGroupService {
         if (options.groupCode) {
 
             try {
-                permissionGroupData = await this.findByGroupOrName({ parameter: options.groupCode });
+                permissionGroupData = await this.findByGroupCodeData({ parameter: options.groupCode });
             } catch (error) {
                 permissionGroupData = undefined;
             }
         }
         if (options.groupName) {
             try {
-                permissionGroupData = await this.findByGroupOrName({ parameter: options.groupName });
+                permissionGroupData = await this.findByGroupName({ parameter: options.groupName });
             } catch (error) {
                 permissionGroupData = undefined;
             }
@@ -123,18 +156,14 @@ export class PermissionGroupService {
             throw new ConflictException(`Group Permissions with "${options.groupCode}" or "${options.groupName}" is exists`);
         }
     }
-    async findByGroupOrName(options: { parameter: string; }) {
+    async findByGroupName(options: { parameter: string; }) {
         try {
-
-            const item = await this.permissionGroupRepository.findOne({
+            const item = await this.permissionGroupRepository.findOneOrFail({
                 where: [
-                    { groupCode: options.parameter },
                     { groupName: options.parameter }
-                ],
+                ]
             });
-
             return item;
-
         } catch (error) {
             throw new NotFoundException(`Group Permissions with "${options.parameter}" not found`);
         }
@@ -142,7 +171,7 @@ export class PermissionGroupService {
 
     async getAllPermissionGroup() {
         try {
-            let permissionGroup = await this.permissionGroupRepository.find();
+            const permissionGroup = await this.permissionGroupRepository.find();
             return plainToClass(PermissionGroupDto, permissionGroup);
         } catch (error) {
             throw (error)

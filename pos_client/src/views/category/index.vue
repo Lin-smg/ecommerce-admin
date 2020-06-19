@@ -99,7 +99,7 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
+        <el-button type="primary" @click="createCategory">Confirm</el-button>
         <el-button @click="dialogVisible = false">Cancel</el-button>
       </span>
 

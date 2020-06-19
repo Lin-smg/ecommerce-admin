@@ -43,6 +43,31 @@ export class PermissionController {
         }
     }
 
+        //Delete Permission Group
+        @HttpCode(HttpStatus.OK)
+        @ApiResponse({
+            status: HttpStatus.OK,
+            type: OutPermissionGroupDto,
+            description: 'The record has been successfully created.'
+        })
+        @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
+        @ApiBody({type:InCreatePermissionGroupDto})
+        //@Permissions(PermissionsType.USERS_CREATE)
+        @Post('delete')
+        async delete( @Body() dto: InCreatePermissionGroupDto) {
+        try {
+                return plainToClass(
+                    OutPermissionGroupDto,
+                    await this.permissionGroupService.delete({
+                        item: plainToClass(PermissionGroup, dto)
+                    })
+                );
+            } catch (error) {
+                throw error;
+            }
+        }
+    
+    
     //Update Permission Group
     @HttpCode(HttpStatus.OK)
     @ApiResponse({

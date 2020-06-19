@@ -1,3 +1,5 @@
+import { getCategory } from '@/api/category'
+
 export const Category = {
   data() {
     return {
@@ -29,6 +31,20 @@ export const Category = {
     }
   },
   methods: {
+    getCategory() {
+      getCategory().then(res => {
+
+      })
+    },
+    createCategory() {
+      this.$store.dispatch('category/createCategory', this.category)
+        .then(() => {
+          this.handleTab('view')
+        })
+        .catch(() => {
+          console.log('Create supplier error')
+        })
+    },
     showDialog(key, data) {
       this.dialog.visible = true
       if (key === 'add') {
