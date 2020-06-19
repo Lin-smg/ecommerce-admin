@@ -25,7 +25,7 @@ export class WarehouseController {
         private readonly warehouseService: WarehouseService,
     ) { }
 
-    //Create User
+    //Create Warehouse
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
