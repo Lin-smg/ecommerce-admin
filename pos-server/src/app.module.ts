@@ -10,6 +10,7 @@ import { PermissionModule } from './permission/permission.module';
 import { CategoryModule } from './category/category.module';
 import { CompanyModule } from './company/company.module';
 import { WarehouseModule } from './warehouse/warehouse.module';
+import { BrandModule } from './brand/brand.module';
 import { UnitsModule } from './units/units.module';
 import { CustomersModule } from './customers/customers.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
@@ -45,10 +46,11 @@ import { SuppliersModule } from './suppliers/suppliers.module';
     CategoryModule,
     CompanyModule,
     WarehouseModule,
+    BrandModule,
     UnitsModule,
     CustomersModule,
     SuppliersModule
-   
+
   ],
 
 })
