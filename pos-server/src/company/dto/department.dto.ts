@@ -12,6 +12,12 @@ export class DepartmentDto{
     deptAddress: string;
 
     @ApiProperty()
+    deptPhone: string;
+
+    
+    @ApiProperty()
     companyCode: string;
+
+
 
 }

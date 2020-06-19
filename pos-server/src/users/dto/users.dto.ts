@@ -26,6 +26,9 @@ export class UsersDto {
     @ApiPropertyOptional()
     position: string;
 
+    @ApiProperty()
+    department: string;
+
     @ApiPropertyOptional()
     email: string;
 

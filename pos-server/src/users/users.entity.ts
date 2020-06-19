@@ -21,6 +21,9 @@ export class User extends BaseEntity {
     @Column({type: "text",default:'All'})
     departmentpermissions: string;
 
+    @Column({ nullable: false})
+    department: string;
+
     @Column({ nullable: true})
     position: string;
 

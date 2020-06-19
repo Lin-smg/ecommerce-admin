@@ -13,9 +13,15 @@ export class CompanyDto{
     companyType: string;
 
     @ApiProperty()
+    companyPhone: string;
+
+    @ApiProperty()
+    companyEmail: string;
+
+    @ApiProperty()
     companyAddress: string;
 
     @ApiProperty()
-    companyLogo: string
+    companyLogo: string;
 
 }
