@@ -6,6 +6,7 @@ import { UsersDto } from './dto/users.dto';
 import { plainToClass } from 'class-transformer';
 import { CryptoService } from './crypto/crypto.service';
 import { PageMetaDto } from '../common/dto/page_meta.dto';
+import { PermissionGroupService } from '../permission/permission-group.service';
 
 
 
@@ -16,6 +17,7 @@ export class UsersService {
         @InjectRepository(User)
         private readonly userRepository: Repository<User>,
         private readonly cryptoService: CryptoService,
+        private readonly permissionGroupService: PermissionGroupService,
     ) { }
 
     // find UserId
@@ -24,7 +26,8 @@ export class UsersService {
            
             const item = await this.userRepository.findOneOrFail({
                 where: {
-                    userid: options.userid
+                    userid: options.userid,
+                    delFlg: '0'
                 },
             });
 
@@ -40,16 +43,12 @@ export class UsersService {
     async create(options: { item: User }) {
         try {
             await this.isExistWithUserId({ userid: options.item.userid });
-
             const password = await this.cryptoService.hash(options.item.password);
             options.item.password = password;
-            options.item = await this.userRepository.save(options.item);
-            const user= await this.findByUserId({ userid: options.item.userid });
-            return user;
+            const user = await this.userRepository.save(options.item);
+            return {data: plainToClass(UsersDto, user) };
 
         } catch (error) {
-            console.log(error);
-            
             throw error;
         }
     }
@@ -57,15 +56,31 @@ export class UsersService {
     //Update
     async update(options: { userid: string; item: User; }){
         try {
-         await this.findByUserId({ userid: options.userid });  
-         await this.userRepository.update({userid: options.userid},options.item);
-         return  await this.findByUserId({ userid: options.item.userid });
+         const user = await this.findByUserId({ userid: options.userid });  
+         if(user.password !== options.item.password ){
+            const password = await this.cryptoService.hash(options.item.password);
+            options.item.password = password; 
+         }
+         await this.userRepository.update({userid: options.userid, delFlg: '0'},options.item);
+         return  {data: await this.findByUserId({ userid: options.item.userid })};
         } catch (error) {
           throw error;  
         }
 
     }
-
+    //Delete
+    async delete(options: { item: User }){
+        try {
+            const user = await this.findByUserId({ userid: options.item.userid });  
+            user.delFlg = '1'
+            await this.userRepository.update({userid: user.userid,delFlg: '0'},user);
+            return  {data: options.item};
+           } catch (error) {
+             throw error;  
+           }
+   
+    }
+   
     async isExistWithUserId(options: { userid: string; }) {
         let userOfUserId;
         try {
@@ -98,8 +113,11 @@ export class UsersService {
         try {
             let objects: [User[], number];
             let qb = this.userRepository.createQueryBuilder('user');
+            qb = qb.where('user.delFlg = :q',{
+                q: '0'
+            });
             if (options.q) {
-                qb = qb.where('user.username like :q or user.position like :q or user.userid = :id', {
+                qb = qb.andWhere('user.username like :q or user.position like :q or user.userid = :id', {
                     q: `%${options.q}%`,
                     id: +options.q
                 });
@@ -124,7 +142,8 @@ export class UsersService {
             }
             return {
                 data: plainToClass(UsersDto,objects[0]),
-                meta: plainToClass(PageMetaDto,metaPage)
+                meta: plainToClass(PageMetaDto,metaPage),
+                permissionGroup: await this.permissionGroupService.getAllPermissionGroup()            
             };
         } catch (error) {
             throw error;

@@ -16,7 +16,6 @@ import { LoginUserInfoDto } from './dto/login-userinfo.dto';
 import { AuthUser } from '../common/decorators/auth-user.decorator';
 import { UsersDto } from './dto/users.dto';
 import { PermissionService } from '../permission/permission.service';
-import { PermissionGroupService } from '../permission/permission-group.service';
 
 @Controller('users')
 @ApiTags('users')
@@ -27,7 +26,6 @@ export class UsersController {
     //Servie Constructor
     constructor(private readonly userService: UsersService,
         private readonly permissionService: PermissionService,
-        private readonly permissionGroupService: PermissionGroupService,
 ) { }
 
     //Create User
@@ -54,6 +52,29 @@ export class UsersController {
         }
     }
 
+  //Delete User
+  @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+      status: HttpStatus.OK,
+      type: OutUsersDto,
+      description: 'The record has been successfully created.'
+  })
+  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
+  @ApiBody({type:InCreateUsersDto})
+  @Permissions(PermissionsType.USERS_CREATE)
+  @Post('delete')
+  async delete( @Body() dto: InCreateUsersDto) {
+  try {
+          return plainToClass(
+              OutUsersDto,
+              await this.userService.delete({
+                  item: plainToClass(User, dto)
+              })
+          );
+      } catch (error) {
+          throw error;
+      }
+  }
 
       //Update User
       @HttpCode(HttpStatus.OK)
@@ -155,8 +176,7 @@ export class UsersController {
         try {
             const userInfo = await this.userService.findByUserId({userid: user.userid})
             const permissions = await this.permissionService.getAllPermission();  
-            const permissionsGroup = await this.permissionGroupService.getAllPermissionGroup();
-            return new LoginUserInfoDto(plainToClass(UsersDto,userInfo), permissions, permissionsGroup );     
+            return new LoginUserInfoDto(plainToClass(UsersDto,userInfo), permissions);     
         } catch (error) {
          throw error;   
         }

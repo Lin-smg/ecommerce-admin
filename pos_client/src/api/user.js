@@ -8,6 +8,22 @@ export function login(data) {
   })
 }
 
+export function deletePhoto(data) {
+  return request({
+    url: '/shared/deleteIMG',
+    method: 'post',
+    data
+  })
+}
+
+export function updateUser(userid, data) {
+  return request({
+    url: `/users/${userid}`,
+    method: 'put',
+    data
+  })
+}
+
 export function getInfo() {
   return request({
     url: '/users/info',
@@ -15,7 +31,7 @@ export function getInfo() {
   })
 }
 
-export function getUserList(params) {
+export async function getUserList(params) {
   return request({
     url: '/users',
     method: 'get',
@@ -31,9 +47,10 @@ export function createUser(data) {
   })
 }
 
-// export function logout() {
-//   return request({
-//     url: '/vue-admin-template/user/logout',
-//     method: 'post'
-//   })
-// }
+export function deleteUser(data) {
+  return request({
+    url: '/users/delete',
+    method: 'post',
+    data
+  })
+}

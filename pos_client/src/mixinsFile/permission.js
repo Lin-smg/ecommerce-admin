@@ -68,18 +68,20 @@ export const PermissionGroup = {
       this.listLoading = true
       await getPermissionGroupList(params).then(response => {
         this.permissionGroupData = []
-        for (const data of response.data) {
-          var str = data.permissions.replace('{', '[')
-          str = str.replace('}', ']')
-          const pdataList = JSON.parse(str)
-          const obj = {
-            'id': data.id,
-            'groupCode': data.groupCode,
-            'groupName': data.groupName,
-            'permissions': pdataList,
-            'permissionNames': this.getPermissionNameFromCode(pdataList)
+        if (response.data !== '') {
+          for (const data of response.data) {
+            var str = data.permissions.replace('{', '[')
+            str = str.replace('}', ']')
+            const pdataList = JSON.parse(str)
+            const obj = {
+              'id': data.id,
+              'groupCode': data.groupCode,
+              'groupName': data.groupName,
+              'permissions': pdataList,
+              'permissionNames': this.getPermissionNameFromCode(pdataList)
+            }
+            this.permissionGroupData.push(obj)
           }
-          this.permissionGroupData.push(obj)
         }
 
         this.pageIndex = response.meta.curPage
