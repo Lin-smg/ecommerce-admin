@@ -4,12 +4,11 @@ export const Company = {
     return {
       companyProfile: this.initCompanyForm(),
       fileName: '',
-      companyUploadUrl: 'http://localhost:3000/shared/companyIMG',
       editVisible: false,
       imgEdit: false,
       imgUpload: false,
-      imageUrl: 'http://localhost:3000/shared/company_profile.jpg'
-      // imageUrl: '/files/company_profile.jpg'
+      // imageUrl: 'http://localhost:3000/shared/company_profile.jpg'
+      imageUrl: '/files/company_profile.jpg'
     }
   },
   created() {

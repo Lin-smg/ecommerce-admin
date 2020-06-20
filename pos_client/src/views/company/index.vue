@@ -11,7 +11,7 @@
 
             <el-upload
               class="avatar-uploader"
-              action="/dev-api/shared/companyIMG"
+              action="/prod-api/shared/companyIMG"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :before-upload="beforeAvatarUpload"
