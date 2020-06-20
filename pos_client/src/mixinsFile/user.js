@@ -1,4 +1,5 @@
-import { getUserList } from '@/api/user'
+import { getUserList, deletePhoto } from '@/api/user'
+import { ElStep } from 'element-ui/types/step'
 export const User = {
   name: 'Index',
   data() {
@@ -8,21 +9,8 @@ export const User = {
       pageIndex: 1,
       usersData: [],
       totalCount: 0,
-      userCreateForm: {
-        userid: '',
-        password: '',
-        username: '',
-        email: '',
-        phone: '',
-        position: '',
-        department: '',
-        deptPermissions: [],
-        permissions: ['M000B00']
-      },
-      userUpdateForm: {
-        name: '',
-        userId: ''
-      },
+      userCreateForm: this.initUserForm(),
+      userUpdateForm: this.initUserForm(),
       searchValue: '',
       deptOptions: [
         {
@@ -34,19 +22,21 @@ export const User = {
           label: 'dept2'
         }
       ],
-      permissionGroupList: [
-        {
-          value: 'permission1',
-          label: 'permission1'
-        },
-        {
-          value: 'permission2',
-          label: 'permission2'
-        }
-      ]
+      permissionGroupList: [],
+      premissionGroupSelectedValue: '',
+      premissionGroupSelectedValueForUpdate: '',
+      loading: false,
+      passwordType: 'password',
+      isDisablePwd: true,
+      loginUserId: this.$store.getters.userid,
+      photoUploadUrl: '',
+      photoUrl: '',
+      oldFileName: '',
+      baseUrl: process.env.VUE_APP_BASE_API
     }
   },
   created() {
+    this.photoUploadUrl = this.baseUrl + '/shared/userIMG'
     this.getUsers()
   },
   computed: {
@@ -55,7 +45,55 @@ export const User = {
     }
   },
   methods: {
+    handleAvatarSuccess(res, file) {
+      if (this.oldFileName !== '') {
+        deletePhoto({ fileName: `./files/${this.oldFileName}` })
+      }
+      this.oldFileName = res.filename
+      this.userCreateForm.imagePath = `/shared/${res.filename}`
+      this.userUpdateForm.imagePath = `/shared/${res.filename}`
+      this.photoUrl = URL.createObjectURL(file.raw)
+    },
+    editPwd() {
+      this.isDisablePwd = !this.isDisablePwd
+    },
+    showPwd() {
+      if (this.passwordType === 'password') {
+        this.passwordType = ''
+      } else {
+        this.passwordType = 'password'
+      }
+      this.$nextTick(() => {
+        this.$refs.password.focus()
+      })
+    },
 
+    initUserForm() {
+      return {
+        userid: '',
+        password: '',
+        username: '',
+        email: '',
+        phone: '',
+        position: '',
+        department: '',
+        deptPermissions: [],
+        permissions: ['M000B00'],
+        imagePath: ''
+      }
+    },
+    setPermissionGroupValue() {
+      this.userCreateForm.permissions = []
+      var str = this.premissionGroupSelectedValue.replace('{', '[')
+      str = JSON.parse(str.replace('}', ']'))
+      this.userCreateForm.permissions = str
+    },
+    setPermissionGroupValueForUpdate() {
+      this.userUpdateForm.permissions = []
+      var str = this.premissionGroupSelectedValueForUpdate.replace('{', '[')
+      str = JSON.parse(str.replace('}', ']'))
+      this.userUpdateForm.permissions = str
+    },
     handleCheckedPermissionChange(value) {
       var checkedList = this.userCreateForm.permissions
       const uniqueCheckList = new Set()
@@ -67,7 +105,6 @@ export const User = {
       this.userCreateForm.permissions = []
       this.userCreateForm.permissions = Array.from(uniqueCheckList)
     },
-
     async getUsers() {
       const params = {
         group: '',
@@ -79,15 +116,50 @@ export const User = {
 
       this.listLoading = true
       getUserList(params).then(response => {
-        this.usersData = response.data
+        // this.usersData = response.data
+        this.userCreateForm = this.initUserForm()
+        this.userUpdateForm = this.initUserForm()
+        this.photoUrl = ''
+        this.usersData = []
+        this.permissionGroupList = response.permissionGroup
         this.pageIndex = response.meta.curPage
         this.pageSize = response.meta.perPage
         this.totalCount = response.meta.totalResults
-        this.listLoading = false
-        console.log('request', params)
-        console.log('user data', response)
-        console.log('user count', this.totalCount)
+        if (response.data !== '') {
+          for (const data of response.data) {
+            let obj = this.initUserForm()
+            obj = data
+            if (data.imagePath && data.imagePath !== null && data.imagePath !== '') {
+              obj.imagePath = data.imagePath
+            } else {
+              obj.imagePath = ''
+            }
+            if (data.userid === this.$store.getters.curUserInfo.userid) {
+              obj.isLoginUser = true
+            } else {
+              obj.isLoginUser = false
+            }
+            var str = data.permissions.replace('{', '')
+            str = str.replace('}', '')
+            str = str.replace(/"/g, '')
+            const pdataList = str.split(',')
+            obj.permissions = pdataList
+            obj.permissionNames = this.getPermissionNameFromCode(pdataList)
+
+            this.usersData.push(obj)
+          }
+          this.listLoading = false
+        }
       })
+    },
+
+    getPermissionNameFromCode(data) {
+      const result = []
+      const allPermission = this.$store.getters.allPermission
+      for (const obj of data) {
+        result.push(allPermission.find(({ permissionCode }) => permissionCode === obj).permissionName)
+      }
+      return result
     },
 
     handleSizeChange(val) {
@@ -127,11 +199,39 @@ export const User = {
     },
 
     deleteUser(data) {
-      console.log('delete', data)
+      // this.$refs.userCreateForm.validate(valid => {
+      //   if (valid) {
+      this.loading = true
+      this.$store.dispatch('user/deleteUser', data).then(() => {
+        this.handleTab('view')
+        this.getUsers()
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
     },
 
     updateOk() {
-
+      // this.$refs.userCreateForm.validate(valid => {
+      //   if (valid) {
+      this.loading = true
+      this.$store.dispatch('user/updateUser', this.userUpdateForm).then(() => {
+        this.handleTab('view')
+        this.getUsers()
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
+      //   } else {
+      //     console.log('error submit!!')
+      //     return false
+      //   }
+      // })
     },
 
     updateReset() {
@@ -139,14 +239,35 @@ export const User = {
     },
 
     updateUser(data) {
-      console.log('update', data)
-      this.userUpdateForm.name = data.username
-      this.userUpdateForm.userId = data.userid
+      this.userUpdateForm.userid = data.userid
+      this.userUpdateForm.password = data.password
+      this.userUpdateForm.username = data.username
+      this.userUpdateForm.email = data.email
+      this.userUpdateForm.phone = data.phone
+      this.userUpdateForm.position = data.position
+      this.userUpdateForm.department = data.department
+      this.userUpdateForm.deptPermissions = data.deptPermissions
+      this.userUpdateForm.permissions = data.permissions
+      this.userUpdateForm.imagePath = data.imagePath
+      this.photoUrl = this.baseUrl + data.imagePath
+      if (data.imagePath !== '') {
+        this.oldFileName = data.imagePath.substring(data.imagePath.lastIndexOf('/'))
+      } else {
+        this.oldFileName = ''
+      }
       this.handleTab('update')
     },
 
     handleTab(tab) {
-      console.log(tab)
+      this.premissionGroupSelectedValue = ''
+      this.premissionGroupSelectedValueForUpdate = ''
+      this.userCreateForm = this.initUserForm()
+      if (tab === 'view') {
+        this.getUsers()
+      }
+      if (tab === 'create') {
+        this.photoUrl = ''
+      }
       this.activeName = tab
     }
   }

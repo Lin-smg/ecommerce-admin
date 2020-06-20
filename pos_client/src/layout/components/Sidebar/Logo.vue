@@ -25,9 +25,11 @@ export default {
   data() {
     return {
       title: 'POS',
-      logo: 'http://localhost:3000/shared/company_profile.jpg'
-      // logo: '/files/company_profile.jpg'
+      logo: ''
     }
+  },
+  created() {
+    this.logo = process.env.VUE_APP_BASE_API + '/shared/company_profile.jpg'
   }
 }
 </script>

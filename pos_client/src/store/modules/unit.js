@@ -12,9 +12,9 @@ const mutations = {}
 
 const actions = {
   // Create Unit
-  async createUnit({ commit }, unitForm) {
+  async createUnit({ commit }, formData) {
     return await new Promise((resolve, reject) => {
-      createUnit(unitForm).then(response => {
+      createUnit(formData).then(response => {
         resolve(resolve)
       }).catch(error => {
         console.log(error)
@@ -23,9 +23,9 @@ const actions = {
     })
   },
   // Update Unit
-  async updateUnit({ commit }, unitForm) {
+  async updateUnit({ commit }, formData) {
     return await new Promise((resolve, reject) => {
-      updateUnit(unitForm.id, unitForm).then(response => {
+      updateUnit(formData.id, formData).then(response => {
         resolve(resolve)
       }).catch(error => {
         console.log(error)
