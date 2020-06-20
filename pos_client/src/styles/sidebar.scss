@@ -5,6 +5,8 @@
     transition: margin-left .28s;
     margin-left: $sideBarWidth;
     position: relative;
+    height: 100%;
+    overflow-y: auto;
   }
 
   .sidebar-container {

@@ -220,7 +220,7 @@
             <el-input v-model="product.productName" type="text" placeholder="" autocomplete="off" />
           </el-form-item>
           <el-form-item label="Category" prop="category">
-            <el-select v-model="product.category" placeholder="Select" style="width: 280px">
+            <el-select v-model="product.category" value-key="categoryName" placeholder="Select" style="width: 280px">
               <el-option
                 v-for="item in categoryList"
                 :key="item.categoryCode"
@@ -230,11 +230,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="Brand" prop="Brand">
-            <el-select v-model="product.brand" placeholder="Select" style="width: 280px">
+            <el-select v-model="product.brand" value-key="brandName" placeholder="Select" style="width: 280px">
               <el-option
-                v-for="item in categoryList"
-                :key="item.categoryCode"
-                :label="item.categoryName"
+                v-for="item in brandList"
+                :key="item.brandCode"
+                :label="item.brandName"
                 :value="item"
               />
             </el-select>
