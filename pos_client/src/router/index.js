@@ -189,6 +189,17 @@ export const constantRoutes = [
       meta: { title: 'Product', icon: 'tree' }
     }]
   },
+  {
+    path: '/branch',
+    component: Layout,
+    redirect: '/branch',
+    children: [{
+      path: 'index',
+      name: 'Branch',
+      component: () => import('@/views/branch/index'),
+      meta: { title: 'Branch', icon: 'tree' }
+    }]
+  },
 
   {
     path: '/example',

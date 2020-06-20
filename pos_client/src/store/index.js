@@ -11,6 +11,7 @@ import customer from './modules/customer'
 import company from './modules/company'
 import supplier from './modules/supplier'
 import category from './modules/category'
+import branch from './modules/branch'
 
 Vue.use(Vuex)
 
@@ -25,7 +26,9 @@ const store = new Vuex.Store({
     customer,
     company,
     supplier,
-    category
+    category,
+    supplier,
+    branch
   },
   getters
 
