@@ -8,7 +8,7 @@
 
         <div style="width: 250px; float: right">
           <el-input v-model="searchValue" placeholder="Please input" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search" />
+            <el-button slot="append" icon="el-icon-search" @click="getCategory" />
           </el-input>
         </div>
       </div>
@@ -87,7 +87,7 @@
       <el-form ref="createForm" label-width="220px" style="width: 500px">
 
         <el-form-item label="Category Code" prop="code">
-          <el-input v-model="category.categoryCode" type="text" placeholder="category name" autocomplete="off" />
+          <el-input v-model="category.categoryCode" :disabled="isUpdate" type="text" placeholder="category name" autocomplete="off" />
         </el-form-item>
         <el-form-item label="Category Name" prop="name">
           <el-input v-model="category.categoryName" type="text" placeholder="category name" autocomplete="off" />

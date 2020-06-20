@@ -4,13 +4,11 @@ import { JwtAuthGuard } from '../common/guards/auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { AuthUserInterceptor } from '../common/interceptors/auth-user-interceptor.service';
 import { OutCategoryPageDto } from './dto/out-categroy-page.dto';
-import { Permissions } from '../common/decorators/permissions.decorator';
-import { PermissionsType } from '../common/constants/permissions-type';
 import { plainToClass } from 'class-transformer';
-import { CategoryService } from './category.service';
 import { OutCategoryDto } from './dto/out-category.dto';
 import { InCreateCategoryDto } from './dto/in-create-category.dto';
 import { Category } from './category.entity';
+import { CategoryService } from './category.service';
 
 @Controller('category')
 @ApiTags('category')
@@ -21,7 +19,7 @@ export class CategoryController {
 
     //Servie Constructor
     constructor(
-        private readonly CategoryService: CategoryService,
+        private readonly categoryService: CategoryService,
     ) { }
 
      //Create Category
@@ -33,13 +31,13 @@ export class CategoryController {
      })
      @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
      @ApiBody({type:InCreateCategoryDto})
-     @Permissions(PermissionsType.USERS_CREATE)
+    // @Permissions(PermissionsType.USERS_CREATE)
      @Post()
      async create( @Body() dto: InCreateCategoryDto) {
      try {
              return plainToClass(
                 OutCategoryDto,
-                 await this.CategoryService.create({
+                 await this.categoryService.create({
                      item: plainToClass(Category, dto)
                  })
              );
@@ -57,14 +55,13 @@ export class CategoryController {
       })
       @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
       @ApiParam({ name: 'categoryCode'})      
-      @Permissions(PermissionsType.USERS_CREATE)
-      @Post(":categoryCode")
-      async delete( @Param('categoryCode') categoryCode, @Body() dto: InCreateCategoryDto) {
+     //@Permissions(PermissionsType.USERS_CREATE)
+      @Post("delete")
+      async delete( @Body() dto: InCreateCategoryDto) {
         try {
             return plainToClass(
               OutCategoryDto,
-              await this.CategoryService.delete({
-                  categoryCode,
+              await this.categoryService.delete({
                 item: await plainToClass(Category, dto)
               })
             );
@@ -88,7 +85,7 @@ export class CategoryController {
         try {
           return plainToClass(
             OutCategoryDto,
-            await this.CategoryService.update({
+            await this.categoryService.update({
                 categoryCode,
               item: await plainToClass(Category, dto)
             })
@@ -136,7 +133,7 @@ export class CategoryController {
         description: 'Group id for filter data by group. (default: empty)'
     })
     @Get()
-    @Permissions(PermissionsType.USERS)
+    //@Permissions(PermissionsType.USERS)
     async getCategory(
         @Query('cur_page', new DefaultValuePipe(1), ParseIntPipe) curPage,
         @Query('per_page', new DefaultValuePipe(10), ParseIntPipe) perPage,
@@ -147,7 +144,7 @@ export class CategoryController {
         try {
             return plainToClass(
                 OutCategoryPageDto,
-                await this.CategoryService.getCategory({
+                await this.categoryService.getCategory({
                     curPage,
                     perPage,
                     q,

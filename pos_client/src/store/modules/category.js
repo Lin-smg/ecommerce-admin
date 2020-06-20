@@ -1,4 +1,4 @@
-import { createCategory } from '@/api/category'
+import { createCategory, updateCategory, deleteCategory } from '@/api/category'
 import { getToken } from '@/utils/auth'
 
 const getDefaultState = () => {
@@ -31,7 +31,36 @@ const actions = {
           reject(error)
         })
     })
+  },
+
+  // Delete Category
+  async deleteCategory({ commit }, category) {
+    return await new Promise((resolve, reject) => {
+      deleteCategory(category)
+        .then(response => {
+          resolve(resolve)
+        })
+        .catch(error => {
+          console.log(error)
+          reject(error)
+        })
+    })
+  },
+
+  // Create Category
+  async updateCategory({ commit }, category) {
+    return await new Promise((resolve, reject) => {
+      updateCategory(category.categoryCode, category)
+        .then(response => {
+          resolve(resolve)
+        })
+        .catch(error => {
+          console.log(error)
+          reject(error)
+        })
+    })
   }
+
 }
 
 export default {

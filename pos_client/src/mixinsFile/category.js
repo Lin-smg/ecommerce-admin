@@ -10,44 +10,66 @@ export const Category = {
         title: ''
       },
       searchValue: '',
-      category: {
+      category: this.initCategory(),
+      categoryData: [],
+      isUpdate: false
+    }
+  },
+  created() {
+    this.getCategory()
+  },
+  methods: {
+    initCategory() {
+      return {
         categoryCode: '',
         categoryName: '',
         description: ''
-      },
-      categoryData: [
-        {
-          categoryCode: 'C001',
-          categoryName: 'category1',
-          description: 'description'
-        },
-        {
-          categoryCode: 'C002',
-          categoryName: 'category1',
-          description: 'description'
-        }
-      ],
-      dialogVisible: false
-    }
-  },
-  methods: {
-    getCategory() {
-      getCategory().then(res => {
+      }
+    },
+    async getCategory() {
+      const params = {
+        group: '',
+        sort: '',
+        cur_page: this.pageIndex,
+        per_page: this.pageSize,
+        q: this.searchValue ? this.searchValue : ''
+      }
 
+      this.listLoading = true
+      await getCategory(params).then(response => {
+        this.categoryData = response.data
+        this.pageIndex = response.meta.curPage
+        this.pageSize = response.meta.perPage
+        this.totalCount = response.meta.totalResults
+        this.category = this.initCategory()
+        this.listLoading = false
       })
     },
     createCategory() {
-      this.$store.dispatch('category/createCategory', this.category)
-        .then(() => {
-          this.handleTab('view')
-        })
-        .catch(() => {
-          console.log('Create supplier error')
-        })
+      if (this.isUpdate) {
+        this.$store.dispatch('category/updateCategory', this.category)
+          .then(() => {
+            this.dialog.visible = false
+            this.getCategory()
+          })
+          .catch(() => {
+            console.log('Create supplier error')
+          })
+      } else {
+        this.$store.dispatch('category/createCategory', this.category)
+          .then(() => {
+            this.dialog.visible = false
+            this.getCategory()
+          })
+          .catch(() => {
+            console.log('Create supplier error')
+          })
+      }
     },
     showDialog(key, data) {
       this.dialog.visible = true
       if (key === 'add') {
+        this.isUpdate = false
         this.dialog.title = 'Add'
         this.category = {
           categoryCode: '',
@@ -55,13 +77,20 @@ export const Category = {
           description: ''
         }
       } else {
+        this.isUpdate = true
         this.dialog.title = 'Edit'
         this.category = data
       }
     },
 
     deleteCategory(data) {
-      console.log(data)
+      this.$store.dispatch('category/deleteCategory', data)
+        .then(() => {
+          this.getCategory()
+        })
+        .catch(() => {
+          console.log('delete error')
+        })
     },
 
     onPageSizeChange(val) {

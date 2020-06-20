@@ -7,15 +7,16 @@ export function createCategory(data) {
     data
   })
 }
-export function getCategory() {
+export function getCategory(params) {
   return request({
     url: '/category',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
-export function updateCategory(id, data) {
+export function updateCategory(categoryCode, data) {
   return request({
-    url: `/category/${id}`,
+    url: `/category/${categoryCode}`,
     method: 'put',
     data
   })

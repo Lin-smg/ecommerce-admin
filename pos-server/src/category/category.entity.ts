@@ -7,7 +7,7 @@ export class Category extends BaseEntity {
     @Column({ name: 'category_code', nullable: false })
     categoryCode: string;
 
-    @Column({ name: 'category_name', nullable: true, })
+    @Column({ name: 'category_name', nullable: false, })
     categoryName: string;
 
     @Column({ name: 'description', nullable: true })

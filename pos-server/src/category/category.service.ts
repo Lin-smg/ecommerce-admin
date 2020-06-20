@@ -16,23 +16,32 @@ export class CategoryService {
 //Category Create
     async create(options: { item: Category; }): Promise<any> {
         try {
+           await this.isExistCatergoryCode(options.item.categoryCode)
            options.item.createDateTime = new Date();
-           return await this.categoryRepository.save(options.item);
+           return { data: await this.categoryRepository.save(options.item)};
         } 
-        catch (error) {
-            if(error.code === '23505'){
-                throw new NotAcceptableException('Category Name is already exists.')
-            }            
+        catch (error) {          
             throw error;
         }   
     }
+    async isExistCatergoryCode(categoryCode: string) {
+        try{
+          const data = await this.categoryRepository.findOne({categoryCode: categoryCode, delFlg: '0'})
+          if(data){
+            throw new NotAcceptableException('Category is already exists.')
+          }
+        }catch(error){
+          throw error;
+        }
+       
+    }
 // Category Delete
-    async delete(options: { categoryCode: any; item: Category; }): Promise<any> {
+    async delete(options: { item: Category; }): Promise<any> {
         try {            
-            const Category = await this.findByCategoryCode({ categoryCode: options.categoryCode });  
-            Category.delFlg = '1';
-            await this.categoryRepository.update({categoryCode: Category.categoryCode},Category);
-            return options.item;
+            const category = await this.findByCategoryCode({ categoryCode: options.item.categoryCode });  
+            category.delFlg = '1';
+            await this.categoryRepository.update({categoryCode: category.categoryCode},category);
+            return { data: options.item };
         } catch (error) {
             throw error;  
         }
@@ -42,25 +51,19 @@ export class CategoryService {
         try {
             await this.findByCategoryCode({ categoryCode: options.categoryCode });  
             await this.categoryRepository.update({categoryCode: options.categoryCode},options.item);
-            return options.item;
+            return {data: options.item};
         } catch (error) {
-            if(error.code === '23505'){
-                throw new NotAcceptableException('Category Name is already exists.')
-            }
             throw error;  
         }
     } 
     async findByCategoryCode(options: { categoryCode: string; }) {
         try {
            
-            const item = await this.categoryRepository.findOneOrFail({
+            return await this.categoryRepository.findOneOrFail({
                 where: {
-                    categoryCode: options.categoryCode
+                    categoryCode: options.categoryCode , delFlg: '0'
                 },
-            });
-
-            return item;
-    
+            });    
         } catch (error) {
             throw new NotFoundException(`This Category is not found`);
         }
@@ -74,7 +77,7 @@ export class CategoryService {
             d: '0'
         });
         if (options.q) {
-            qb = qb.andWhere('category.categoryCod like :q', {
+            qb = qb.andWhere('category.categoryCode like :q OR category.categoryName like :q', {
                 q: `%${options.q}%`,
             });
         }
@@ -89,6 +92,7 @@ export class CategoryService {
         }
         qb = qb.skip((options.curPage - 1) * options.perPage).take(options.perPage);
         
+        // eslint-disable-next-line prefer-const
         objects = await qb.getManyAndCount();
         const metaPage = {
             perPage: options.perPage,
@@ -99,7 +103,6 @@ export class CategoryService {
     
         return {
             data: plainToClass(CategoryDto,objects[0]),
-            all: plainToClass(CategoryDto,await this.categoryRepository.find()),
             meta: plainToClass(PageMetaDto,metaPage)
         };
        } catch (error) {
