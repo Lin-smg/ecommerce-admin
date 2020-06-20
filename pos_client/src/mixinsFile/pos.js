@@ -1,4 +1,5 @@
-
+import { getCategory } from '@/api/category'
+import { getCustomerList } from '@/api/customer'
 export const POS = {
   data: function() {
     return {
@@ -6,16 +7,7 @@ export const POS = {
       searchValue: '',
       searchType: '',
       customer: '',
-      customerList: [
-        {
-          value: 'Mg Mg',
-          id: 1
-        },
-        {
-          value: 'Ma Ma',
-          id: 2
-        }
-      ],
+      customerData: '',
       num: 0,
       otherChargesList: [],
       otherCharge: {
@@ -23,18 +15,50 @@ export const POS = {
         amount: 0
       },
       name: '',
-      amount: 0
+      amount: 0,
+      itemList: [],
+      categoryList: []
     }
   },
   created() {
     const self = this
+    this.getCategory();
     self.$store.dispatch('app/setBackHandle', true)
     window.onpopstate = function() {
       localStorage.setItem('back', true)
     }
-
   },
   methods: {
+    async getCategory() {
+      const params = {
+      }
+      await getCategory(params).then(response => {
+        this.categoryList = response.data
+        console.log(response.data)
+      })
+    },
+    async getAllProduct() {
+    },
+    async customerSearch(q, cb) {
+      const params = {
+        group: '',
+        sort: '',
+        cur_page: this.pageIndex,
+        per_page: this.pageSize,
+        q: q
+      }
+      getCustomerList(params).then(response => {
+        this.customersData = response.data
+        cb(response.data)
+      })
+    },
+
+    async productSearch(q, cb) {
+    
+    },
+    createCustomer() {
+      // this.$router.push({name: 'Customers'});
+    },
     setBackHandle() {
 
     },
@@ -45,20 +69,10 @@ export const POS = {
     },
     change(val) {
       console.log(val)
-    },
-
-    querySearch(queryString, cb) {
-      const customer = this.customerList
-      const results = queryString ? customer.filter(this.createFilter(queryString)) : customer
-      // call callback function to return suggestions
-      cb(results)
-    },
-    createFilter(queryString) {
-      return (link) => {
-        return (link.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
-      }
+      console.log(this.categoryList[val])
     },
     handleSelect(val) {
+      this.customerData = val
       console.log(val)
     },
     addOtherCharges() {

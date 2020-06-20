@@ -9,6 +9,7 @@ export const Company = {
       imgUpload: false,
       imageUrl: '',
       companyUploadUrl: ''
+
     }
   },
   created() {
