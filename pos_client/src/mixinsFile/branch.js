@@ -143,6 +143,11 @@ export const User = {
         this.$message.error("Avatar picture size can not exceed 2MB!");
       }
       return isJPG && isLt2M;
+    },
+
+    toUpperCaseWord(object, key){
+      const upperWord = object[key].toUpperCase();
+      object[key] = upperWord;
     }
   }
 };

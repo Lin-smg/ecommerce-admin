@@ -91,7 +91,7 @@
       <el-tab-pane label="Create Branch" name="create">
         <el-form ref="createForm" label-width="220px" style="width: 500px">
           <el-form-item label="Code :" prop="code">
-            <el-input v-model="branchCreateForm.code" type="text" autocomplete="off" />
+            <el-input v-model="branchCreateForm.code" type="text" autocomplete="off" @input="toUpperCaseWord(branchCreateForm,'code')" />
           </el-form-item>
 
           <el-form-item label="Name :" prop="name">
