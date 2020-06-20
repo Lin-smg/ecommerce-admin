@@ -19,7 +19,7 @@
               <img v-if="imageUrl" :src="imageUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
-            <i v-if="imgEdit && !imgUpload" class="el-icon-edit" style="position: absolute; color: #132584; font-size: 25px; top: 200px" @click="imgUpload = true" />
+            <i v-if="imgEdit && !imgUpload" class="el-icon-edit" style="position: absolute; color: #132584; font-size: 25px;top: 170px; left: 270px" @click="imgUpload = true" />
             <i v-if="imgEdit && imgUpload" class="el-icon-delete" style="position: absolute; color: #132584; font-size: 25px; top: 170px; left: 270px" @click="imgUpload = false" />
           </div>
           <div style="text-align: center; margin: 10px">

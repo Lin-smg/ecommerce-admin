@@ -4,29 +4,20 @@
       <el-row :gutter="20">
         <el-col :span="15" style="height: 100vh">
           <div>
-            <el-input v-model="searchValue" placeholder="Please input" class="input-with-select">
-<!--              <el-select slot="prepend" v-model="searchType" style="width: 100px" placeholder="Select">-->
-<!--                <el-option label="type1" value="type1" />-->
-<!--                <el-option label="type2" value="type2" />-->
-<!--              </el-select>-->
+            <el-autocomplete v-model="searchValue" value-key="username" :fetch-suggestions="productSearch" :trigger-on-focus="false" @select="searchClick" placeholder="Please input" class="input-with-select">
               <el-button slot="append" icon="el-icon-search" @click="searchClick" />
-            </el-input>
+            </el-autocomplete>
 
             <el-carousel :autoplay="false" arrow="always" indicator-position="none" type="card" height="40px" style="margin: 10px" @change="change">
-              <el-carousel-item v-for="item in 6" :key="item" style="text-align: center; line-height: 45px">
-                <h3 class="medium">{{ item }}</h3>
+              <el-carousel-item v-for="item in categoryList" :key="item.categoryCode" style="text-align: center; line-height: 45px">
+                <h3 class="medium">{{ item.categoryName }}</h3>
               </el-carousel-item>
             </el-carousel>
 
-<!--            <div style="text-align: center; margin: 10px">-->
-<!--              <i class="el-icon-back" style="float:left; font-size: 35px" />-->
-<!--              <el-button type="primary" style="width: 510px">Category</el-button>-->
-<!--              <i class="el-icon-right" style="float:right; font-size: 35px" />-->
-<!--            </div>-->
           </div>
 
           <div style="overflow-y: scroll;height: 80vh">
-            <el-card v-for="i in 20" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; height: 170px; float: left; margin: 2px">
+            <el-card v-for="i in 20" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; height: 170px; float: left; margin: 2px; cursor: pointer">
               <div>
                 <el-image style="height: 90px" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQr28OdEVKSN446VF2degUDZ9-WDSge_zQKsPYV0t3WzkuoVVee&usqp=CAU" />
                 <div style="text-align: center; padding: 10px">
@@ -45,12 +36,14 @@
               <div ref="header">
                 <el-autocomplete
                   v-model="customer"
+                  value-key="name"
                   class="inline-input"
-                  :fetch-suggestions="querySearch"
+                  :fetch-suggestions="customerSearch"
+                  :highlight-first-item="true"
                   placeholder="Please Input"
                   @select="handleSelect"
                 />
-                <el-button type="primary">Create</el-button>
+                <el-button type="primary" @click="createCustomer">Create</el-button>
               </div>
 
               <div style="margin: 10px; height: 250px">
@@ -88,7 +81,7 @@
                     <span>Name:</span>
                     <el-input v-model="otherCharge.name" size="mini" />
                     <span>Amount:</span>
-                    <el-input type="number" v-model="otherCharge.amount" size="mini"/>
+                    <el-input v-model="otherCharge.amount" type="number" size="mini" />
 
                     <el-button type="primary" size="mini" @click="addOtherCharges">OK</el-button>
                   </div>
@@ -96,13 +89,13 @@
                 </el-popover>
                 <el-row v-for="(data,i) of otherChargesList" :key="i" style="margin-bottom: 5px">
                   <el-col :span="14">
-                    <span>{{data.name}}</span>
+                    <span>{{ data.name }}</span>
                   </el-col>
                   <el-col :span="6" style="text-align: center">
                     <el-input v-model="data.amount" size="mini" style="width: 60px" />
                   </el-col>
                   <el-col :span="3" style="text-align: left">
-                    <i class="el-icon-delete-solid" style="color: red" @click="otherChargeDelete(data)"/>
+                    <i class="el-icon-delete-solid" style="color: red" @click="otherChargeDelete(data)" />
                   </el-col>
                 </el-row>
               </div>
