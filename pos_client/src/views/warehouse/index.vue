@@ -55,12 +55,12 @@
                 <span>Operations</span>
               </template>
               <template slot-scope="{row}">
-                <el-button size="mini" @click="updateUser(row)">update</el-button>
+                <el-button size="mini" @click="updateWareHouse(row)">update</el-button>
                 <el-popconfirm
                   confirm-button-text="OK"
                   cancel-button-text="No, Thanks"
                   title="Are you sure to delete this?"
-                  @onConfirm="deleteUser(row.id)"
+                  @onConfirm="deleteWareHouse(row)"
                 >
                   <el-button slot="reference" size="mini" type="danger">delete</el-button>
                 </el-popconfirm>
@@ -106,23 +106,29 @@
 
       </el-tab-pane>
 
-      <!-- user update tab -->
-      <!--<el-tab-pane label="Update User" name="update" :disabled="true">
+      <!-- Warehouse update tab -->
+      <el-tab-pane label="Update User" name="update" :disabled="true">
         <el-form ref="updateForm" label-width="220px" style="width: 500px">
-          <el-form-item label="Name" prop="name">
-            <el-input v-model="userUpdateForm.name" type="text" placeholder="user name" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="User Id" prop="userId">
-            <el-input v-model="userUpdateForm.userId" type="text" placeholder="user id" autocomplete="off" />
-          </el-form-item>
 
+          <el-form-item label="Warehouse Name" prop="wareHouseName">
+            <el-input v-model="warehouseUpdateForm.wareHouseName" type="text" :disabled="true" placeholder="warehouse name" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="Location" prop="location">
+            <el-input v-model="warehouseUpdateForm.location" type="text" placeholder="location" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="Space" prop="space">
+            <el-input v-model="warehouseUpdateForm.space" type="text" placeholder="Space" autocomplete="off" />
+          </el-form-item>
+          <el-form-item label="Remark" prop="remark">
+            <el-input v-model="warehouseUpdateForm.remark" type="text" placeholder="remark" autocomplete="off" />
+          </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="updateOk">Update</el-button>
             <el-button @click="updateReset">Reset</el-button>
           </el-form-item>
         </el-form>
 
-      </el-tab-pane> -->
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>

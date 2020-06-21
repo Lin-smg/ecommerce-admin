@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     TypeOrmModule.forFeature([Branch]),
   ],
   controllers: [BranchController],
-  providers: [BranchService]
+  providers: [BranchService],
+  exports: [BranchService]
 })
 export class BranchModule {}

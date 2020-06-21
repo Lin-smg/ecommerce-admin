@@ -30,6 +30,10 @@ export class InCreateUsersDto {
     @IsOptional()
     readonly department: string;
 
+    @ApiProperty()
+    @IsOptional()
+    readonly departmentname: string;
+
     @ApiPropertyOptional()
     @IsOptional()
     readonly email: string;

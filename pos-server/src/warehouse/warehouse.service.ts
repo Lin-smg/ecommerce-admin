@@ -8,23 +8,19 @@ import { PageMetaDto } from '../common/dto/page_meta.dto';
 
 @Injectable()
 export class WarehouseService {
-    
-    
-    
+        
     constructor(
         @InjectRepository(Warehouse)
         private readonly warehouseRepository: Repository<Warehouse>,
         
     ) { }
 
-    async create(options: { item: Warehouse; }): Promise<any> {
+    async create(options: { item: Warehouse }): Promise<any> {
         try {
-            options.item.createDateTime=new Date();
-            return await this.warehouseRepository.save(options.item);           
-            
 
-        } catch (error) {
-            console.log(error);            
+            options.item.createDateTime=new Date();
+            return {data: await this.warehouseRepository.save(options.item)}; 
+        } catch (error) {            
             throw error;
         }
     }
@@ -32,27 +28,39 @@ export class WarehouseService {
     async update(options: { id: any; item: Warehouse; }): Promise<any> {
         try {
             await this.findById({ id: options.id });  
-            await this.warehouseRepository.update({id: options.id},options.item);
-            
+            await this.warehouseRepository.update({id: options.id,delFlg: '0'},options.item);
+            return { data: plainToClass(WarehouseDto, options.item) };
         } catch (error) {
             throw error;
         }
     }
    
+    async delete(options: { item: Warehouse; }): Promise<any> {
+        try {
+            const endata = await this.findById({ id: options.item.id });  
+            endata.delFlg = '1'
+            await this.warehouseRepository.update({id: options.item.id,delFlg: '0'},endata);
+            return { data: plainToClass(WarehouseDto, endata) };
+        } catch (error) {
+            throw error;
+        }
+    }
+    
     // find UserId
     async findById(options: { id: any }) {
         try {
            
             const item = await this.warehouseRepository.findOneOrFail({
                 where: {
-                    id: options.id
+                    id: options.id,
+                    delFlg: '0'
                 },
             });
 
             return item;
     
         } catch (error) {
-            throw new NotFoundException(`Deleted warehouse is not found`);
+            throw new NotFoundException(`This Warehouse is not found`);
         }
     }
 
@@ -60,20 +68,22 @@ export class WarehouseService {
     async getWarehouse(options: { curPage: number; perPage: number; q: any; sort: string; group: number; }) {
         try {
             let objects: [Warehouse[], number];
-            let qb = this.warehouseRepository.createQueryBuilder('warhouse');
+            let qb = this.warehouseRepository.createQueryBuilder('warehouse');
+            qb = qb.where('warehouse.delFlg = :q',{
+                q: '0'
+            })
             if (options.q) {
-                qb = qb.where('warhouse.wareHouseName like :q or user.position like :q or user.userid = :id', {
-                    q: `%${options.q}%`,
-                    id: +options.q
+                qb = qb.andWhere('warehouse.wareHouseName like :q', {
+                    q: `%${options.q}%`
                 });
             }
             options.sort = options.sort && new Warehouse().hasOwnProperty(options.sort.replace('-', '')) ? options.sort : '-id';
             const field = options.sort.replace('-', '');
             if (options.sort) {
                 if (options.sort[0] === '-') {
-                    qb = qb.orderBy('warhouse.' + field, 'DESC');
+                    qb = qb.orderBy('warehouse.' + field, 'DESC');
                 } else {
-                    qb = qb.orderBy('warhouse.' + field, 'ASC');
+                    qb = qb.orderBy('warehouse.' + field, 'ASC');
                 }
             }
             qb = qb.skip((options.curPage - 1) * options.perPage).take(options.perPage);

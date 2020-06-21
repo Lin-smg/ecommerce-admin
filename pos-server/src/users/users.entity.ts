@@ -24,6 +24,9 @@ export class User extends BaseEntity {
     @Column({ nullable: false})
     department: string;
 
+    @Column({ nullable: false})
+    departmentname: string;
+
     @Column({ nullable: true})
     position: string;
 

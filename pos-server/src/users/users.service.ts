@@ -7,6 +7,7 @@ import { plainToClass } from 'class-transformer';
 import { CryptoService } from './crypto/crypto.service';
 import { PageMetaDto } from '../common/dto/page_meta.dto';
 import { PermissionGroupService } from '../permission/permission-group.service';
+import { BranchService } from '../branch/branch.service';
 
 
 
@@ -18,6 +19,8 @@ export class UsersService {
         private readonly userRepository: Repository<User>,
         private readonly cryptoService: CryptoService,
         private readonly permissionGroupService: PermissionGroupService,
+        private readonly branchService: BranchService,
+
     ) { }
 
     // find UserId
@@ -143,7 +146,8 @@ export class UsersService {
             return {
                 data: plainToClass(UsersDto,objects[0]),
                 meta: plainToClass(PageMetaDto,metaPage),
-                permissionGroup: await this.permissionGroupService.getAllPermissionGroup()            
+                permissionGroup: await this.permissionGroupService.getAllPermissionGroup(),
+                allBranch: await this.branchService.getAllBranch()            
             };
         } catch (error) {
             throw error;

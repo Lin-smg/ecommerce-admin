@@ -19,7 +19,8 @@
                 <span>Photo</span>
               </template>
               <template slot-scope="{row}">
-                <img :src="row.imagePath === ''?baseUrl+'/shared/company_profile.jpg':baseUrl+row.imagePath" class="img-container" alt="Photo">
+                <img v-if="row.imagePath !== ''" :src="baseUrl+row.imagePath" class="img-container" alt="Photo">
+                <img v-if="row.imagePath === ''" :src="baseUrl+'/shared/company_profile.jpg'" class="img-container" alt="Photo">
               </template>
             </el-table-column>
 
@@ -49,22 +50,28 @@
                 <span>{{ row.position }}</span>
               </template>
             </el-table-column>
-
             <el-table-column align="center" min-width="200">
               <template slot="header">
-                <span>Email</span>
+                <span>Branch</span>
               </template>
               <template slot-scope="{row}">
-                <span>{{ row.email }}</span>
+                <span>{{ row.departmentname }}</span>
               </template>
             </el-table-column>
-
             <el-table-column align="center" min-width="200">
               <template slot="header">
                 <span>Phone</span>
               </template>
               <template slot-scope="{row}">
                 <span>{{ row.phone }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" min-width="200">
+              <template slot="header">
+                <span>Email</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.email }}</span>
               </template>
             </el-table-column>
             <el-table-column min-width="1000">
@@ -154,23 +161,24 @@
             <el-input v-model="userCreateForm.position" type="text" placeholder="position" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="Department" prop="dept">
-            <el-select v-model="userCreateForm.department" placeholder="Select" style="width: 280px">
+          <el-form-item label="Branch" prop="Branch">
+            <el-select v-model="selectDeptObject" value-key="name" placeholder="Select" style="width: 280px">
               <el-option
-                v-for="item in deptOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in allBranchList"
+                :key="item.code"
+                :label="item.name"
+                :value="item"
               />
             </el-select>
           </el-form-item>
 
           <div style="margin-left: 50px; width: 700px">
-            <span>Department Permission</span>
+            <span>Branch Permission</span>
             <div style="border: 1px solid rgb(174, 178, 183); padding: 10px">
-              <el-checkbox-group v-model="userCreateForm.deptPermissions">
-                <el-checkbox v-for="(item,i) in deptOptions" :key="i" :label="item.label" />
+              <el-checkbox-group v-model="userCreateForm.departmentpermissions">
+                <el-checkbox v-for="branch in allBranchList" :key="branch.code" :label="branch.code" style="min-width:100px;">{{ branch.name }}</el-checkbox>
               </el-checkbox-group>
+
             </div>
           </div>
 
@@ -255,23 +263,24 @@
             <el-input v-model="userUpdateForm.position" type="text" placeholder="position" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="Department" prop="dept">
-            <el-select v-model="userUpdateForm.department" placeholder="Select" style="width: 280px">
+          <el-form-item label="Branch" prop="Branch">
+            <el-select v-model="selectDeptObject" value-key="name" placeholder="Select" style="width: 280px">
               <el-option
-                v-for="item in deptOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                v-for="item in allBranchList"
+                :key="item.code"
+                :label="item.name"
+                :value="item"
               />
             </el-select>
           </el-form-item>
 
           <div style="margin-left: 50px; width: 700px">
-            <span>Department Permission</span>
+            <span>Branch Permission</span>
             <div style="border: 1px solid rgb(174, 178, 183); padding: 10px">
-              <el-checkbox-group v-model="userUpdateForm.deptPermissions">
-                <el-checkbox v-for="(item,i) in deptOptions" :key="i" :label="item.label" />
+              <el-checkbox-group v-model="userUpdateForm.departmentpermissions">
+                <el-checkbox v-for="branch in allBranchList" :key="branch.code" :label="branch.code" style="min-width:100px;">{{ branch.name }}</el-checkbox>
               </el-checkbox-group>
+
             </div>
           </div>
 

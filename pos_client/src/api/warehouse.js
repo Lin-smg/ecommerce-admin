@@ -8,6 +8,14 @@ export function createWarehouse(data) {
   })
 }
 
+export function deleteWarehouse(data) {
+  return request({
+    url: '/warehouse/delete',
+    method: 'post',
+    data
+  })
+}
+
 export function getWarehouseList(params) {
   return request({
     url: '/warehouse',
@@ -19,14 +27,7 @@ export function getWarehouseList(params) {
 export function updateWarehouse(id, data) {
   return request({
     url: `/warehouse/${id}`,
-    method: 'post',
+    method: 'put',
     data
   })
 }
-
-// export function logout() {
-//   return request({
-//     url: '/vue-admin-template/user/logout',
-//     method: 'post'
-//   })
-// }

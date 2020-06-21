@@ -11,19 +11,11 @@ export const User = {
       userCreateForm: this.initUserForm(),
       userUpdateForm: this.initUserForm(),
       searchValue: '',
-      deptOptions: [
-        {
-          value: 'dept1',
-          label: 'dept1'
-        },
-        {
-          value: 'dept2',
-          label: 'dept2'
-        }
-      ],
+      allBranchList: [],
       permissionGroupList: [],
       premissionGroupSelectedValue: '',
       premissionGroupSelectedValueForUpdate: '',
+      selectDeptObject: '',
       loading: false,
       passwordType: 'password',
       isDisablePwd: true,
@@ -44,6 +36,15 @@ export const User = {
     }
   },
   methods: {
+    beforeAvatarUpload(file) {
+      // const isJPG = file.type === 'image/jpeg'
+      // const isPNG = file.type === 'image/png'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('Avatar picture size can not exceed 2MB!')
+      }
+      return isLt2M
+    },
     handleAvatarSuccess(res, file) {
       if (this.oldFileName !== '') {
         deletePhoto({ fileName: `./files/${this.oldFileName}` })
@@ -76,7 +77,8 @@ export const User = {
         phone: '',
         position: '',
         department: '',
-        deptPermissions: [],
+        departmentname: '',
+        departmentpermissions: [],
         permissions: ['M000B00'],
         imagePath: ''
       }
@@ -118,9 +120,11 @@ export const User = {
         // this.usersData = response.data
         this.userCreateForm = this.initUserForm()
         this.userUpdateForm = this.initUserForm()
+        this.selectDeptObject = ''
         this.photoUrl = ''
         this.usersData = []
         this.permissionGroupList = response.permissionGroup
+        this.allBranchList = response.allBranch
         this.pageIndex = response.meta.curPage
         this.pageSize = response.meta.perPage
         this.totalCount = response.meta.totalResults
@@ -145,6 +149,13 @@ export const User = {
             obj.permissions = pdataList
             obj.permissionNames = this.getPermissionNameFromCode(pdataList)
 
+            var deptStr = data.departmentpermissions.replace('{', '')
+            deptStr = deptStr.replace('}', '')
+            deptStr = deptStr.replace(/"/g, '')
+            const deptdataList = deptStr.split(',')
+            obj.departmentpermissions = deptdataList
+            obj.departmentname = this.getDepartmentNameFromCode(data.department)
+            obj.departmentpermissionsname = this.getDepartmentNameListFromCode(deptdataList)
             this.usersData.push(obj)
           }
           this.listLoading = false
@@ -160,7 +171,33 @@ export const User = {
       }
       return result
     },
-
+    getDepartmentNameListFromCode(data) {
+      const result = []
+      const all = this.allBranchList
+      for (const obj of data) {
+        let robj = {
+          code: '',
+          name: ''
+        }
+        robj = all.find(({ code }) => code === obj)
+        if (robj) {
+          result.push(robj.name)
+        }
+      }
+      return result
+    },
+    getDepartmentNameFromCode(data) {
+      let result = {
+        code: '',
+        name: ''
+      }
+      const all = this.allBranchList
+      result = (all.find(({ code }) => code === data))
+      if (result) {
+        return result.name
+      }
+      result
+    },
     handleSizeChange(val) {
       this.pageSize = val
       this.getUsers()
@@ -178,6 +215,8 @@ export const User = {
     async createOk() {
       // this.$refs.userCreateForm.validate(valid => {
       //   if (valid) {
+      this.userCreateForm.department = this.selectDeptObject.code
+      this.userCreateForm.departmentname = this.selectDeptObject.name
       this.loading = true
       this.$store.dispatch('user/createUser', this.userCreateForm).then(() => {
         this.handleTab('view')
@@ -218,6 +257,8 @@ export const User = {
     updateOk() {
       // this.$refs.userCreateForm.validate(valid => {
       //   if (valid) {
+      this.userUpdateForm.department = this.selectDeptObject.code
+      this.userUpdateForm.departmentname = this.selectDeptObject.name
       this.loading = true
       this.$store.dispatch('user/updateUser', this.userUpdateForm).then(() => {
         this.handleTab('view')
@@ -244,8 +285,12 @@ export const User = {
       this.userUpdateForm.email = data.email
       this.userUpdateForm.phone = data.phone
       this.userUpdateForm.position = data.position
-      this.userUpdateForm.department = data.department
-      this.userUpdateForm.deptPermissions = data.deptPermissions
+      const obj = {
+        code: data.department,
+        name: data.departmentname
+      }
+      this.selectDeptObject = obj
+      this.userUpdateForm.departmentpermissions = data.departmentpermissions
       this.userUpdateForm.permissions = data.permissions
       this.userUpdateForm.imagePath = data.imagePath
       this.photoUrl = this.baseUrl + data.imagePath
@@ -265,6 +310,7 @@ export const User = {
         this.getUsers()
       }
       if (tab === 'create') {
+        this.selectDeptObject = ''
         this.photoUrl = ''
       }
       this.activeName = tab

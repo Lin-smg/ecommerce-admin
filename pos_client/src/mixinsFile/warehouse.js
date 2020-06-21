@@ -8,16 +8,8 @@ export const Warehouse = {
       pageIndex: 1,
       warehousesData: [],
       totalCount: 0,
-      warehouseCreateForm: {
-        'wareHouseName': '',
-        'location': '',
-        'space': '',
-        'remark': ''
-      },
-      warehouseUpdateForm: {
-        name: '',
-        userId: ''
-      },
+      warehouseCreateForm: this.initCreateWareHouseForm(),
+      warehouseUpdateForm: this.initUpdateWareHouseForm(),
       searchValue: ''
     }
   },
@@ -31,18 +23,23 @@ export const Warehouse = {
   },
   methods: {
 
-    handleCheckedPermissionChange(value) {
-      var checkedList = this.userCreateForm.permissions
-      const uniqueCheckList = new Set()
-      checkedList.forEach(element => {
-        const checkedValueMenuCode = element.toString().substring(0, 4)
-        uniqueCheckList.add(checkedValueMenuCode + 'B00')
-        uniqueCheckList.add(element)
-      })
-      this.userCreateForm.permissions = []
-      this.userCreateForm.permissions = Array.from(uniqueCheckList)
+    initCreateWareHouseForm() {
+      return {
+        'wareHouseName': '',
+        'location': '',
+        'space': '',
+        'remark': ''
+      }
     },
-
+    initUpdateWareHouseForm() {
+      return {
+        'id': '',
+        'wareHouseName': '',
+        'location': '',
+        'space': '',
+        'remark': ''
+      }
+    },
     async getWarehouse() {
       const params = {
         group: '',
@@ -54,6 +51,8 @@ export const Warehouse = {
 
       this.listLoading = true
       await getWarehouseList(params).then(response => {
+        this.warehouseCreateForm = this.initCreateWareHouseForm()
+        this.warehouseUpdateForm = this.initUpdateWareHouseForm()
         this.warehousesData = response.data
         this.pageIndex = response.meta.curPage
         this.pageSize = response.meta.perPage
@@ -82,7 +81,6 @@ export const Warehouse = {
       this.loading = true
       this.$store.dispatch('warehouse/createWarehouse', this.warehouseCreateForm).then(() => {
         this.handleTab('view')
-        this.getWarehouse()
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -98,27 +96,40 @@ export const Warehouse = {
 
     },
 
-    deleteUser(data) {
-      console.log('delete', data)
+    deleteWareHouse(data) {
+      this.loading = true
+      this.$store.dispatch('warehouse/deleteWarehouse', data).then(() => {
+        this.handleTab('view')
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     updateOk() {
-
+      this.loading = true
+      this.$store.dispatch('warehouse/updateWarehouse', this.warehouseUpdateForm).then(() => {
+        this.handleTab('view')
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+      })
     },
 
     updateReset() {
 
     },
 
-    updateUser(data) {
-      console.log('update', data)
-      this.userUpdateForm.name = data.username
-      this.userUpdateForm.userId = data.userid
+    updateWareHouse(data) {
+      this.warehouseUpdateForm = data
       this.handleTab('update')
     },
 
     handleTab(tab) {
-      console.log(tab)
+      if (tab === 'view') {
+        this.getWarehouse()
+        this.warehouseCreateForm = this.initCreateWareHouseForm()
+      }
       this.activeName = tab
     }
   }

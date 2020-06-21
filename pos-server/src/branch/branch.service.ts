@@ -12,6 +12,7 @@ import { PageMetaDto } from '../common/dto/page_meta.dto';
 
 @Injectable()
 export class BranchService {
+ 
   constructor(
     @InjectRepository(Branch)
     private readonly branchRepository: Repository<Branch>,
@@ -46,7 +47,7 @@ export class BranchService {
     try {
       const branch = await this.findByBranchCode({ code: options.item.code });
       branch.delFlg = '1';
-      await this.branchRepository.update({ code: branch.code }, branch);
+      await this.branchRepository.update({ code: branch.code, delFlg: '0' }, branch);
       return { data: options.item };
     } catch (error) {
       throw error;
@@ -57,7 +58,7 @@ export class BranchService {
   async update(options: { code: string; item: Branch }): Promise<any> {
     try {
       await this.findByBranchCode({ code: options.code });
-      await this.branchRepository.update({ code: options.code }, options.item);
+      await this.branchRepository.update({ code: options.code, delFlg: '0' }, options.item);
       return { data: options.item };
     } catch (error) {
       throw error;
@@ -118,4 +119,12 @@ export class BranchService {
           throw new error;
       }
    }
+
+   async getAllBranch() {
+    try {
+      return await plainToClass(BranchDto, await this.branchRepository.find({delFlg: '0'}));
+  } catch (error) {
+      throw (error)
+  }
+  }
 }
