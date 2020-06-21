@@ -16,7 +16,20 @@ export const POS = {
       },
       name: '',
       amount: 0,
-      itemList: [],
+      itemList: [
+        {
+          code: 'code1',
+          name: 'p1',
+          type: 'type',
+          price: 100
+        },
+        {
+          code: 'code2',
+          name: 'p2',
+          type: 'type',
+          price: 200
+        }
+      ],
       categoryList: [],
       dialogVisible: false,
       popVisible: false,
@@ -59,11 +72,11 @@ export const POS = {
 
     addSaleItem() {
       const selected = {
-        name: this.selectedItem,
+        data: this.selectedItem,
         count: 1
       }
       var exists = this.selectedItemList.some(function(field) {
-        var flag = field.name === selected.name
+        var flag = field.data.code === selected.data.code
         if (flag) {
           field.count += 1
         }
@@ -74,7 +87,6 @@ export const POS = {
       }
       this.dialogVisible = false
       this.setTotal()
-      console.log(this.selectedItemList)
     },
 
     removeItem(i) {
@@ -84,9 +96,8 @@ export const POS = {
     setTotal() {
       this.total = 0
       for (const i of this.selectedItemList) {
-        this.total += i.count
+        this.total += (i.data.price * i.count)
       }
-      console.log(this.total)
     },
 
     async getCategory() {
@@ -94,7 +105,6 @@ export const POS = {
       }
       await getCategory(params).then(response => {
         this.categoryList = response.data
-        console.log(response.data)
       })
     },
 

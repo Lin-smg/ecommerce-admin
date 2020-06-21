@@ -33,23 +33,25 @@
           </div>
 
           <div style="overflow-y: scroll;height: 80vh">
-            <el-card v-for="i in 20" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; height: 170px; float: left; margin: 2px; cursor: pointer">
-              <div @click="popShow(i)">
+            <el-card v-for="(item,i) in itemList" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; height: 170px; float: left; margin: 2px; cursor: pointer">
+              <div @click="popShow(item)">
                 <el-image style="height: 90px" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQr28OdEVKSN446VF2degUDZ9-WDSge_zQKsPYV0t3WzkuoVVee&usqp=CAU" />
                 <div style="text-align: center; padding: 10px">
-                  <span>product {{ i }}</span><br>
-                  <span> tye </span><br>
-                  <span> price </span>
+                  <span>product {{ item.name }}</span><br>
+                  <span> {{ item.type }} </span><br>
+                  <span> {{ item.price }} Kyats</span>
                 </div>
               </div>
             </el-card>
           </div>
 
           <el-dialog
-            title="Tips"
             :visible.sync="dialogVisible"
+            width="30%"
           >
-            <span>This is a {{ selectedItem }}</span>
+            <span>Code : </span><span>{{ selectedItem.code }}</span><br>
+            <span>Name : </span><span>{{ selectedItem.name }}</span><br>
+            <span>Price : </span><span>{{ selectedItem.price }} Kyats</span><br>
             <span slot="footer" class="dialog-footer">
               <el-button size="small" type="primary" @click="addSaleItem">Confirm</el-button>
               <el-button size="small" @click="dialogVisible = false">Cancel</el-button>
@@ -83,12 +85,18 @@
                 <hr>
 
                 <el-row v-for="(item,i) of selectedItemList" :key="i" style="margin-bottom: 5px">
-                  <el-col :span="10"><div>{{ item.name }}</div></el-col>
-                  <el-col :span="6" style="text-align: center"><div>
-                    <el-input-number v-model="item.count" size="mini" :step="1" style="width: 90px" />
-                  </div></el-col>
+                  <el-col :span="10"><div>{{ item.data.name }}</div></el-col>
                   <el-col :span="6" style="text-align: center">
-                    <span>{{ item.count }}</span>
+                    <el-row>
+                      <el-col :span="6" style="text-align: center"><span size="mini" class="el-icon-remove" style="font-size: 25px; color: #8a7443" @click="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" /></el-col>
+                      <el-col :span="12" style="text-align: center; padding-left: 2px"><el-input v-model="item.count" style="width: 45px" size="mini" @change="item.count=item.count!='' ? item.count===0 ? removeItem(i) : 1 : item.count, setTotal()" /></el-col>
+                      <!-- onkeyup="value=value.replace(/[^\d.]/g, '');"  -->
+                      <el-col :span="6" style="text-align: center"><span size="mini" class="el-icon-circle-plus" style="font-size: 25px;color: #73c715" @click="item.count++, setTotal()" /></el-col>
+                    </el-row>
+
+                  </el-col>
+                  <el-col :span="6" style="text-align: center">
+                    <span>{{ item.count*item.data.price }}</span>
                   </el-col>
                   <el-col :span="2" style="text-align: center">
                     <i class="el-icon-delete-solid" style="color: red" @click="removeItem(i)" />
