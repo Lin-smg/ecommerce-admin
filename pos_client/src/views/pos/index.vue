@@ -99,7 +99,7 @@
                     <span>{{ item.count*item.data.price }}</span>
                   </el-col>
                   <el-col :span="2" style="text-align: center">
-                    <i class="el-icon-delete-solid" style="color: red" @click="removeItem(i)" />
+                    <i class="el-icon-delete-solid" style="color: red" @click="removeItem(i), setTotal()" />
                   </el-col>
                 </el-row>
               </div>
