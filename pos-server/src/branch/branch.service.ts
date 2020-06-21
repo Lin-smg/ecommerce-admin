@@ -87,7 +87,7 @@ export class BranchService {
            d: '0'
        });
        if (options.q) {
-           qb = qb.andWhere('branch.code like :q OR category.name like :q', {
+           qb = qb.andWhere('branch.code like :q OR branch.name like :q', {
                q: `%${options.q}%`,
            });
        }
