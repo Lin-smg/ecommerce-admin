@@ -52,7 +52,7 @@ import { BrandModule } from './brand/brand.module';
     CustomersModule,
     SuppliersModule,
     BranchModule,
-    DashboardModule
+    DashboardModule,
     BrandModule
   ],
 
