@@ -1,20 +1,23 @@
 import { Injectable, NotFoundException, NotAcceptableException } from '@nestjs/common';
 import { Customers } from './customers.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Any } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CustomersDto } from './dto/customers.dto';
 import { plainToClass } from 'class-transformer';
 import { PageMetaDto } from '../common/dto/page_meta.dto';
 
 @Injectable()
 export class CustomersService {
-  
-   
+      
     constructor(
         @InjectRepository(Customers)
         private readonly customersRepository: Repository<Customers>,
 
     ) { }
+
+    async getCustomerCount() {
+       return await this.customersRepository.count({ delFlg: '0' });
+    }
 
     async create(options: { item: Customers; }): Promise<any> {
        

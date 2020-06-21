@@ -9,11 +9,13 @@ import { contextMiddleware } from './common/middlewares';
 import { PermissionModule } from './permission/permission.module';
 import { CompanyModule } from './company/company.module';
 import { WarehouseModule } from './warehouse/warehouse.module';
-// import { BrandModule } from './brand/brand.module';
 import { UnitsModule } from './units/units.module';
 import { CustomersModule } from './customers/customers.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
 import { CategoryModule } from './category/category.module';
+import { BranchModule } from './branch/branch.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { BrandModule } from './brand/brand.module';
 
 @Module({
   imports: [   
@@ -46,11 +48,12 @@ import { CategoryModule } from './category/category.module';
     CategoryModule,
     CompanyModule,
     WarehouseModule,
-    // BrandModule,
     UnitsModule,
     CustomersModule,
-    SuppliersModule
-
+    SuppliersModule,
+    BranchModule,
+    DashboardModule,
+    BrandModule
   ],
 
 })

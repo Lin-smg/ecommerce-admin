@@ -1,5 +1,8 @@
-INSERT INTO public.users( userid, username, password, department, permissions, departmentpermissions)
-	VALUES ('admin', 'Admin', '5b6df479ad', 'DEPT01','M000B00,M003B00,M003B01,M003B02,M003B03', '');
+INSERT INTO public.users( userid, username, password, department, departmentname, permissions, departmentpermissions)
+	VALUES ('admin', 'Admin', '5b6df479ad', 'B01','Branch','M000B00,M003B00,M003B01,M003B02,M003B03', 'B01');
+
+INSERT INTO public.Branch( branch_code, branch_name )
+	VALUES ('B01','Branch');
 
 insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
 values('M000B00','Dashboard','M000','Dashboard','B00','Menu');

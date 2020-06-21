@@ -11,7 +11,6 @@ import { WarehouseService } from './warehouse.service';
 import { OutWarehouseDto } from './dto/out-warehouse.dto';
 import { InWarehousesDto } from './dto/in-warehouse.dto';
 import { Warehouse } from './warehouse.entity';
-import { WarehouseDto } from './dto/warehouse.dto';
 
 @Controller('warehouse')
 @ApiTags('warehouse')
@@ -34,7 +33,7 @@ export class WarehouseController {
     })
     @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
     @ApiBody({type:InWarehousesDto})
-    @Permissions(PermissionsType.USERS_CREATE)
+    // @Permissions(PermissionsType.USERS_CREATE)
     @Post()
     async create( @Body() dto: InWarehousesDto) {
     try {
@@ -49,7 +48,31 @@ export class WarehouseController {
         }
     }
 
-     //Update User
+    //Delete Warehouse
+    @HttpCode(HttpStatus.OK)
+    @ApiResponse({
+        status: HttpStatus.OK,
+        type: OutWarehouseDto,
+        description: 'The record has been successfully deleted.'
+    })
+    @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
+    @ApiBody({type:InWarehousesDto})
+    // @Permissions(PermissionsType.USERS_CREATE)
+    @Post('delete')
+    async delete( @Body() dto: InWarehousesDto) {
+    try {
+            return plainToClass(
+                OutWarehouseDto,
+                await this.warehouseService.delete({
+                    item: plainToClass(Warehouse, dto)
+                })
+            );
+        } catch (error) {
+            throw error;
+        }
+    }
+
+     //Update Warehouse
      @HttpCode(HttpStatus.OK)
      @ApiResponse({
        status: HttpStatus.OK,
@@ -77,7 +100,7 @@ export class WarehouseController {
       
 
 
-    // User Find
+    // Find WareHouse
     @HttpCode(HttpStatus.OK)
     @ApiResponse({
         status: HttpStatus.OK,
