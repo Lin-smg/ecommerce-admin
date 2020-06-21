@@ -153,5 +153,10 @@ export class UsersService {
             throw error;
         }
     }
+
+    async getUserCount() {
+       return await this.userRepository.count({delFlg: '0'})
+    }
+    
 }
 

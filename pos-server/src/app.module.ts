@@ -15,6 +15,7 @@ import { CustomersModule } from './customers/customers.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
 import { CategoryModule } from './category/category.module';
 import { BranchModule } from './branch/branch.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [   
@@ -51,7 +52,8 @@ import { BranchModule } from './branch/branch.module';
     UnitsModule,
     CustomersModule,
     SuppliersModule,
-    BranchModule
+    BranchModule,
+    DashboardModule
 
   ],
 
