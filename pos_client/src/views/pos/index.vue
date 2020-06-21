@@ -4,21 +4,37 @@
       <el-row :gutter="20">
         <el-col :span="15" style="height: 100vh">
           <div>
-            <el-autocomplete v-model="searchValue" value-key="username" :fetch-suggestions="productSearch" :trigger-on-focus="false" @select="searchClick" placeholder="Please input" class="input-with-select">
+            <el-autocomplete v-model="searchValue" value-key="username" :fetch-suggestions="productSearch" :trigger-on-focus="false" placeholder="Please input" class="input-with-select" @select="searchClick">
               <el-button slot="append" icon="el-icon-search" @click="searchClick" />
             </el-autocomplete>
 
-            <el-carousel :autoplay="false" arrow="always" indicator-position="none" type="card" height="40px" style="margin: 10px" @change="change">
+            <el-row>
+              <el-col :span="2">
+                <span style="line-height: 70px; font-size: 45px; color: #267bbf; cursor: pointer" class="el-icon-caret-left" @click="preCat" />
+              </el-col>
+              <el-col :span="20">
+                <div id="cat" style="text-align: center; padding: 15px; overflow-x: hidden; overflow-y: hidden; height: 50px; border: 1px solid rgb(245, 232, 232); margin-top: 10px">
+                  <span v-for="(item,i) in categoryList" :key="i" :style="{background: catActive === i ? '#b0c4e8' : ''}" style="cursor: pointer; margin: 5px; width: auto; height:30px; line-height: 10px; padding: 10px; border: 1px solid rgb(191, 180, 180); border-radius: 5px" @mouseover="catOver(i)" @click="chooseCatecory(item)">
+                    <span>{{ item.categoryName }}</span>
+                  </span>
+                </div>
+              </el-col>
+              <el-col :span="2">
+                <span style="line-height: 70px; font-size: 45px; color: #267bbf; cursor: pointer; float: right;" class="el-icon-caret-right" @click="nextCat" />
+              </el-col>
+            </el-row>
+
+            <!-- <el-carousel :autoplay="false" arrow="always" indicator-position="none" type="card" height="40px" style="margin: 10px" @change="change">
               <el-carousel-item v-for="item in categoryList" :key="item.categoryCode" style="text-align: center; line-height: 45px">
                 <h3 class="medium">{{ item.categoryName }}</h3>
               </el-carousel-item>
-            </el-carousel>
+            </el-carousel> -->
 
           </div>
 
           <div style="overflow-y: scroll;height: 80vh">
             <el-card v-for="i in 20" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; height: 170px; float: left; margin: 2px; cursor: pointer">
-              <div>
+              <div @click="popShow(i)">
                 <el-image style="height: 90px" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQr28OdEVKSN446VF2degUDZ9-WDSge_zQKsPYV0t3WzkuoVVee&usqp=CAU" />
                 <div style="text-align: center; padding: 10px">
                   <span>product {{ i }}</span><br>
@@ -28,6 +44,17 @@
               </div>
             </el-card>
           </div>
+
+          <el-dialog
+            title="Tips"
+            :visible.sync="dialogVisible"
+          >
+            <span>This is a {{ selectedItem }}</span>
+            <span slot="footer" class="dialog-footer">
+              <el-button size="small" type="primary" @click="addSaleItem">Confirm</el-button>
+              <el-button size="small" @click="dialogVisible = false">Cancel</el-button>
+            </span>
+          </el-dialog>
 
         </el-col>
         <el-col :span="9" style="overflow-y: auto; height: 100vh">
@@ -55,16 +82,16 @@
                 </el-row>
                 <hr>
 
-                <el-row v-for="i of 3" :key="i" style="margin-bottom: 5px">
-                  <el-col :span="10"><div>Name</div></el-col>
+                <el-row v-for="(item,i) of selectedItemList" :key="i" style="margin-bottom: 5px">
+                  <el-col :span="10"><div>{{ item.name }}</div></el-col>
                   <el-col :span="6" style="text-align: center"><div>
-                    <el-input-number v-model="num" size="mini" :step="1" style="width: 90px" />
+                    <el-input-number v-model="item.count" size="mini" :step="1" style="width: 90px" />
                   </div></el-col>
                   <el-col :span="6" style="text-align: center">
-                    <span>10000</span>
+                    <span>{{ item.count }}</span>
                   </el-col>
                   <el-col :span="2" style="text-align: center">
-                    <i class="el-icon-delete-solid" style="color: red" />
+                    <i class="el-icon-delete-solid" style="color: red" @click="removeItem(i)" />
                   </el-col>
                 </el-row>
               </div>
@@ -73,6 +100,7 @@
               <div>
                 <label>Other Charges</label>
                 <el-popover
+                  v-model="popVisible"
                   placement="right"
                   width="400"
                   trigger="click"
@@ -102,7 +130,7 @@
               <hr>
               <div>
                 <span>Total : </span>
-                <span style="float:right;">10000</span>
+                <span style="float:right;">{{ total }}</span>
               </div>
               <hr>
               <div>

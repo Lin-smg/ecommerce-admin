@@ -17,18 +17,78 @@ export const POS = {
       name: '',
       amount: 0,
       itemList: [],
-      categoryList: []
+      categoryList: [],
+      dialogVisible: false,
+      popVisible: false,
+      selectedItemList: [],
+      selectedItem: '',
+      catActive: '',
+      total: 0
     }
   },
   created() {
     const self = this
-    this.getCategory();
+    this.getCategory()
     self.$store.dispatch('app/setBackHandle', true)
     window.onpopstate = function() {
       localStorage.setItem('back', true)
     }
   },
   methods: {
+    catOver(i) {
+      this.catActive = i
+    },
+    preCat() {
+      var cat = document.getElementById('cat')
+      cat.scrollLeft -= 200
+    },
+
+    nextCat() {
+      var cat = document.getElementById('cat')
+      cat.scrollLeft += 200
+    },
+
+    chooseCatecory(data) {
+      console.log('categor', data)
+    },
+
+    popShow(data) {
+      this.selectedItem = data
+      this.dialogVisible = true
+    },
+
+    addSaleItem() {
+      const selected = {
+        name: this.selectedItem,
+        count: 1
+      }
+      var exists = this.selectedItemList.some(function(field) {
+        var flag = field.name === selected.name
+        if (flag) {
+          field.count += 1
+        }
+        return flag
+      })
+      if (!exists) {
+        this.selectedItemList.push(selected)
+      }
+      this.dialogVisible = false
+      this.setTotal()
+      console.log(this.selectedItemList)
+    },
+
+    removeItem(i) {
+      this.selectedItemList.splice(i, 1)
+    },
+
+    setTotal() {
+      this.total = 0
+      for (const i of this.selectedItemList) {
+        this.total += i.count
+      }
+      console.log(this.total)
+    },
+
     async getCategory() {
       const params = {
       }
@@ -37,8 +97,10 @@ export const POS = {
         console.log(response.data)
       })
     },
+
     async getAllProduct() {
     },
+
     async customerSearch(q, cb) {
       const params = {
         group: '',
@@ -54,7 +116,7 @@ export const POS = {
     },
 
     async productSearch(q, cb) {
-    
+
     },
     createCustomer() {
       // this.$router.push({name: 'Customers'});
@@ -76,12 +138,14 @@ export const POS = {
       console.log(val)
     },
     addOtherCharges() {
+      console.log(this.popVisible)
       if (!this.otherCharge.name) {
         return
       }
+      this.popVisible = false
       this.otherChargesList.push({ name: this.otherCharge.name, amount: this.otherCharge.amount })
-      // this.otherCharge.name = ''
-      // this.otherCharge.amount = 0
+      this.otherCharge.name = ''
+      this.otherCharge.amount = 0
       console.log(this.otherCharge.name)
     },
     otherChargeDelete(data) {
