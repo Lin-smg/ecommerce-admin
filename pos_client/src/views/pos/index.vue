@@ -89,14 +89,17 @@
                   <el-col :span="6" style="text-align: center">
                     <el-row>
                       <el-col :span="6" style="text-align: center"><span size="mini" class="el-icon-remove" style="font-size: 25px; color: #8a7443" @click="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" /></el-col>
-                      <el-col :span="12" style="text-align: center; padding-left: 2px"><el-input v-model="item.count" style="width: 45px" size="mini" @change="item.count=item.count!='' ? item.count===0 ? removeItem(i) : 1 : item.count, setTotal()" /></el-col>
-                      <!-- onkeyup="value=value.replace(/[^\d.]/g, '');"  -->
+                      <el-col :span="12" style="text-align: center; padding-left: 2px">
+                        <!-- <el-input v-model="item.count" onkeyup="value=value.replace(/[^\d.]/g, '');" style="width: 45px" size="mini" @change="item.count = item.count==='' ? 1 : item.count===0 ? removeItem(i) : item.count, setTotal()" /> -->
+                        <input v-model="item.count" style="width: 45px; text-align: right" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
+                      </el-col>
+                      <!-- onkeyup="value=value.replace(/[^\d.]/g, '');"  onkeyup="value = /^\d*?\d*$/.test(value) ? value : 1" -->
                       <el-col :span="6" style="text-align: center"><span size="mini" class="el-icon-circle-plus" style="font-size: 25px;color: #73c715" @click="item.count++, setTotal()" /></el-col>
                     </el-row>
 
                   </el-col>
                   <el-col :span="6" style="text-align: center">
-                    <span>{{ item.count*item.data.price }}</span>
+                    <span>{{ item.count * item.data.price }}</span>
                   </el-col>
                   <el-col :span="2" style="text-align: center">
                     <i class="el-icon-delete-solid" style="color: red" @click="removeItem(i), setTotal()" />
@@ -203,6 +206,12 @@ export default {
 </script>
 
 <style scoped>
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
   .pos-container{
     margin: 30px;
   }
