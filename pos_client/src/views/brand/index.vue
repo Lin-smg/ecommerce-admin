@@ -59,7 +59,7 @@
                 icon="el-icon-info"
                 icon-color="red"
                 title="Are you sure to delete this?"
-                @onConfirm="deletebrand(row)"
+                @onConfirm="deleteBrand(row)"
               >
                 <el-button slot="reference" type="danger" size="mini">Delete</el-button>
               </el-popconfirm>
@@ -87,7 +87,7 @@
       <el-form ref="createForm" label-width="220px" style="width: 500px">
 
         <el-form-item label="Brand Code" prop="code">
-          <el-input v-model="brand.brandCode" type="text" placeholder="brand name" autocomplete="off" :required="true" />
+          <el-input v-model="brand.brandCode" type="text" placeholder="brand name" autocomplete="off" :required="true" :disabled="dialog.title === 'Edit' ? true : false" @input="toUpperCaseWord(brand,'brandCode')" />
         </el-form-item>
         <el-form-item label="Brand Name" prop="name">
           <el-input v-model="brand.brandName" type="text" placeholder="brand name" autocomplete="off" :required="true" />
@@ -98,8 +98,8 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">Confirm</el-button>
-        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="createOrUpdateBrand(dialog.title)">Confirm</el-button>
+        <el-button @click="resetBrand">Cancel</el-button>
       </span>
 
     </el-dialog>
