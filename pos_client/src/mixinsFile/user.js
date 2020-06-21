@@ -1,5 +1,4 @@
 import { getUserList, deletePhoto } from '@/api/user'
-import { ElStep } from 'element-ui/types/step'
 export const User = {
   name: 'Index',
   data() {
