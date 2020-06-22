@@ -87,9 +87,9 @@
         </div>
       </el-tab-pane>
 
-      <!-- suppliers create tab-->
+      <!-- branch create tab-->
       <el-tab-pane label="Create Branch" name="create">
-        <el-form ref="createForm" label-width="220px" style="width: 500px">
+        <el-form ref="branchCreateForm" :model="branchCreateForm" :rules="branchRule" label-width="220px" style="width: 500px">
           <el-form-item label="Code :" prop="code">
             <el-input v-model="branchCreateForm.code" type="text" autocomplete="off" @input="toUpperCaseWord(branchCreateForm,'code')" />
           </el-form-item>
@@ -119,8 +119,8 @@
             </el-upload>
           </el-form-item>-->
 
-          <el-form-item label="Address :" prop="addressOne">
-            <el-input v-model="branchCreateForm.address" type="text" autocomplete="off" />
+          <el-form-item label="Address :" prop="address">
+            <el-input v-model="branchCreateForm.address" type="textarea" row="3" autocomplete="off" />
           </el-form-item>
 
           <el-form-item>
@@ -130,9 +130,9 @@
         </el-form>
       </el-tab-pane>
 
-      <!-- user update tab -->
+      <!-- branch update tab -->
       <el-tab-pane label="Update Branch" name="update" :disabled="true">
-        <el-form ref="createForm" label-width="220px" style="width: 500px">
+        <el-form ref="branchCreateForm" :model="branchCreateForm" :rules="branchRule" label-width="220px" style="width: 500px">
           <el-form-item label="Code :" prop="code">
             <el-input
               v-model="branchCreateForm.code"
@@ -167,8 +167,8 @@
             </el-upload>
           </el-form-item>-->
 
-          <el-form-item label="Address :" prop="addressOne">
-            <el-input v-model="branchCreateForm.address" type="text" autocomplete="off" />
+          <el-form-item label="Address :" prop="address">
+            <el-input v-model="branchCreateForm.address" type="textarea" row="3" autocomplete="off" />
           </el-form-item>
 
           <el-form-item>
