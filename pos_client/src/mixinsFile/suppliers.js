@@ -2,6 +2,13 @@ import { getSupplierList } from "@/api/supplier";
 export const User = {
   name: "Index",
   data() {
+    const validateSupplier = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("Invalid input"));
+      } else {
+        callback();
+      }
+    };
     return {
       activeName: "view",
       pageSize: 10,
@@ -24,7 +31,22 @@ export const User = {
         companyName: "",
         account: ""
       },
-      searchValue: ""
+      searchValue: "",
+      supplierRule: {
+        name: [{ required: true, validator: validateSupplier }],
+        email: [{ type: 'email' }],
+        phone: [{ required: true, validator: validateSupplier }],
+        addressOne: [{ required: true, validator: validateSupplier }],
+        addressTwo: [{ required: true, validator: validateSupplier }],
+        city: [{ required: true, validator: validateSupplier }],
+        stateOrProvince: [{ required: true, validator: validateSupplier }],
+        zipCode: [{ required: true, validator: validateSupplier }],
+        country: [{ required: true, validator: validateSupplier }],
+        comments: [{ required: true, validator: validateSupplier }],
+        internalNotes: [{ required: true, validator: validateSupplier }],
+        companyName: [{ required: true, validator: validateSupplier }],
+        account: [{ required: true, validator: validateSupplier }]
+      }
     };
   },
   created() {
@@ -85,15 +107,18 @@ export const User = {
     },
 
     async createSupplier() {
-      console.log('Create data=>', this.suppliersCreateForm);
-      this.$store
-        .dispatch("supplier/createSupplier", this.suppliersCreateForm)
-        .then(() => {
-          this.handleTab("view");
-        })
-        .catch(() => {
-          console.log("Create supplier error");
-        });
+      this.$refs.suppliersCreateForm.validate(valid => {
+        if (valid) {
+          this.$store
+            .dispatch("supplier/createSupplier", this.suppliersCreateForm)
+            .then(() => {
+              this.handleTab("view");
+            })
+            .catch(() => {
+              console.log("Create supplier error");
+            });
+        }
+      });
     },
 
     updateSupplier(row) {
@@ -103,15 +128,19 @@ export const User = {
     },
 
     async updateSupplierOk() {
-      this.$store
-        .dispatch("supplier/updateSupplier", this.suppliersCreateForm)
-        .then(() => {
-          this.resetCreateSupplierForm();
-          this.handleTab("view");
-        })
-        .catch(() => {
-          console.log('Update supplier error')
-        });
+      this.$refs.suppliersCreateForm.validate(valid => {
+        if (valid) {
+          this.$store
+            .dispatch("supplier/updateSupplier", this.suppliersCreateForm)
+            .then(() => {
+              this.resetCreateSupplierForm();
+              this.handleTab("view");
+            })
+            .catch(() => {
+              console.log("Update supplier error");
+            });
+        }
+      });
     },
 
     handleSizeChange(val) {

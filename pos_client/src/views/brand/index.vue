@@ -84,16 +84,16 @@
       :title="dialog.title"
       :visible.sync="dialog.visible"
     >
-      <el-form ref="createForm" label-width="220px" style="width: 500px">
+      <el-form ref="brand" :model="brand" :rules="brandRule" label-width="220px" style="width: 500px">
 
-        <el-form-item label="Brand Code" prop="code">
-          <el-input v-model="brand.brandCode" type="text" placeholder="brand name" autocomplete="off" :required="true" :disabled="dialog.title === 'Edit' ? true : false" @input="toUpperCaseWord(brand,'brandCode')" />
+        <el-form-item label="Brand Code" prop="brandCode">
+          <el-input v-model="brand.brandCode" type="text" placeholder="brand code" autocomplete="off" :disabled="dialog.title === 'Edit' ? true : false" @input="toUpperCaseWord(brand,'brandCode')" />
         </el-form-item>
-        <el-form-item label="Brand Name" prop="name">
-          <el-input v-model="brand.brandName" type="text" placeholder="brand name" autocomplete="off" :required="true" />
+        <el-form-item label="Brand Name" prop="brandName">
+          <el-input v-model="brand.brandName" type="text" placeholder="brand name" autocomplete="off"  />
         </el-form-item>
         <el-form-item label="Description" prop="description">
-          <el-input v-model="brand.description" type="textarea" :row="3" placeholder="description" autocomplete="off" :required="true" />
+          <el-input v-model="brand.description" type="textarea" :row="3" placeholder="description" autocomplete="off" />
         </el-form-item>
       </el-form>
 

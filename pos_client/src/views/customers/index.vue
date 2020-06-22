@@ -89,16 +89,16 @@
 
       <!-- customers create tab-->
       <el-tab-pane label="Create Customers" name="create">
-        <el-form ref="createForm" label-width="220px" style="width: 500px">
-          <el-form-item label="Name :" prop="name">
+        <el-form ref="customersCreateForm" :model="customersCreateForm" :rules="customerRule" label-width="220px" style="width: 500px">
+          <el-form-item label="Name :" ref="name" prop="name">
             <el-input v-model="customersCreateForm.name" type="text" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="E-Mail :" prop="email">
-            <el-input v-model="customersCreateForm.email" type="text" autocomplete="off" />
+          <el-form-item label="E-Mail :" ref="email" prop="email">
+            <el-input v-model="customersCreateForm.email" ref="email" type="email" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="Phone Number :" prop="phone">
+          <el-form-item label="Phone Number :" ref="phone" prop="phone">
             <el-input v-model="customersCreateForm.phone" type="text" autocomplete="off" />
           </el-form-item>
 
@@ -119,43 +119,43 @@
             </el-upload>
           </el-form-item> -->
 
-          <el-form-item label="Address 1 :" prop="addressOne">
+          <el-form-item label="Address 1 :" ref="addressOne" prop="addressOne">
             <el-input v-model="customersCreateForm.addressOne" type="text" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="Address 2 :" prop="addressTwo">
+          <el-form-item label="Address 2 :" ref="addressTwo" prop="addressTwo">
             <el-input v-model="customersCreateForm.addressTwo" type="text" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="City :" prop="city">
+          <el-form-item label="City :" ref="city" prop="city">
             <el-input v-model="customersCreateForm.city" type="text" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="State/Province :" prop="stateOrProvince">
+          <el-form-item label="State/Province :" ref="stateOrProvince" prop="stateOrProvince">
             <el-input v-model="customersCreateForm.stateOrProvince" type="text" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="Zip :" prop="zipCode">
+          <el-form-item label="Zip :" ref="zipCode" prop="zipCode">
             <el-input v-model="customersCreateForm.zipCode" type="text" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="Country :" prop="country">
+          <el-form-item label="Country :" ref="country" prop="country">
             <el-input v-model="customersCreateForm.country" type="text" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="Comments :" prop="comments">
+          <el-form-item label="Comments :" ref="comments" prop="comments">
             <el-input v-model="customersCreateForm.comments" type="text" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="Internal Notes :" prop="internalNotes">
+          <el-form-item label="Internal Notes :" ref="internalNotes" prop="internalNotes">
             <el-input v-model="customersCreateForm.internalNotes" type="text" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="Company Name :" prop="companyName">
+          <el-form-item label="Company Name :" ref="companyName" prop="companyName">
             <el-input v-model="customersCreateForm.companyName" type="text" autocomplete="off" />
           </el-form-item>
 
-          <el-form-item label="Account # :" prop="account">
+          <el-form-item label="Account # :" ref="account" prop="account">
             <el-input v-model="customersCreateForm.account" type="text" autocomplete="off" />
           </el-form-item>
 
@@ -168,13 +168,13 @@
 
       <!-- user update tab -->
       <el-tab-pane label="Update Customers" name="update" :disabled="true">
-        <el-form ref="createForm" label-width="220px" style="width: 500px">
+        <el-form ref="customersCreateForm" :model="customersCreateForm" :rules="customerRule" label-width="220px" style="width: 500px">
           <el-form-item label="Name :" prop="name">
             <el-input v-model="customersCreateForm.name" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="E-Mail :" prop="email">
-            <el-input v-model="customersCreateForm.email" type="text" autocomplete="off" />
+            <el-input v-model="customersCreateForm.email" type="email" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="Phone Number :" prop="phone">

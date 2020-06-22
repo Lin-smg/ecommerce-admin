@@ -2,6 +2,13 @@ import { getBranchList } from "@/api/branch";
 export const User = {
   name: "Index",
   data() {
+    const validateBranch = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("Invalid input"));
+      } else {
+        callback();
+      }
+    };
     return {
       activeName: "view",
       pageSize: 10,
@@ -14,7 +21,13 @@ export const User = {
         phone: "",
         address: ""
       },
-      searchValue: ""
+      searchValue: "",
+      branchRule: {
+        code: [{ required: true, validator: validateBranch }],
+        name: [{ required: true, validator: validateBranch }],
+        phone: [{ required: true, validator: validateBranch }],
+        address: [{ required: true, validator: validateBranch }]
+      }
     };
   },
   created() {
@@ -71,15 +84,18 @@ export const User = {
     },
 
     async createBranch() {
-      console.log('Create data=>', this.branchCreateForm);
-      this.$store
-        .dispatch("branch/createBranch", this.branchCreateForm)
-        .then(() => {
-          this.handleTab("view");
-        })
-        .catch(() => {
-          console.log("Create branch error");
-        });
+      this.$refs.branchCreateForm.validate(valid => {
+        if (valid) {
+          this.$store
+            .dispatch("branch/createBranch", this.branchCreateForm)
+            .then(() => {
+              this.handleTab("view");
+            })
+            .catch(() => {
+              console.log("Create branch error");
+            });
+        }
+      });
     },
 
     updateBranch(row) {
@@ -89,15 +105,19 @@ export const User = {
     },
 
     async updateBranchOk() {
-      this.$store
-        .dispatch("branch/updateBranch", this.branchCreateForm)
-        .then(() => {
-          this.resetCreateBranchForm();
-          this.handleTab("view");
-        })
-        .catch(() => {
-          console.log('Update branch error')
-        });
+      this.$refs.branchCreateForm.validate(valid => {
+        if (valid) {
+          this.$store
+            .dispatch("branch/updateBranch", this.branchCreateForm)
+            .then(() => {
+              this.resetCreateBranchForm();
+              this.handleTab("view");
+            })
+            .catch(() => {
+              console.log("Update branch error");
+            });
+        }
+      });
     },
 
     handleSizeChange(val) {
@@ -145,7 +165,7 @@ export const User = {
       return isJPG && isLt2M;
     },
 
-    toUpperCaseWord(object, key){
+    toUpperCaseWord(object, key) {
       const upperWord = object[key].toUpperCase();
       object[key] = upperWord;
     }

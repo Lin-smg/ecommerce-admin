@@ -1,6 +1,13 @@
 import { getBrandList } from "@/api/brand";
 export const Brand = {
   data() {
+    const validateBrand = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("Invalid input"));
+      } else {
+        callback();
+      }
+    };
     return {
       pageSize: 10,
       pageIndex: 1,
@@ -15,7 +22,18 @@ export const Brand = {
         description: ""
       },
       brandData: [],
-      listLoading: false
+      listLoading: false,
+      brandRule: {
+        brandCode: [
+          { required: true, trigger: "blur", validator: validateBrand }
+        ],
+        brandName: [
+          { required: true, trigger: "blur", validator: validateBrand }
+        ],
+        description: [
+          { required: true, trigger: "blur", validator: validateBrand }
+        ]
+      }
     };
   },
   created() {
@@ -80,29 +98,33 @@ export const Brand = {
     },
 
     async createOrUpdateBrand(key) {
-      console.log("Data =>", this.brand);
-      if(key === 'Add'){
-        this.$store
-        .dispatch("brand/createBrand", this.brand)
-        .then(() => {
-          this.resetBrand();
-        })
-        .catch(() => {
-          console.log("Create brand error");
-        });
-      }
-      if(key === 'Edit'){
-        this.$store
-        .dispatch("brand/updateBrand", this.brand)
-        .then(() => {
-          this.resetBrand();
-          this.handleTab("view");
-        })
-        .catch(() => {
-          console.log('Update brand error')
-        });
-      }
-      
+      this.$refs.brand.validate(valid => {
+        if (valid) {
+          console.log("Data =>", this.brand);
+
+          if (key === "Add") {
+            this.$store
+              .dispatch("brand/createBrand", this.brand)
+              .then(() => {
+                this.resetBrand();
+              })
+              .catch(() => {
+                console.log("Create brand error");
+              });
+          }
+          if (key === "Edit") {
+            this.$store
+              .dispatch("brand/updateBrand", this.brand)
+              .then(() => {
+                this.resetBrand();
+                this.handleTab("view");
+              })
+              .catch(() => {
+                console.log("Update brand error");
+              });
+          }
+        }
+      });
     },
 
     resetBrand() {
@@ -112,7 +134,7 @@ export const Brand = {
       this.brand.description = "";
     },
 
-    toUpperCaseWord(object, key){
+    toUpperCaseWord(object, key) {
       const upperWord = object[key].toUpperCase();
       object[key] = upperWord;
     }

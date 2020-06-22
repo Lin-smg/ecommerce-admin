@@ -89,7 +89,7 @@
 
       <!-- suppliers create tab-->
       <el-tab-pane label="Create Suppliers" name="create">
-        <el-form ref="createForm" label-width="220px" style="width: 500px">
+        <el-form ref="suppliersCreateForm" :model="suppliersCreateForm" :rules="supplierRule" label-width="220px" style="width: 500px">
           <el-form-item label="Name :" prop="name">
             <el-input v-model="suppliersCreateForm.name" type="text" autocomplete="off" />
           </el-form-item>
@@ -168,7 +168,7 @@
 
       <!-- user update tab -->
       <el-tab-pane label="Update Suppliers" name="update" :disabled="true">
-        <el-form ref="createForm" label-width="220px" style="width: 500px">
+        <el-form ref="suppliersCreateForm" :model="suppliersCreateForm" :rules="supplierRule" label-width="220px" style="width: 500px">
           <el-form-item label="Name :" prop="name">
             <el-input v-model="suppliersCreateForm.name" type="text" autocomplete="off" />
           </el-form-item>
