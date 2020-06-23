@@ -37,7 +37,7 @@ export class ProductsController {
          return plainToClass(
             OutProductsDto,
              await this.productsService.create({
-                 item: plainToClass(Products, dto)
+                 item: dto
              })
          );
      } catch (error) {

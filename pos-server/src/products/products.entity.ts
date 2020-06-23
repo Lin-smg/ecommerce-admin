@@ -4,10 +4,10 @@ import { Entity, Column } from "typeorm";
 @Entity({ name: 'products' })
 export class Products extends BaseEntity {
 
-    @Column({ name: 'product_code', nullable: true })
+    @Column({ name: 'product_code', nullable: false })
     productCode: string;
 
-    @Column({ name: 'product_name', nullable: true })
+    @Column({ name: 'product_name', nullable: false })
     productName: string;
         
     @Column({ name: 'category_code', nullable: true })
@@ -29,21 +29,21 @@ export class Products extends BaseEntity {
     unitName: string;
 
     @Column({name: 'unit_price', nullable: true})
-    @Column('numeric',{ precision: 10, scale: 2 })
+    @Column('numeric',{ precision: 10, scale: 2, default: 0 })
     unitPrice: number;
 
-    @Column({ name: 'reorder', nullable: false })
+    @Column({ name: 'reorder', default: 0, nullable: false })
     reOrder: number;
 
-    @Column({ name: 'tax_percent', nullable: false })
+    @Column({ name: 'tax_percent', default: 0, nullable: false })
     taxPercent: number;
 
-    @Column({ name: 'exp_date',type: 'date', nullable: false })
+    @Column({ name: 'exp_date',type: 'date', nullable: true })
     expDate: Date;
     
-    @Column({ name: 'description', nullable: false })
+    @Column({ name: 'description', nullable: true })
     description: string;
     
-    @Column({ name: 'imgpath', nullable: false })
+    @Column({ name: 'imgpath', nullable: true })
     imgPath: string;
 }

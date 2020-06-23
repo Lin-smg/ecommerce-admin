@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { ProductsUnitsDto } from "./products-units.dto";
 
 export class ProductsDto {
 
@@ -43,4 +44,7 @@ export class ProductsDto {
     
     @ApiPropertyOptional()
     imgPath: string;
+
+    unit: ProductsUnitsDto[];
+    dataObj: { data: ProductsUnitsDto[]; };
 }

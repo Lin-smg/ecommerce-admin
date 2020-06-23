@@ -8,11 +8,18 @@ export function deletePhoto(data) {
   })
 }
 
-export function updatProductr(productCode, data) {
+export async function updatProductr(productCode, data) {
   return request({
     url: `/products/${productCode}`,
     method: 'put',
     data
+  })
+}
+
+export async function getPKGWithSmallestUnit(id) {
+  return request({
+    url: `/units/${id}`,
+    method: 'get'
   })
 }
 
@@ -24,7 +31,7 @@ export async function getProductList(params) {
   })
 }
 
-export function createProduct(data) {
+export async function createProduct(data) {
   return request({
     url: '/products',
     method: 'post',

@@ -57,7 +57,7 @@ import { ProductsModule } from './products/products.module';
     BrandModule,
     ProductsModule
   ],
-
+exports: [TypeOrmModule]
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): MiddlewareConsumer | void {

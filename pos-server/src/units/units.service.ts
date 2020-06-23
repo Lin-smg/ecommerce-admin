@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, NotAcceptableException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, NotAcceptableException, ConflictException, Options } from '@nestjs/common';
 import { Units } from './units.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -147,5 +147,18 @@ export class UnitsService {
         objects = await qb.getManyAndCount();
         return await plainToClass(UnitsDto, objects[0]);
     }
+
+    async getParentUnitWithId(options: { id: number; }){
+        let objects: [Units[], number];
+        let qb = this.unitsRepository.createQueryBuilder('unit');
+        qb = qb.where('unit.delFlg = :d AND ( unit.childUnitId = :i OR unit.id = :i )' ,{
+            d: '0',
+            i: options.id
+        });
+        // eslint-disable-next-line prefer-const
+        objects = await qb.getManyAndCount();
+        return {data: await plainToClass(UnitsDto, objects[0])};
+    }
+    
 
 }

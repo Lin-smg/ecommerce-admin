@@ -1,19 +1,23 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Products } from './products.entity';
-import { Repository } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 import { plainToClass } from 'class-transformer';
 import { ProductsDto } from './dto/products.dto';
 import { PageMetaDto } from '../common/dto/page_meta.dto';
 import { BrandService } from '../brand/brand.service';
 import { CategoryService } from '../category/category.service';
 import { UnitsService } from '../units/units.service';
+import { InCreateProductsDto } from './dto/in-create-products.dto';
+import { ProductsUnitsService } from './products-units.service';
 
 @Injectable()
 export class ProductsService {
     constructor(
         @InjectRepository(Products)
         private readonly productsRepository: Repository<Products>,
+        private connection: Connection,
+        private readonly productsUnitsService: ProductsUnitsService,
         private readonly brandService: BrandService,
         private readonly categoryService: CategoryService,
         private readonly unitService: UnitsService
@@ -44,6 +48,13 @@ export class ProductsService {
             qb = qb.skip((options.curPage - 1) * options.perPage).take(options.perPage);
             // eslint-disable-next-line prefer-const
             objects = await qb.getManyAndCount();
+            const resultObj = []
+            const outObj = await plainToClass(ProductsDto,objects[0]);
+            for (const data of outObj) {
+                const obj = data;
+                obj.unit = await this.productsUnitsService.findByProduct(data.productCode);
+                resultObj.push(obj);
+            }
             const metaPage = {
                 perPage: options.perPage,
                 totalPages: options.perPage > objects[1] ? 1 : Math.ceil(objects[1] / options.perPage),
@@ -51,7 +62,7 @@ export class ProductsService {
                 curPage: options.curPage
             }
             return {
-                data: await plainToClass(ProductsDto,objects[0]),
+                data: await plainToClass(ProductsDto,resultObj),
                 meta: await plainToClass(PageMetaDto,metaPage),
                 brands: await this.brandService.getAllBrand(),
                 categorys: await this.categoryService.getAllCategory(),
@@ -86,13 +97,32 @@ export class ProductsService {
 
 }  
     //Create
-    async create(options: { item: Products }) {
+    async create(options: { item: InCreateProductsDto }) {
         try {
             await this.isExistWithproductCode({ productCode: options.item.productCode });
-            const user = await this.productsRepository.save(options.item);
-            return {data: plainToClass(ProductsDto, user) };
+            await this.productsUnitsService.checkIsExistProductUnit(options.item);
+            const queryRunner = this.connection.createQueryRunner();
+            await queryRunner.connect();
+            await queryRunner.startTransaction();
+            const pdata = await plainToClass(Products,options.item);
+            try {
+            //const product = await this.productsRepository.save(plainToClass(Products,options.item));
+            const product = await queryRunner.manager.save(pdata);
+            await this.productsUnitsService.saveProductUnit(product,options.item,queryRunner);
+
+            await queryRunner.commitTransaction();
+            } catch (err) {
+             // since we have errors lets rollback the changes we made
+            await queryRunner.rollbackTransaction();
+            throw new UnprocessableEntityException(err);
+             } finally {
+          // you need to release a queryRunner which was manually instantiated
+          await queryRunner.release();
+        }
+            return {data: plainToClass(ProductsDto, options.item) };
 
         } catch (error) {
+            console.log(error)
             throw error;
         }
     }

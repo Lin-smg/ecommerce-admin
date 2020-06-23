@@ -1,4 +1,4 @@
-import { getProductList, deletePhoto } from '@/api/product'
+import { getProductList, deletePhoto, getPKGWithSmallestUnit } from '@/api/product'
 export const Product = {
   data() {
     return {
@@ -7,6 +7,7 @@ export const Product = {
       categoryList: [],
       brandList: [],
       unitList: [],
+      packageUnitList: [],
       createProductForm: this.initProductForm(),
       updateProductForm: this.initProductForm(),
       productData: [],
@@ -42,15 +43,37 @@ export const Product = {
         categoryName: '',
         brandCode: '',
         brandName: '',
-        expDate: '',
+        expDate: null,
         unitId: null,
         unitName: '',
         unitPrice: 0,
         description: '',
         reOrder: 0,
         taxPercent: 0,
-        imgPath: ''
+        imgPath: '',
+        unit: []
       }
+    },
+    async changeSelectedUnit() {
+      this.listLoading = true
+      const id = this.selectedUnit.id
+      await getPKGWithSmallestUnit(id).then(response => {
+        this.packageUnitList = []
+        this.createProductForm.unit = []
+        for (const obj of response.data) {
+          const data = {
+            id: obj.id,
+            unitName: obj.unitName,
+            childUnitId: obj.childUnitId,
+            childUnitName: obj.childUnitName
+          }
+          if (data.id === this.selectedUnit.id) {
+            this.createProductForm.unit.push(data)
+          }
+          this.packageUnitList.push(data)
+        }
+        this.listLoading = false
+      })
     },
     async getProductList() {
       const params = {
@@ -62,12 +85,13 @@ export const Product = {
       }
 
       this.listLoading = true
-      getProductList(params).then(response => {
+      await getProductList(params).then(response => {
         this.createProductForm = this.initProductForm()
         this.updateProductForm = this.initProductForm()
         this.selectDeptObject = ''
         this.imageUrl = ''
         this.productData = []
+        this.packageUnitList = []
         this.categoryList = response.categorys
         this.brandList = response.brands
         this.unitList = response.units
@@ -80,6 +104,15 @@ export const Product = {
     },
 
     searchClick() {
+      this.getProductList()
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.getProductList()
+    },
+
+    handleCurrentChange(val) {
+      this.pageIndex = val
       this.getProductList()
     },
 

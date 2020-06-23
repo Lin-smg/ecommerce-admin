@@ -3,6 +3,9 @@ import { ApiProperty } from "@nestjs/swagger";
 export class UnitsDto {
 
     @ApiProperty()
+    id: number;
+
+    @ApiProperty()
     unitName: string;
 
     @ApiProperty()

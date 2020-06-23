@@ -100,6 +100,19 @@
             </el-table-column>
 
           </el-table>
+
+          <el-pagination
+            v-if="productData.length > 0"
+            :page-sizes="[5,10,20,30]"
+            :page-size="pageSize"
+            :page-index="pageIndex"
+            layout="sizes, prev, pager, next"
+            :total="totalCount"
+            style="float:right;"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+          />
+
         </div>
       </el-tab-pane>
       <el-tab-pane label="Add Product" name="add">
@@ -142,7 +155,7 @@
             />
           </el-form-item>
           <el-form-item label="Unit" prop="Unit">
-            <el-select v-model="selectedUnit" value-key="unitName" placeholder="Select" style="width: 280px">
+            <el-select v-model="selectedUnit" value-key="unitName" placeholder="Select" style="width: 280px" @change="changeSelectedUnit">
               <el-option
                 v-for="item of unitList"
                 :key="item.id"
@@ -150,6 +163,11 @@
                 :value="item"
               />
             </el-select>
+          </el-form-item>
+          <el-form-item v-if="packageUnitList.length !== 0" label="Unit Package" prop="PKG">
+            <el-checkbox-group v-model="createProductForm.unit" value-key="unitName">
+              <el-checkbox v-for="(item,i) in packageUnitList" :key="i" :disabled="item.id===selectedUnit.id?true:false" :label="item">{{ item.unitName }}&nbsp;&nbsp; <span v-if="item.id !== selectedUnit.id">( {{ item.childUnitQty }} {{ item.childUnitName }} / {{ item.unitName }} )<span /></span></el-checkbox>
+            </el-checkbox-group>
           </el-form-item>
           <el-form-item label="Re-Order Limit" prop="reOrder">
             <el-input v-model="createProductForm.reOrder" type="number" min="0" placeholder="0" autocomplete="off" />
