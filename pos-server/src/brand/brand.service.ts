@@ -12,6 +12,7 @@ import { PageMetaDto } from '../common/dto/page_meta.dto';
 
 @Injectable()
 export class BrandService {
+  
   constructor(
     @InjectRepository(Brand)
     private readonly brandRepository: Repository<Brand>,
@@ -138,4 +139,16 @@ export class BrandService {
       throw new error();
     }
   }
+
+  async getAllBrand() {
+   await this.brandRepository.find({delFlg: '0'});
+   let objects: [Brand[], number];
+   let qb = this.brandRepository.createQueryBuilder('brand');
+   qb = qb.where('brand.delFlg = :d' ,{
+       d: '0',
+   });
+   // eslint-disable-next-line prefer-const
+   objects = await qb.getManyAndCount();
+   return await plainToClass(BrandDto, objects[0]);
+ }
 }

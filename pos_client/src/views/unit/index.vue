@@ -16,7 +16,7 @@
           >
             <el-table-column align="center">
               <template slot="header">
-                <span>Unit Name</span>
+                <span>Unit/PKG</span>
               </template>
               <template slot-scope="{row}">
                 <span>{{ row.unitName }}</span>
@@ -25,7 +25,7 @@
 
             <el-table-column align="center">
               <template slot="header">
-                <span>Unit Quantity</span>
+                <span>Quantity</span>
               </template>
               <template slot-scope="{row}">
                 <span>{{ row.unitQty }}</span>
@@ -34,7 +34,7 @@
 
             <el-table-column align="center">
               <template slot="header">
-                <span>Child Unit Name</span>
+                <span>Smallest Unit</span>
               </template>
               <template slot-scope="{row}">
                 <span>{{ row.childUnitName }}</span>
@@ -43,7 +43,7 @@
 
             <el-table-column align="center">
               <template slot="header">
-                <span>Child Unit Quantity</span>
+                <span>Smallest Unit Quantity</span>
               </template>
               <template slot-scope="{row}">
                 <span>{{ row.childUnitQty }}</span>
@@ -85,13 +85,13 @@
       <!-- user create tab-->
       <el-tab-pane label="Create Unit" name="create">
         <el-form ref="unitCreateForm" :model="unitCreateForm" label-width="220px" style="width: 500px">
-          <el-form-item label="Unit Name" prop="unitName">
+          <el-form-item label="Unit/PKG" prop="unitName">
             <el-input v-model="unitCreateForm.unitName" type="text" placeholder="Unit Name" autocomplete="off" />
           </el-form-item>
-          <el-form-item label="Unit Quantity" prop="unitQty">
+          <el-form-item label="Quantity" prop="unitQty">
             <el-input v-model="unitCreateForm.unitQty" type="number" :valuetext="1" :disabled="true" placeholder="Quantity" autocomplete="off" />
           </el-form-item>
-          <el-form-item label="Child Unit" prop="childUnit">
+          <el-form-item label="Smallest Unit" prop="childUnit">
             <el-select v-model="selectedObject" value-key="id" placeholder="Select" style="width: 280px">
               <el-option
                 v-for="item of childUnitsList"
@@ -101,7 +101,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="Child Unit Quantity" prop="unitQty">
+          <el-form-item label="Smallest Unit Quantity" prop="unitQty">
             <el-input v-model="unitCreateForm.childUnitQty" type="number" placeholder="user id" autocomplete="off" />
           </el-form-item>
           <el-form-item>
@@ -115,13 +115,13 @@
       <!-- unit update tab -->
       <el-tab-pane label="Update Unit" name="update" :disabled="true">
         <el-form ref="unitUpdateForm" label-width="220px" style="width: 500px">
-          <el-form-item label="Unit Name" prop="unitName">
+          <el-form-item label="Unit/PKG" prop="unitName">
             <el-input v-model="unitUpdateForm.unitName" type="text" placeholder="Unit Name" autocomplete="off" />
           </el-form-item>
-          <el-form-item label="Unit Quantity" prop="unitQty">
+          <el-form-item label="Quantity" prop="unitQty">
             <el-input v-model="unitUpdateForm.unitQty" type="number" :valuetext="1" :disabled="true" placeholder="Quantity" autocomplete="off" />
           </el-form-item>
-          <el-form-item label="Child Unit" prop="childUnit">
+          <el-form-item label="Smallest Unit" prop="childUnit">
             <el-select v-model="selectedUpdatedObject" value-key="unitName" placeholder="Select" style="width: 280px">
               <el-option
                 v-for="(item,i) in childUnitsListForUpdate"
@@ -131,7 +131,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="Child Unit Quantity" prop="unitQty">
+          <el-form-item label="Smallest Unit Quantity" prop="unitQty">
             <el-input v-model="unitUpdateForm.childUnitQty" type="number" placeholder="user id" autocomplete="off" />
           </el-form-item>
           <el-form-item>

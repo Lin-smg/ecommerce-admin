@@ -109,4 +109,18 @@ export class CategoryService {
            throw new error;
        } 
     }
+
+    
+    async getAllCategory() {
+        await this.categoryRepository.find({delFlg: '0'});
+        let objects: [Category[], number];
+        let qb = this.categoryRepository.createQueryBuilder('category');
+        qb = qb.where('category.delFlg = :d' ,{
+            d: '0',
+        });
+        // eslint-disable-next-line prefer-const
+        objects = await qb.getManyAndCount();
+        return await plainToClass(CategoryDto, objects[0]);
+       }
+    
 }

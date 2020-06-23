@@ -79,7 +79,7 @@
                 <span>Permissions</span>
               </template>
               <template slot-scope="{row}">
-                <el-tag v-for="(item,i) in row.permissionNames" :key="i" type="info" round>{{ item }} </el-tag>
+                <el-tag v-for="(item,i) in row.permissionNames" :key="i" size="mini" style="margin-right: 2px;" type="info" round>{{ item }} </el-tag>
               </template>
             </el-table-column>
 

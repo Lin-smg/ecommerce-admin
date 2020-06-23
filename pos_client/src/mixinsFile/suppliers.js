@@ -1,37 +1,37 @@
-import { getSupplierList } from "@/api/supplier";
+import { getSupplierList } from '@/api/supplier'
 export const User = {
-  name: "Index",
+  name: 'Index',
   data() {
     const validateSupplier = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("Invalid input"));
+      if (value === '') {
+        callback(new Error('Invalid input'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
-      activeName: "view",
+      activeName: 'view',
       pageSize: 10,
       pageIndex: 1,
       suppliersData: [],
       totalCount: 0,
       suppliersCreateForm: {
-        name: "",
-        email: "",
-        phone: "",
-        imageUrl: "",
-        addressOne: "",
-        addressTwo: "",
-        city: "",
-        stateOrProvince: "",
-        zipCode: "",
-        country: "",
-        comments: "",
-        internalNotes: "",
-        companyName: "",
-        account: ""
+        name: '',
+        email: '',
+        phone: '',
+        imageUrl: '',
+        addressOne: '',
+        addressTwo: '',
+        city: '',
+        stateOrProvince: '',
+        zipCode: '',
+        country: '',
+        comments: '',
+        internalNotes: '',
+        companyName: '',
+        account: ''
       },
-      searchValue: "",
+      searchValue: '',
       supplierRule: {
         name: [{ required: true, validator: validateSupplier }],
         email: [{ type: 'email' }],
@@ -47,156 +47,156 @@ export const User = {
         companyName: [{ required: true, validator: validateSupplier }],
         account: [{ required: true, validator: validateSupplier }]
       }
-    };
+    }
   },
   created() {
-    this.getSuppliers();
+    this.getSuppliers()
   },
   computed: {
     groups() {
-      return groupBy(this.$store.getters.allPermission, "menuCode");
+      return groupBy(this.$store.getters.allPermission, 'menuCode')
     }
   },
   methods: {
     handleTab(tab) {
-      this.activeName = tab;
-      if (this.activeName === "view") {
-        this.getSuppliers();
+      this.activeName = tab
+      if (this.activeName === 'view') {
+        this.getSuppliers()
       }
-      if (this.activeName === "create") {
-        this.resetCreateSupplierForm();
+      if (this.activeName === 'create') {
+        this.resetCreateSupplierForm()
       }
     },
 
     resetCreateSupplierForm() {
-      this.suppliersCreateForm.name = "";
-      this.suppliersCreateForm.email = "";
-      this.suppliersCreateForm.phone = "";
-      this.suppliersCreateForm.imageUrl = "";
-      this.suppliersCreateForm.addressOne = "";
-      this.suppliersCreateForm.addressTwo = "";
-      this.suppliersCreateForm.city = "";
-      this.suppliersCreateForm.stateOrProvince = "";
-      this.suppliersCreateForm.zipCode = "";
-      this.suppliersCreateForm.country = "";
-      this.suppliersCreateForm.comments = "";
-      this.suppliersCreateForm.internalNotes = "";
-      this.suppliersCreateForm.companyName = "";
-      this.suppliersCreateForm.account = "";
+      this.suppliersCreateForm.name = ''
+      this.suppliersCreateForm.email = ''
+      this.suppliersCreateForm.phone = ''
+      this.suppliersCreateForm.imageUrl = ''
+      this.suppliersCreateForm.addressOne = ''
+      this.suppliersCreateForm.addressTwo = ''
+      this.suppliersCreateForm.city = ''
+      this.suppliersCreateForm.stateOrProvince = ''
+      this.suppliersCreateForm.zipCode = ''
+      this.suppliersCreateForm.country = ''
+      this.suppliersCreateForm.comments = ''
+      this.suppliersCreateForm.internalNotes = ''
+      this.suppliersCreateForm.companyName = ''
+      this.suppliersCreateForm.account = ''
     },
 
     async getSuppliers() {
       const params = {
-        group: "",
-        sort: "",
+        group: '',
+        sort: '',
         cur_page: this.pageIndex,
         per_page: this.pageSize,
-        q: this.searchValue ? this.searchValue : ""
-      };
+        q: this.searchValue ? this.searchValue : ''
+      }
 
-      this.listLoading = true;
+      this.listLoading = true
       getSupplierList(params).then(response => {
-        this.suppliersData = response.data;
-        this.pageIndex = response.meta.curPage;
-        this.pageSize = response.meta.perPage;
-        this.totalCount = response.meta.totalResults;
-        this.listLoading = false;
-        console.log("request", params);
-        console.log("Supplier data", response);
-      });
+        this.suppliersData = response.data
+        this.pageIndex = response.meta.curPage
+        this.pageSize = response.meta.perPage
+        this.totalCount = response.meta.totalResults
+        this.listLoading = false
+        console.log('request', params)
+        console.log('Supplier data', response)
+      })
     },
 
     async createSupplier() {
       this.$refs.suppliersCreateForm.validate(valid => {
         if (valid) {
           this.$store
-            .dispatch("supplier/createSupplier", this.suppliersCreateForm)
+            .dispatch('supplier/createSupplier', this.suppliersCreateForm)
             .then(() => {
-              this.handleTab("view");
+              this.handleTab('view')
             })
             .catch(() => {
-              console.log("Create supplier error");
-            });
+              console.log('Create supplier error')
+            })
         }
-      });
+      })
     },
 
     updateSupplier(row) {
-      this.handleTab("update");
-      this.suppliersCreateForm = row;
-      console.log("Update supplier =>", this.suppliersCreateForm);
+      this.handleTab('update')
+      this.suppliersCreateForm = row
+      console.log('Update supplier =>', this.suppliersCreateForm)
     },
 
     async updateSupplierOk() {
       this.$refs.suppliersCreateForm.validate(valid => {
         if (valid) {
           this.$store
-            .dispatch("supplier/updateSupplier", this.suppliersCreateForm)
+            .dispatch('supplier/updateSupplier', this.suppliersCreateForm)
             .then(() => {
-              this.resetCreateSupplierForm();
-              this.handleTab("view");
+              this.resetCreateSupplierForm()
+              this.handleTab('view')
             })
             .catch(() => {
-              console.log("Update supplier error");
-            });
+              console.log('Update supplier error')
+            })
         }
-      });
+      })
     },
 
     handleSizeChange(val) {
-      this.pageSize = val;
-      this.getCustomers();
+      this.pageSize = val
+      this.getCustomers()
     },
 
     handleCurrentChange(val) {
-      this.pageIndex = val;
-      this.getCustomers();
+      this.pageIndex = val
+      this.getCustomers()
     },
 
     searchClick() {
-      this.getSuppliers();
+      this.getSuppliers()
     },
 
     async deleteSupplier(data) {
-      console.log("delete", data);
+      console.log('delete', data)
       this.$store
-        .dispatch("supplier/deleteSupplier", data)
+        .dispatch('supplier/deleteSupplier', data)
         .then(() => {
-          this.handleTab("view");
+          this.handleTab('view')
         })
         .catch(() => {
-          console.log("Delete supplier error");
-        });
+          console.log('Delete supplier error')
+        })
     },
 
     handleAvatarSuccess(res, file) {
-      console.log("Image Upload");
-      this.suppliersCreateForm.imageUrl = URL.createObjectURL(file.raw);
+      console.log('Image Upload')
+      this.suppliersCreateForm.imageUrl = URL.createObjectURL(file.raw)
     },
 
     beforeAvatarUpload(file) {
-      console.log("File=>", file);
-      const isJPG = file.type === "image/jpeg";
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      console.log('File=>', file)
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isJPG) {
-        this.$message.error("Avatar picture must be JPG format!");
+        this.$message.error('Avatar picture must be JPG format!')
       }
       if (!isLt2M) {
-        this.$message.error("Avatar picture size can not exceed 2MB!");
+        this.$message.error('Avatar picture size can not exceed 2MB!')
       }
-      return isJPG && isLt2M;
+      return isJPG && isLt2M
     }
   }
-};
+}
 
 function groupBy(array, key) {
-  const result = {};
+  const result = {}
   array.forEach(item => {
     if (!result[item[key]]) {
-      result[item[key]] = [];
+      result[item[key]] = []
     }
-    result[item[key]].push(item);
-  });
-  return result;
+    result[item[key]].push(item)
+  })
+  return result
 }

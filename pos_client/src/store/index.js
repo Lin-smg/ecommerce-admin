@@ -13,6 +13,7 @@ import supplier from './modules/supplier'
 import category from './modules/category'
 import branch from './modules/branch'
 import brand from './modules/brand'
+import product from './modules/product'
 
 Vue.use(Vuex)
 
@@ -28,9 +29,9 @@ const store = new Vuex.Store({
     company,
     supplier,
     category,
-    supplier,
     branch,
-    brand
+    brand,
+    product
   },
   getters
 

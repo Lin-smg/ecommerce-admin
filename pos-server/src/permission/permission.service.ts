@@ -13,7 +13,7 @@ export class PermissionService {
     ){}
     async getAllPermission() {
        try { 
-           let permission = await this.permissionRepository.find();          
+           const permission = await this.permissionRepository.find();          
            return plainToClass(PermissionDto,permission);
 
        } catch (error) {

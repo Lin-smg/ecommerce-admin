@@ -1,6 +1,6 @@
 import { Controller, Post, UseInterceptors, UploadedFile, UploadedFiles, Get, Param, Res, HttpStatus, Body } from '@nestjs/common';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
-import { editFileName, imageFileFilter, companyImgName, userImgName } from '../utils/file-upload.utils';
+import { editFileName, imageFileFilter, companyImgName, userImgName, productImgName } from '../utils/file-upload.utils';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
 
@@ -44,6 +44,25 @@ export class SharedController {
       return response;
     }
   
+    
+    @Post('productIMG')
+    @UseInterceptors(
+      FileInterceptor('file', {
+        storage: diskStorage({
+          destination: './files',
+          filename: productImgName,
+        }),
+        fileFilter: imageFileFilter,
+      }),
+    )
+    async uploadedProductImg(@UploadedFile() file) {
+      const response = {
+        originalname: file.originalname,
+        filename: file.filename,
+      };
+      return response;
+    }
+
     @Post('deleteIMG')
     async deleteUserImg(@Body() data) {
       const path = data.fileName;

@@ -98,7 +98,6 @@ export const Unit = {
       this.$store.dispatch('unit/createUnit', this.unitCreateForm).then(() => {
         this.unitCreateForm = this.initCreateForm()
         this.handleTab('view')
-        this.getUnits()
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -115,7 +114,6 @@ export const Unit = {
       this.loading = true
       this.$store.dispatch('unit/deleteUnit', data).then(() => {
         this.handleTab('view')
-        this.getUnits()
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -131,7 +129,6 @@ export const Unit = {
       this.$store.dispatch('unit/updateUnit', this.unitUpdateForm).then(() => {
         this.unitUpdateForm = this.initUpdateForm()
         this.handleTab('view')
-        this.getUnits()
         this.loading = false
       }).catch(() => {
         this.loading = false
@@ -157,6 +154,9 @@ export const Unit = {
     handleTab(tab) {
       if (tab === 'view') {
         this.getUnits()
+      }
+      if (tab === 'create') {
+        this.unitCreateForm = this.initCreateForm()
       }
       this.activeName = tab
     }

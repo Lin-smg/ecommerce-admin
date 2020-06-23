@@ -4,7 +4,7 @@ import { Entity, Column } from "typeorm";
 @Entity({ name: 'units' })
 export class Units extends BaseEntity {
     
-    @Column({ name: 'unit_name', unique: true, nullable: false })
+    @Column({ name: 'unit_name', nullable: false })
     unitName: string;
 
     @Column({ name: 'unit_qty', nullable: false, default: 1 })
