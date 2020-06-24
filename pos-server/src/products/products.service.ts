@@ -100,6 +100,9 @@ export class ProductsService {
     async create(options: { item: InCreateProductsDto }) {
         try {
             await this.isExistWithproductCode({ productCode: options.item.productCode });
+            if(options.item.supplierName !== ''){
+            await this.isExistProductWithSupplier(options.item);
+            }
             await this.productsUnitsService.checkIsExistProductUnit(options.item);
             const queryRunner = this.connection.createQueryRunner();
             await queryRunner.connect();
@@ -126,6 +129,17 @@ export class ProductsService {
             throw error;
         }
     }
+    async isExistProductWithSupplier(data: InCreateProductsDto) {
+        let item;
+        try {
+            item = await this.productsRepository.findOneOrFail({ productCode: data.productCode, supplierId: data.supplierId, delFlg: '0' });
+        } catch (error) {
+            item = undefined;
+        }
+        if (item) {
+            throw new ConflictException(`This "${data.supplierName}'s "${data.productName}" is already exists`);
+        }
+    }
     async isExistWithproductCode(options: { productCode: string; }) {
         let item;
         try {
@@ -134,7 +148,7 @@ export class ProductsService {
             item = undefined;
         }
         if (item && item.productCode === options.productCode) {
-            throw new ConflictException(`User with userId "${options.productCode}" is exists`);
+            throw new ConflictException(`This "${options.productCode}" is already exists`);
         }
     }
     async findByproductCode(options: { productCode: string; }){

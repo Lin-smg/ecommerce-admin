@@ -1,4 +1,5 @@
 import { getProductList, deletePhoto, getPKGWithSmallestUnit } from '@/api/product'
+import { getSupplierList } from '@/api/supplier'
 export const Product = {
   data() {
     return {
@@ -8,6 +9,7 @@ export const Product = {
       brandList: [],
       unitList: [],
       packageUnitList: [],
+      supplierList: [],
       createProductForm: this.initProductForm(),
       updateProductForm: this.initProductForm(),
       productData: [],
@@ -18,6 +20,8 @@ export const Product = {
       selectedUnit: '',
       selectedCategory: '',
       selectedBrand: '',
+      selectedSupplier: '',
+      timeout: null,
       rules: {
         productCode: [
           { required: true, message: 'Please input Product Code', trigger: 'blur' }
@@ -35,6 +39,28 @@ export const Product = {
     this.getProductList()
   },
   methods: {
+    async querySearchAsync(queryString, cb) {
+      const params = {
+        group: '',
+        sort: '',
+        cur_page: this.pageIndex,
+        per_page: this.pageSize,
+        q: queryString || ''
+      }
+
+      await getSupplierList(params).then(response => {
+        var results = response.data
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          cb(results)
+        }, 1000 * Math.random())
+      })
+    },
+    handleSelect(item) {
+      this.createProductForm.supplierId = item.id
+      this.createProductForm.supplierName = item.name
+      this.selectedSupplier = item.name
+    },
     initProductForm() {
       return {
         productCode: '',
@@ -46,6 +72,8 @@ export const Product = {
         expDate: null,
         unitId: null,
         unitName: '',
+        supplierId: null,
+        supplierName: '',
         unitPrice: 0,
         description: '',
         reOrder: 0,
@@ -53,6 +81,13 @@ export const Product = {
         imgPath: '',
         unit: []
       }
+    },
+    async getSupplierList() {
+      this.listLoading = true
+      await getSupplierList().then(response => {
+        this.supplierList = response.data
+        this.listLoading = false
+      })
     },
     async changeSelectedUnit() {
       this.listLoading = true
@@ -143,6 +178,10 @@ export const Product = {
     handleTab(tab) {
       if (tab === 'view') {
         this.createProductForm = this.initProductForm()
+        this.selectedUnit = ''
+        this.selectedCategory = ''
+        this.selectedBrand = ''
+        this.selectedSupplier = ''
         this.getProductList()
       }
       this.activeName = tab

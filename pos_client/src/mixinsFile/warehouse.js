@@ -10,16 +10,16 @@ export const Warehouse = {
       totalCount: 0,
       warehouseCreateForm: this.initCreateWareHouseForm(),
       warehouseUpdateForm: this.initUpdateWareHouseForm(),
-      searchValue: ''
+      searchValue: '',
+      rules: {
+        wareHouseName: [{ required: true, message: 'Please input Name', trigger: 'blur' }],
+        location: [{ required: true, message: 'Please input Address', trigger: 'blur' }]
+
+      }
     }
   },
   created() {
     this.getWarehouse()
-  },
-  computed: {
-    groups() {
-      return groupBy(this.$store.getters.allPermission, 'menuCode')
-    }
   },
   methods: {
 
@@ -76,20 +76,20 @@ export const Warehouse = {
     },
 
     async createOk() {
-      // this.$refs.userCreateForm.validate(valid => {
-      //   if (valid) {
-      this.loading = true
-      this.$store.dispatch('warehouse/createWarehouse', this.warehouseCreateForm).then(() => {
-        this.handleTab('view')
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
+      this.$refs.createForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('warehouse/createWarehouse', this.warehouseCreateForm).then(() => {
+            this.handleTab('view')
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
-      //   } else {
-      //     console.log('error submit!!')
-      //     return false
-      //   }
-      // })
     },
 
     createReset() {
@@ -107,12 +107,19 @@ export const Warehouse = {
     },
 
     updateOk() {
-      this.loading = true
-      this.$store.dispatch('warehouse/updateWarehouse', this.warehouseUpdateForm).then(() => {
-        this.handleTab('view')
-        this.loading = false
-      }).catch(() => {
-        this.loading = false
+      this.$refs.updateForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          this.$store.dispatch('warehouse/updateWarehouse', this.warehouseUpdateForm).then(() => {
+            this.handleTab('view')
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+        } else {
+          console.log('error submit!!')
+          return false
+        }
       })
     },
 
@@ -134,15 +141,4 @@ export const Warehouse = {
     }
   }
 
-}
-
-function groupBy(array, key) {
-  const result = {}
-  array.forEach(item => {
-    if (!result[item[key]]) {
-      result[item[key]] = []
-    }
-    result[item[key]].push(item)
-  })
-  return result
 }

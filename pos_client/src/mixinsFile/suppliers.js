@@ -2,20 +2,38 @@ import { getSupplierList } from '@/api/supplier'
 export const User = {
   name: 'Index',
   data() {
-    const validateSupplier = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('Invalid input'))
-      } else {
-        callback()
-      }
-    }
     return {
       activeName: 'view',
       pageSize: 10,
       pageIndex: 1,
       suppliersData: [],
       totalCount: 0,
-      suppliersCreateForm: {
+      suppliersCreateForm: this.resetCreateSupplierForm(),
+      suppliersUpdateForm: this.resetCreateSupplierForm(),
+      searchValue: '',
+      supplierRule: {
+        name: [{ required: true, message: 'Please input Name', trigger: 'blur' }],
+        email: [{ type: 'email', message: 'Please input Email', trigger: 'blur' }],
+        phone: [{ required: true, message: 'Please input Phone', trigger: 'blur' }],
+        addressOne: [{ required: true, message: 'Please input Address', trigger: 'blur' }]
+
+      }
+    }
+  },
+  created() {
+    this.getSuppliers()
+  },
+  methods: {
+    handleTab(tab) {
+      this.activeName = tab
+      if (this.activeName === 'view') {
+        this.suppliersCreateForm = this.resetCreateSupplierForm()
+        this.getSuppliers()
+      }
+    },
+
+    resetCreateSupplierForm() {
+      return {
         name: '',
         email: '',
         phone: '',
@@ -30,59 +48,7 @@ export const User = {
         internalNotes: '',
         companyName: '',
         account: ''
-      },
-      searchValue: '',
-      supplierRule: {
-        name: [{ required: true, validator: validateSupplier }],
-        email: [{ type: 'email' }],
-        phone: [{ required: true, validator: validateSupplier }],
-        addressOne: [{ required: true, validator: validateSupplier }],
-        addressTwo: [{ required: true, validator: validateSupplier }],
-        city: [{ required: true, validator: validateSupplier }],
-        stateOrProvince: [{ required: true, validator: validateSupplier }],
-        zipCode: [{ required: true, validator: validateSupplier }],
-        country: [{ required: true, validator: validateSupplier }],
-        comments: [{ required: true, validator: validateSupplier }],
-        internalNotes: [{ required: true, validator: validateSupplier }],
-        companyName: [{ required: true, validator: validateSupplier }],
-        account: [{ required: true, validator: validateSupplier }]
       }
-    }
-  },
-  created() {
-    this.getSuppliers()
-  },
-  computed: {
-    groups() {
-      return groupBy(this.$store.getters.allPermission, 'menuCode')
-    }
-  },
-  methods: {
-    handleTab(tab) {
-      this.activeName = tab
-      if (this.activeName === 'view') {
-        this.getSuppliers()
-      }
-      if (this.activeName === 'create') {
-        this.resetCreateSupplierForm()
-      }
-    },
-
-    resetCreateSupplierForm() {
-      this.suppliersCreateForm.name = ''
-      this.suppliersCreateForm.email = ''
-      this.suppliersCreateForm.phone = ''
-      this.suppliersCreateForm.imageUrl = ''
-      this.suppliersCreateForm.addressOne = ''
-      this.suppliersCreateForm.addressTwo = ''
-      this.suppliersCreateForm.city = ''
-      this.suppliersCreateForm.stateOrProvince = ''
-      this.suppliersCreateForm.zipCode = ''
-      this.suppliersCreateForm.country = ''
-      this.suppliersCreateForm.comments = ''
-      this.suppliersCreateForm.internalNotes = ''
-      this.suppliersCreateForm.companyName = ''
-      this.suppliersCreateForm.account = ''
     },
 
     async getSuppliers() {
@@ -101,8 +67,6 @@ export const User = {
         this.pageSize = response.meta.perPage
         this.totalCount = response.meta.totalResults
         this.listLoading = false
-        console.log('request', params)
-        console.log('Supplier data', response)
       })
     },
 
@@ -123,17 +87,15 @@ export const User = {
 
     updateSupplier(row) {
       this.handleTab('update')
-      this.suppliersCreateForm = row
-      console.log('Update supplier =>', this.suppliersCreateForm)
+      this.suppliersUpdateForm = row
     },
 
     async updateSupplierOk() {
-      this.$refs.suppliersCreateForm.validate(valid => {
+      this.$refs.suppliersUpdateForm.validate(valid => {
         if (valid) {
           this.$store
-            .dispatch('supplier/updateSupplier', this.suppliersCreateForm)
+            .dispatch('supplier/updateSupplier', this.suppliersUpdateForm)
             .then(() => {
-              this.resetCreateSupplierForm()
               this.handleTab('view')
             })
             .catch(() => {
@@ -145,12 +107,12 @@ export const User = {
 
     handleSizeChange(val) {
       this.pageSize = val
-      this.getCustomers()
+      this.getSuppliers()
     },
 
     handleCurrentChange(val) {
       this.pageIndex = val
-      this.getCustomers()
+      this.getSuppliers()
     },
 
     searchClick() {
@@ -188,15 +150,4 @@ export const User = {
       return isJPG && isLt2M
     }
   }
-}
-
-function groupBy(array, key) {
-  const result = {}
-  array.forEach(item => {
-    if (!result[item[key]]) {
-      result[item[key]] = []
-    }
-    result[item[key]].push(item)
-  })
-  return result
 }

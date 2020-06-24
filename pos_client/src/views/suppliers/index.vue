@@ -13,8 +13,8 @@
         </div>
         <div>
           <el-table
+            v-loading="listLoading"
             border
-            v-loading = "listLoading"
             :data="suppliersData"
             style="width: 100%;background-color: #e9e3e3"
             highlight-current-row
@@ -120,11 +120,11 @@
           </el-form-item> -->
 
           <el-form-item label="Address 1 :" prop="addressOne">
-            <el-input v-model="suppliersCreateForm.addressOne" type="text" autocomplete="off" />
+            <el-input v-model="suppliersCreateForm.addressOne" type="textarea" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="Address 2 :" prop="addressTwo">
-            <el-input v-model="suppliersCreateForm.addressTwo" type="text" autocomplete="off" />
+            <el-input v-model="suppliersCreateForm.addressTwo" type="textarea" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="City :" prop="city">
@@ -168,17 +168,17 @@
 
       <!-- user update tab -->
       <el-tab-pane label="Update Suppliers" name="update" :disabled="true">
-        <el-form ref="suppliersCreateForm" :model="suppliersCreateForm" :rules="supplierRule" label-width="220px" style="width: 500px">
+        <el-form ref="suppliersUpdateForm" :model="suppliersUpdateForm" :rules="supplierRule" label-width="220px" style="width: 500px">
           <el-form-item label="Name :" prop="name">
-            <el-input v-model="suppliersCreateForm.name" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.name" type="text" :disabled="true" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="E-Mail :" prop="email">
-            <el-input v-model="suppliersCreateForm.email" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.email" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="Phone Number :" prop="phone">
-            <el-input v-model="suppliersCreateForm.phone" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.phone" type="text" autocomplete="off" />
           </el-form-item>
 
           <!-- <el-form-item label="Select Image :" prop="image">
@@ -199,43 +199,43 @@
           </el-form-item> -->
 
           <el-form-item label="Address 1 :" prop="addressOne">
-            <el-input v-model="suppliersCreateForm.addressOne" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.addressOne" type="textarea" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="Address 2 :" prop="addressTwo">
-            <el-input v-model="suppliersCreateForm.addressTwo" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.addressTwo" type="textarea" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="City :" prop="city">
-            <el-input v-model="suppliersCreateForm.city" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.city" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="State/Province :" prop="stateOrProvince">
-            <el-input v-model="suppliersCreateForm.stateOrProvince" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.stateOrProvince" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="Zip :" prop="zipCode">
-            <el-input v-model="suppliersCreateForm.zipCode" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.zipCode" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="Country :" prop="country">
-            <el-input v-model="suppliersCreateForm.country" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.country" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="Comments :" prop="comments">
-            <el-input v-model="suppliersCreateForm.comments" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.comments" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="Internal Notes :" prop="internalNotes">
-            <el-input v-model="suppliersCreateForm.internalNotes" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.internalNotes" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="Company Name :" prop="companyName">
-            <el-input v-model="suppliersCreateForm.companyName" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.companyName" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="Account # :" prop="account">
-            <el-input v-model="suppliersCreateForm.account" type="text" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.account" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item>

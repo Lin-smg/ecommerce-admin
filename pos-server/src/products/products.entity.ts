@@ -22,6 +22,12 @@ export class Products extends BaseEntity {
     @Column({ name: 'brand_name', nullable: true })
     brandName: string;
 
+    @Column({ name: 'supplier_id', nullable: true })
+    supplierId: number;
+
+    @Column({ name: 'supplier_name', nullable: true })
+    supplierName: string;
+
     @Column({ name: 'unit_id', nullable: false })
     unitId: number;
 

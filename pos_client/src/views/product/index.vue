@@ -48,6 +48,14 @@
                 <span>{{ row.categoryName }}</span>
               </template>
             </el-table-column>
+            <el-table-column align="center" min-width="200px">
+              <template slot="header">
+                <span>supplier</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.supplierName }}</span>
+              </template>
+            </el-table-column>
             <el-table-column align="center" min-width="300px">
               <template slot="header">
                 <span>description</span>
@@ -145,6 +153,22 @@
                 :value="item"
               />
             </el-select>
+          </el-form-item>
+          <el-form-item label="Supplier" prop="supplier">
+            <el-autocomplete
+              v-model="selectedSupplier"
+              popper-class="my-autocomplete"
+              :fetch-suggestions="querySearchAsync"
+              placeholder="Please input"
+              style="width: 280px"
+              @select="handleSelect"
+            >
+              <template slot-scope="{ item }">
+                <div class="name">{{ item.name }}</div>
+                <span class="phone">{{ item.phone }}&nbsp;&nbsp;{{ item.addressOne }}</span>
+              </template>
+              <el-button slot="append" icon="el-icon-circle-plus-outline" />
+            </el-autocomplete>
           </el-form-item>
           <el-form-item label="Exp: Date" prop="expDate">
             <el-date-picker
@@ -342,4 +366,17 @@ export default {
     height: 98px;
     display: block;
   }
+  .my-autocomplete li {
+      padding: 7px;
+    }
+
+  .my-autocomplete li .name {
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+   .my-autocomplete li .phone {
+        font-size: 12px;
+        color: #b4b4b4;
+      }
+
 </style>

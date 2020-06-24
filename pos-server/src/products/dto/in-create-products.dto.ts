@@ -26,6 +26,15 @@ export class InCreateProductsDto {
     @IsOptional()
     brandName: string;
 
+    
+    @ApiPropertyOptional()
+    @IsOptional()
+    supplierId: number;
+
+    @ApiPropertyOptional()
+    @IsOptional()
+    supplierName: string;
+    
     @ApiPropertyOptional()
     unitId: number;
 

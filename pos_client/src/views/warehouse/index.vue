@@ -84,7 +84,7 @@
 
       <!-- user create tab-->
       <el-tab-pane label="Create Warehouse" name="create">
-        <el-form ref="warehouseForm" label-width="220px" style="width: 500px">
+        <el-form ref="createForm" :rules="rules" :model="warehouseCreateForm" label-width="220px" style="width: 500px">
           <el-form-item label="Warehouse Name" prop="wareHouseName">
             <el-input v-model="warehouseCreateForm.wareHouseName" type="text" placeholder="warehouse name" autocomplete="off" />
           </el-form-item>
@@ -107,8 +107,8 @@
       </el-tab-pane>
 
       <!-- Warehouse update tab -->
-      <el-tab-pane label="Update User" name="update" :disabled="true">
-        <el-form ref="updateForm" label-width="220px" style="width: 500px">
+      <el-tab-pane label="Update Warehouse" name="update" :disabled="true">
+        <el-form ref="updateForm" :rules="rules" :model="warehouseUpdateForm" label-width="220px" style="width: 500px">
 
           <el-form-item label="Warehouse Name" prop="wareHouseName">
             <el-input v-model="warehouseUpdateForm.wareHouseName" type="text" :disabled="true" placeholder="warehouse name" autocomplete="off" />

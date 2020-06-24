@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, NotAcceptableException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { Suppliers } from './suppliers.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -8,7 +8,7 @@ import { PageMetaDto } from '../common/dto/page_meta.dto';
 
 @Injectable()
 export class SuppliersService {
-       
+           
     constructor(
         @InjectRepository(Suppliers)
         private readonly suppliersRepository: Repository<Suppliers>,
@@ -16,18 +16,42 @@ export class SuppliersService {
 
     async create(options: { item: Suppliers; }): Promise<any> {
         try {
+           await this.checkExistingSupplier(options.item);
            options.item.createDateTime = new Date();
            return await this.suppliersRepository.save(options.item);
 
 
-        } catch (error) {
-            if(error.code === '23505'){
-                throw new NotAcceptableException('Supplier Name is already exists.')
-            }            
+        } catch (error) {            
             throw error;
         }   
     }
+    async checkExistingSupplier(item: Suppliers) {
 
+        let objects: [Suppliers[], number];
+        let qb = this.suppliersRepository.createQueryBuilder('supplier');
+        qb = qb.where('supplier.delFlg = :d AND LOWER(supplier.name) = LOWER(:n)' ,{
+            d: '0',
+            n: item.name
+        });
+        // eslint-disable-next-line prefer-const
+        objects = await qb.getManyAndCount();
+        if(objects[1]>0){
+            throw new ConflictException('Supplier Name is already exists.')
+        }
+    }
+
+    async getAllSuppliers(){
+      
+        let objects: [Suppliers[], number];
+        let qb = this.suppliersRepository.createQueryBuilder('supplier');
+        qb = qb.where('supplier.delFlg = :d' ,{
+            d: '0',
+        });
+        // eslint-disable-next-line prefer-const
+        objects = await qb.getManyAndCount();
+        return await plainToClass(SuppliersDto, objects[0]);
+
+    }
     async delete(options: { item: Suppliers; }): Promise<any> {
         try {
             await this.findById({ id: options.item.id });  
@@ -43,12 +67,10 @@ export class SuppliersService {
     async update(options: { id: any; item: Suppliers; }): Promise<any> {
         try {
             await this.findById({ id: options.id });  
-            await this.suppliersRepository.update({id: options.id},options.item);
+            options.item.lastChangedDateTime = new Date();
+            await this.suppliersRepository.update({id: options.id,delFlg: '0'},options.item);
             return options.item;
         } catch (error) {
-            if(error.code === '23505'){
-                throw new NotAcceptableException('Supplier Name is already exists.')
-            }
             throw error;  
         }
     } 
@@ -57,7 +79,9 @@ export class SuppliersService {
            
             const item = await this.suppliersRepository.findOneOrFail({
                 where: {
-                    id: options.id
+                    id: options.id,
+                    delFlg: '0'
+
                 },
             });
 
@@ -76,7 +100,7 @@ export class SuppliersService {
                 d: '0'
             });
             if (options.q) {
-                qb = qb.where('supplier.name like :q', {
+                qb = qb.where('LOWER(supplier.name) like LOWER(:q)', {
                     q: `%${options.q}%`,
                 });
             }

@@ -11,6 +11,7 @@ import { SuppliersService } from './suppliers.service';
 import { OutSuppliersDto } from './dto/out-suppliers.dto';
 import { InCreateSuppliersDto } from './dto/in-create-suppliers.dto';
 import { Suppliers } from './suppliers.entity';
+import { OutSuppliersAllDto } from './dto/out-suppliers-all.dto';
 
 @Controller('suppliers')
 @ApiTags('suppliers')
@@ -156,6 +157,21 @@ export class SuppliersController {
                     sort,
                     group
                 })
+            );
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    // Supplier Find
+    @HttpCode(HttpStatus.OK)
+    @Get('All')
+    @Permissions(PermissionsType.USERS)
+    async getAllSuppliers() {
+        try {
+            return plainToClass(
+                OutSuppliersAllDto,
+                await this.suppliersService.getAllSuppliers()
             );
         } catch (error) {
             throw error;
