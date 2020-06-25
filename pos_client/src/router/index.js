@@ -99,7 +99,7 @@ export const constantRoutes = [
       path: 'index',
       name: 'UnitOfMeasure',
       component: () => import('@/views/unit/index'),
-      meta: { title: 'UnitOfMeasure', icon: 'ruler' }
+      meta: { title: 'UnitOfMeasure', icon: 'cup-measuring' }
 
     }]
   },

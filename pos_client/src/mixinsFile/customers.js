@@ -2,51 +2,22 @@ import { getCustomerList } from '@/api/customer'
 export const User = {
   name: 'Index',
   data() {
-    const validateCustomer = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('Invalid input'))
-      } else {
-        callback()
-      }
-    }
     return {
       activeName: 'view',
       pageSize: 10,
       pageIndex: 1,
       customersData: [],
       totalCount: 0,
-      customersCreateForm: {
-        name: '',
-        email: '',
-        phone: '',
-        imageUrl: '',
-        addressOne: '',
-        addressTwo: '',
-        city: '',
-        stateOrProvince: '',
-        zipCode: '',
-        country: '',
-        comments: '',
-        internalNotes: '',
-        companyName: '',
-        account: ''
-      },
+      customersCreateForm: this.resetCreateCustomersForm(),
+      customersUpdateForm: this.resetCreateCustomersForm(),
       searchValue: '',
       listLoading: false,
       customerRule: {
-        name: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        email: [{ type: 'email' }],
-        phone: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        addressOne: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        addressTwo: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        city: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        stateOrProvince: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        zipCode: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        country: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        comments: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        internalNotes: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        companyName: [{ required: true, trigger: 'blur', validator: validateCustomer }],
-        account: [{ required: true, trigger: 'blur', validator: validateCustomer }]
+        name: [{ required: true, message: 'Please input Name', trigger: 'blur' }],
+        email: [{ type: 'email', message: 'Please input Email', trigger: 'blur' }],
+        phone: [{ required: true, message: 'Please input Phone', trigger: 'blur' }],
+        addressOne: [{ required: true, message: 'Please input Address', trigger: 'blur' }]
+
       }
     }
   },
@@ -69,20 +40,21 @@ export const User = {
     },
 
     resetCreateCustomersForm() {
-      this.customersCreateForm.name = ''
-      this.customersCreateForm.email = ''
-      this.customersCreateForm.phone = ''
-      this.customersCreateForm.imageUrl = ''
-      this.customersCreateForm.addressOne = ''
-      this.customersCreateForm.addressTwo = ''
-      this.customersCreateForm.city = ''
-      this.customersCreateForm.stateOrProvince = ''
-      this.customersCreateForm.zipCode = ''
-      this.customersCreateForm.country = ''
-      this.customersCreateForm.comments = ''
-      this.customersCreateForm.internalNotes = ''
-      this.customersCreateForm.companyName = ''
-      this.customersCreateForm.account = ''
+      return { id: null,
+        name: '',
+        email: '',
+        phone: '',
+        imageUrl: '',
+        addressOne: '',
+        addressTwo: '',
+        city: '',
+        stateOrProvince: '',
+        zipCode: '',
+        country: '',
+        comments: '',
+        internalNotes: '',
+        companyName: '',
+        account: '' }
     },
 
     async getCustomers() {
@@ -115,23 +87,20 @@ export const User = {
             .catch(() => {
               console.log('Create customer error')
             })
-        } else {
-          this.$message.error('Invalid create customer')
         }
       })
     },
 
     updateCustomers(row) {
       this.handleTab('update')
-      this.customersCreateForm = row
-      console.log('Update customer =>', this.customersCreateForm)
+      this.customersUpdateForm = row
     },
 
     async updateCustomerOk() {
-      this.$refs.customersCreateForm.validate(valid => {
+      this.$refs.customersUpdateForm.validate(valid => {
         if (valid) {
           this.$store
-            .dispatch('customer/updateCustomer', this.customersCreateForm)
+            .dispatch('customer/updateCustomer', this.customersUpdateForm)
             .then(() => {
               this.resetCreateCustomersForm()
               this.handleTab('view')

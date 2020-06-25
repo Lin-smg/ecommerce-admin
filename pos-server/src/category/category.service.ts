@@ -112,7 +112,6 @@ export class CategoryService {
 
     
     async getAllCategory() {
-        await this.categoryRepository.find({delFlg: '0'});
         let objects: [Category[], number];
         let qb = this.categoryRepository.createQueryBuilder('category');
         qb = qb.where('category.delFlg = :d' ,{

@@ -1,22 +1,22 @@
-import { createCustomer, updateCustomer, deleteCustomer } from "@/api/customer";
-import { getToken } from "@/utils/auth";
+import { createCustomer, updateCustomer, deleteCustomer } from '@/api/customer'
+import { getToken } from '@/utils/auth'
 
 const getDefaultState = () => {
   return {
     token: getToken()
-  };
-};
+  }
+}
 
-const state = getDefaultState();
+const state = getDefaultState()
 
 const mutations = {
   RESET_STATE: state => {
-    Object.assign(state, getDefaultState());
+    Object.assign(state, getDefaultState())
   },
   SET_TOKEN: (state, token) => {
-    state.token = token;
+    state.token = token
   }
-};
+}
 
 const actions = {
   // Create Customer
@@ -24,13 +24,13 @@ const actions = {
     return await new Promise((resolve, reject) => {
       createCustomer(customerForm)
         .then(response => {
-          resolve(resolve);
+          resolve(resolve)
         })
         .catch(error => {
-          console.log(error);
-          reject(error);
-        });
-    });
+          console.log(error)
+          reject(error)
+        })
+    })
   },
 
   // Update Customer
@@ -38,33 +38,33 @@ const actions = {
     return await new Promise((resolve, reject) => {
       updateCustomer(customerForm.id, customerForm)
         .then(response => {
-          resolve(resolve);
+          resolve(resolve)
         })
         .catch(error => {
-          console.log(error);
-          reject(error);
-        });
-    });
+          console.log(error)
+          reject(error)
+        })
+    })
   },
 
-  //Delete customer
+  // Delete customer
   async deleteCustomer({ commit }, data) {
     return await new Promise((resolve, reject) => {
       deleteCustomer(data)
         .then(response => {
-          resolve(resolve);
+          resolve(resolve)
         })
         .catch(error => {
-          console.log(error);
-          reject(error);
-        });
-    });
+          console.log(error)
+          reject(error)
+        })
+    })
   }
-};
+}
 
 export default {
   namespaced: true,
   state,
   mutations,
   actions
-};
+}

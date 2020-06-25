@@ -23,6 +23,13 @@ export async function getPKGWithSmallestUnit(id) {
   })
 }
 
+export async function getSupplierList() {
+  return request({
+    url: '/suppliers/all',
+    method: 'get'
+  })
+}
+
 export async function getProductList(params) {
   return request({
     url: '/products',

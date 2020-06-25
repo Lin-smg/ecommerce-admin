@@ -22,6 +22,12 @@ export class ProductsDto {
     brandName: string;
 
     @ApiPropertyOptional()
+    supplierId: number;
+
+    @ApiPropertyOptional()
+    supplierName: string;
+    
+    @ApiPropertyOptional()
     unitId: number;
 
     @ApiPropertyOptional()
