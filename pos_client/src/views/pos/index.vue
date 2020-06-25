@@ -1,45 +1,33 @@
 <template>
   <div class="pos-container">
     <div>
-      <el-row :gutter="20">
-        <el-col :span="15" style="height: 100vh">
-          <div>
-            <el-autocomplete v-model="searchValue" value-key="username" :fetch-suggestions="productSearch" :trigger-on-focus="false" placeholder="Please input" class="input-with-select" @select="searchClick">
-              <el-button slot="append" icon="el-icon-search" @click="searchClick" />
-            </el-autocomplete>
-
-            <el-row>
-              <el-col :span="2">
-                <span style="line-height: 70px; font-size: 45px; color: #267bbf; cursor: pointer" class="el-icon-caret-left" @click="preCat" />
-              </el-col>
-              <el-col :span="20">
-                <div id="cat" style="text-align: center; padding: 15px; overflow-x: hidden; overflow-y: hidden; height: 50px; border: 1px solid rgb(245, 232, 232); margin-top: 10px">
-                  <span v-for="(item,i) in categoryList" :key="i" :style="{background: catActive === i ? '#b0c4e8' : ''}" style="cursor: pointer; margin: 5px; width: auto; height:30px; line-height: 10px; padding: 10px; border: 1px solid rgb(191, 180, 180); border-radius: 5px" @mouseover="catOver(i)" @click="chooseCatecory(item)">
-                    <span>{{ item.categoryName }}</span>
-                  </span>
-                </div>
-              </el-col>
-              <el-col :span="2">
-                <span style="line-height: 70px; font-size: 45px; color: #267bbf; cursor: pointer; float: right;" class="el-icon-caret-right" @click="nextCat" />
-              </el-col>
-            </el-row>
-
-            <!-- <el-carousel :autoplay="false" arrow="always" indicator-position="none" type="card" height="40px" style="margin: 10px" @change="change">
-              <el-carousel-item v-for="item in categoryList" :key="item.categoryCode" style="text-align: center; line-height: 45px">
-                <h3 class="medium">{{ item.categoryName }}</h3>
-              </el-carousel-item>
-            </el-carousel> -->
+      <el-row :gutter="20" style="position: absolute;" :style="{width: device === 'mobile' ? '96%' : '100%'}">
+        <div style="height: 100vh;float: left; margin-right: 8px" :style="{width: device === 'mobile' ? '53%' : '60%'}">
+          <div style="margin-bottom: 10px; border: 1px solid #f3f0f0; padding: 5px; border-radius: 5px">
+            <el-autocomplete
+              v-model="searchProduct"
+              style="margin: 2px"
+              size="small"
+              value-key="productName"
+              :fetch-suggestions="productSearch"
+              placeholder="Search Product"
+              @select="searchClick"
+            />
+            <el-autocomplete v-model="searchCategory" style="margin: 2px" size="small" value-key="categoryName" :fetch-suggestions="categorySearch" placeholder="Search Category" class="input-with-select" @select="searchClick" />
+            <el-autocomplete v-model="searchBrand" style="margin: 2px" size="small" value-key="brandName" :fetch-suggestions="brandSearch" placeholder="Search Brand" class="input-with-select" @select="searchClick" />
+            <el-button size="small" icon="el-icon-search" @click="searchClick" />
 
           </div>
 
           <div style="overflow-y: scroll;height: 80vh">
-            <el-card v-for="(item,i) in itemList" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; height: 170px; float: left; margin: 2px; cursor: pointer">
-              <div @click="popShow(item)">
-                <el-image style="height: 90px" src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQr28OdEVKSN446VF2degUDZ9-WDSge_zQKsPYV0t3WzkuoVVee&usqp=CAU" />
-                <div style="text-align: center; padding: 10px">
-                  <span>product {{ item.name }}</span><br>
+            <el-card v-for="(item,i) in itemList" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; height: 135px; float: left; margin: 5px; cursor: grab">
+              <div style="text-align: center" @click="popShow(item)">
+                <el-image v-if="item.imgPath !== ''" :src="baseUrl+item.imgPath" fit="fill" style="height: 90px; width: 100px" />
+                <!-- src="https://graphicriver.img.customer.envatousercontent.com/files/264957949/preview.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=590&s=2d1cf4f57526765a35de39bf26286c4e" -->
+                <div style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px">
+                  <span>{{ item.productName }}</span><br>
                   <span> {{ item.type }} </span><br>
-                  <span> {{ item.price }} Kyats</span>
+                  <!-- <span> {{ item.price }} Kyats</span> -->
                 </div>
               </div>
             </el-card>
@@ -47,35 +35,54 @@
 
           <el-dialog
             :visible.sync="dialogVisible"
-            width="30%"
+            :title="selectedItem.productName"
           >
-            <span>Code : </span><span>{{ selectedItem.code }}</span><br>
-            <span>Name : </span><span>{{ selectedItem.name }}</span><br>
-            <span>Price : </span><span>{{ selectedItem.price }} Kyats</span><br>
+            <el-row>
+              <el-card v-for="(item,i) in selectedItem.unit" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 150px; height: 85px; float: left; margin: 5px; cursor: grab; border: 2px solid #cedae2;">
+                <div style="text-align: center">
+                  <!-- <el-image fit="fill" style="height: 90px; width: 100px" src="https://graphicriver.img.customer.envatousercontent.com/files/264957949/preview.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=590&s=2d1cf4f57526765a35de39bf26286c4e" /> -->
+                  <div style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px; height: 30px" @click="addSaleItem(item)">
+                    <span>{{ item.unitName }}</span>
+                  </div>
+                  <br>
+                  <div>
+                    <el-input v-model="item.sellPrice" style="width: 50%" size="mini" />MMK
+                  </div>
+                </div>
+              </el-card>
+            </el-row>
             <span slot="footer" class="dialog-footer">
-              <el-button size="small" type="primary" @click="addSaleItem">Confirm</el-button>
-              <el-button size="small" @click="dialogVisible = false">Cancel</el-button>
+              <!-- <el-button size="small" type="primary" @click="addSaleItem">Confirm</el-button>
+              <el-button size="small" @click="dialogVisible = false">Cancel</el-button> -->
             </span>
           </el-dialog>
 
-        </el-col>
-        <el-col :span="9" style="overflow-y: auto; height: 100vh">
+        </div>
+        <div style="overflow-y: auto; height: 100vh; float: right;" :style="{width: device==='mobile' ? '45%' : '500px'}">
           <div>
             <el-card shadow="hover" class="box-card" style="bottom: 0px">
               <div ref="header">
                 <el-autocomplete
                   v-model="customer"
+                  popper-class="my-autocomplete"
+                  size="small"
                   value-key="name"
                   class="inline-input"
                   :fetch-suggestions="customerSearch"
                   :highlight-first-item="true"
                   placeholder="Please Input"
                   @select="handleSelect"
-                />
-                <el-button type="primary" @click="createCustomer">Create</el-button>
+                >
+                  <template slot="prepend"><span class="el-icon-user" /></template>
+                  <template slot-scope="{ item }" style="line-height: normal">
+                    <div class="value">{{ item.name }} ( {{ item.phone }} )</div>
+                    <!-- <span class="link" style="margin-top: -10px">{{ item.name }}</span> -->
+                  </template>
+                </el-autocomplete>
+                <el-button type="primary" size="small" class="el-icon-plus" @click="customerCreateVisible = true" />
               </div>
 
-              <div style="margin: 10px; height: 250px">
+              <div style="margin: 10px; min-height: 200px">
                 <el-row>
                   <el-col :span="10" style="text-align: center"><span>Name</span></el-col>
                   <el-col :span="6" style="text-align: center"><span>Qty</span></el-col>
@@ -84,25 +91,29 @@
                 </el-row>
                 <hr>
 
-                <el-row v-for="(item,i) of selectedItemList" :key="i" style="margin-bottom: 5px">
-                  <el-col :span="10"><div>{{ item.data.name }}</div></el-col>
+                <el-row v-for="(item,i) of selectedItemList" :key="i" style="margin-bottom: 5px;line-height: 25px">
+                  <el-col :span="10"><div>{{ item.data.productName }}({{ item.data.unitName }})</div></el-col>
                   <el-col :span="6" style="text-align: center">
                     <el-row>
-                      <el-col :span="6" style="text-align: center"><span size="mini" class="el-icon-remove" style="font-size: 25px; color: #8a7443" @click="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" /></el-col>
-                      <el-col :span="12" style="text-align: center; padding-left: 2px">
-                        <!-- <el-input v-model="item.count" onkeyup="value=value.replace(/[^\d.]/g, '');" style="width: 45px" size="mini" @change="item.count = item.count==='' ? 1 : item.count===0 ? removeItem(i) : item.count, setTotal()" /> -->
-                        <input v-model="item.count" style="width: 45px; text-align: right" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
-                      </el-col>
+                      <!-- <el-col :span="7" style="text-align: center"> -->
+                      <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" />
+                      <!-- </el-col> -->
+                      <!-- <el-col :span="10" style="text-align: center; padding-left: 2px"> -->
+                      <!-- <el-input v-model="item.count" onkeyup="value=value.replace(/[^\d.]/g, '');" style="width: 45px" size="mini" @change="item.count = item.count==='' ? 1 : item.count===0 ? removeItem(i) : item.count, setTotal()" /> -->
+                      <input v-model="item.count" :style="{width: device==='mobile'? '21px' : '25px'}" style="width: 25px; text-align: center; border: none" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
+                      <!-- </el-col> -->
                       <!-- onkeyup="value=value.replace(/[^\d.]/g, '');"  onkeyup="value = /^\d*?\d*$/.test(value) ? value : 1" -->
-                      <el-col :span="6" style="text-align: center"><span size="mini" class="el-icon-circle-plus" style="font-size: 25px;color: #73c715" @click="item.count++, setTotal()" /></el-col>
+                      <!-- <el-col :span="7" style="text-align: center"> -->
+                      <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click="item.count++, setTotal()" />
+                      <!-- </el-col> -->
                     </el-row>
 
                   </el-col>
                   <el-col :span="6" style="text-align: center">
-                    <span>{{ item.count * item.data.price }}</span>
+                    <span>{{ item.count * parseFloat(item.data.sellPrice) }}</span>
                   </el-col>
                   <el-col :span="2" style="text-align: center">
-                    <i class="el-icon-delete-solid" style="color: red" @click="removeItem(i), setTotal()" />
+                    <i class="el-icon-delete-solid" style="color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
                   </el-col>
                 </el-row>
               </div>
@@ -143,6 +154,10 @@
                 <span>Total : </span>
                 <span style="float:right;">{{ total }}</span>
               </div>
+              <div>
+                <span>Other Total : </span>
+                <span style="float:right;">{{ OtherChargeTotal }}</span>
+              </div>
               <hr>
               <div>
                 <span>Discount :</span>
@@ -152,10 +167,10 @@
                 <span>Tax :</span>
                 <span style="float:right;">0</span>
               </div>
-              <div>
+              <!-- <div>
                 <span>FOC/Other :</span>
                 <span style="float:right;">0</span>
-              </div>
+              </div> -->
 
               <hr>
 
@@ -190,9 +205,74 @@
 
             </el-card>
           </div>
-        </el-col>
+        </div>
       </el-row>
     </div>
+
+    <el-dialog
+      title="Tips"
+      :visible.sync="customerCreateVisible"
+    >
+
+      <el-form ref="createForm" label-width="220px" style="width: 500px">
+        <el-form-item label="Name :" prop="name">
+          <el-input v-model="customersCreateForm.name" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="E-Mail :" prop="email">
+          <el-input v-model="customersCreateForm.email" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Phone Number :" prop="phone">
+          <el-input v-model="customersCreateForm.phone" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Address 1 :" prop="addressOne">
+          <el-input v-model="customersCreateForm.addressOne" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Address 2 :" prop="addressTwo">
+          <el-input v-model="customersCreateForm.addressTwo" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="City :" prop="city">
+          <el-input v-model="customersCreateForm.city" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="State/Province :" prop="stateOrProvince">
+          <el-input v-model="customersCreateForm.stateOrProvince" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Zip :" prop="zipCode">
+          <el-input v-model="customersCreateForm.zipCode" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Country :" prop="country">
+          <el-input v-model="customersCreateForm.country" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Comments :" prop="comments">
+          <el-input v-model="customersCreateForm.comments" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Internal Notes :" prop="internalNotes">
+          <el-input v-model="customersCreateForm.internalNotes" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Company Name :" prop="companyName">
+          <el-input v-model="customersCreateForm.companyName" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Account # :" prop="account">
+          <el-input v-model="customersCreateForm.account" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary" @click="createCustomer">Create</el-button>
+          <el-button @click="resetCreateCustomersForm">Reset</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -229,5 +309,22 @@ input::-webkit-inner-spin-button {
   .el-carousel__item:nth-child(2n+1) {
     background-color: #267bbf;
   }
+
+  .my-autocomplete li {
+    /* li { */
+      line-height: normal;
+      padding: 7px;
+  }
+
+      /* .value {
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+      .link {
+        font-size: 12px;
+        color: #b4b4b4;
+      }
+
+  } */
 
 </style>
