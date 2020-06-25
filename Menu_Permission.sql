@@ -33,3 +33,75 @@ insert into public.permissions(permission_code,permission_name,menu_code,menu_na
 values('M003B02','Edit','M003','User','B02','Edit');
 insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
 values('M003B03','Delete','M003','User','B03','Delete');
+
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M004B00','Customer','M004','Customer','B00','Menu');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M004B01','New','M004','Customer','B01','New');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M004B02','Edit','M004','Customer','B02','Edit');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M004B03','Delete','M004','Customer','B03','Delete');
+
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M005B00','Supplier','M005','Supplier','B00','Menu');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M005B01','New','M005','Supplier','B01','New');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M005B02','Edit','M005','Supplier','B02','Edit');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M005B03','Delete','M005','Supplier','B03','Delete');
+
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M006B00','Branch','M006','Branch','B00','Menu');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M006B01','New','M006','Branch','B01','New');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M006B02','Edit','M006','Branch','B02','Edit');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M006B03','Delete','M006','Branch','B03','Delete');
+
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M007B00','Warehouse','M007','Warehouse','B00','Menu');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M007B01','New','M007','Warehouse','B01','New');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M007B02','Edit','M007','Warehouse','B02','Edit');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M007B03','Delete','M007','Warehouse','B03','Delete');
+
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M008B00','Category','M008','Category','B00','Menu');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M008B01','New','M008','Category','B01','New');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M008B02','Edit','M008','Category','B02','Edit');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M008B03','Delete','M008','Category','B03','Delete');
+
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M009B00','Brand','M009','Brand','B00','Menu');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M009B01','New','M009','Brand','B01','New');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M009B02','Edit','M009','Brand','B02','Edit');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M009B03','Delete','M009','Brand','B03','Delete');
+
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M010B00','Product','M010','Product','B00','Menu');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M010B01','New','M010','Product','B01','New');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M010B02','Edit','M010','Product','B02','Edit');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M010B03','Delete','M010','Product','B03','Delete');
+
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M011B00','UnitOfMeasure','M011','UnitOfMeasure','B00','Menu');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M011B01','New','M011','UnitOfMeasure','B01','New');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M011B02','Edit','M011','UnitOfMeasure','B02','Edit');
+insert into public.permissions(permission_code,permission_name,menu_code,menu_name,button_code,button_name)
+values('M011B03','Delete','M011','UnitOfMeasure','B03','Delete');
