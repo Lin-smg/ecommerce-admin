@@ -200,6 +200,17 @@ export const constantRoutes = [
       meta: { title: 'Branch', icon: 'tree' }
     }]
   },
+  {
+    path: '/dailyreport',
+    component: Layout,
+    redirect: '/dailyreport',
+    children: [{
+      path: 'index',
+      name: 'Dailyreport',
+      component: () => import('@/views/dailyreport/index'),
+      meta: { title: 'Dailyreport', icon: 'tree' }
+    }]
+  },
 
   {
     path: '/example',
