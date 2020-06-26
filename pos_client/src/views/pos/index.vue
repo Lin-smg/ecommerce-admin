@@ -26,7 +26,7 @@
                 <!-- src="https://graphicriver.img.customer.envatousercontent.com/files/264957949/preview.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=590&s=2d1cf4f57526765a35de39bf26286c4e" -->
                 <div style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px">
                   <span>{{ item.productName }}</span><br>
-                  <span> {{ item.type }} </span><br>
+                  <span> {{ item.type }} {{ item.taxPercent }} </span><br>
                   <!-- <span> {{ item.price }} Kyats</span> -->
                 </div>
               </div>
@@ -95,22 +95,15 @@
                   <el-col :span="10"><div>{{ item.data.productName }}({{ item.data.unitName }})</div></el-col>
                   <el-col :span="6" style="text-align: center">
                     <el-row>
-                      <!-- <el-col :span="7" style="text-align: center"> -->
                       <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" />
-                      <!-- </el-col> -->
-                      <!-- <el-col :span="10" style="text-align: center; padding-left: 2px"> -->
-                      <!-- <el-input v-model="item.count" onkeyup="value=value.replace(/[^\d.]/g, '');" style="width: 45px" size="mini" @change="item.count = item.count==='' ? 1 : item.count===0 ? removeItem(i) : item.count, setTotal()" /> -->
                       <input v-model="item.count" :style="{width: device==='mobile'? '21px' : '25px'}" style="width: 25px; text-align: center; border: none" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
-                      <!-- </el-col> -->
-                      <!-- onkeyup="value=value.replace(/[^\d.]/g, '');"  onkeyup="value = /^\d*?\d*$/.test(value) ? value : 1" -->
-                      <!-- <el-col :span="7" style="text-align: center"> -->
                       <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click="item.count++, setTotal()" />
-                      <!-- </el-col> -->
+
                     </el-row>
 
                   </el-col>
                   <el-col :span="6" style="text-align: center">
-                    <span>{{ item.count * parseFloat(item.data.sellPrice) }}</span>
+                    <span>{{ ((item.count * parseFloat(item.data.sellPrice)) + (item.count * parseFloat(item.data.sellPrice) * (item.tax/100))).toFixed(2) }}</span>
                   </el-col>
                   <el-col :span="2" style="text-align: center">
                     <i class="el-icon-delete-solid" style="color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
@@ -131,9 +124,9 @@
                     <span>Name:</span>
                     <el-input v-model="otherCharge.name" size="mini" />
                     <span>Amount:</span>
-                    <el-input v-model="otherCharge.amount" type="number" size="mini" />
+                    <el-input v-model="otherCharge.amount" type="number" size="mini" min="0" />
 
-                    <el-button type="primary" size="mini" @click="addOtherCharges">OK</el-button>
+                    <el-button type="primary" size="mini" style="margin-top: 10px" @click="addOtherCharges">OK</el-button>
                   </div>
                   <el-button slot="reference" type="primary" size="mini" icon="el-icon-plus" />
                 </el-popover>
@@ -144,7 +137,7 @@
                   <el-col :span="6" style="text-align: center">
                     <el-input v-model="data.amount" size="mini" style="width: 60px" />
                   </el-col>
-                  <el-col :span="3" style="text-align: left">
+                  <el-col :span="3" style="text-align: right">
                     <i class="el-icon-delete-solid" style="color: red" @click="otherChargeDelete(data)" />
                   </el-col>
                 </el-row>
@@ -160,12 +153,40 @@
               </div>
               <hr>
               <div>
-                <span>Discount :</span>
-                <span style="float:right;">0</span>
+                <span>Discount :
+                  <el-popover
+                    placement="top"
+                    title="Discount"
+                    width="200"
+                    trigger="click"
+                    content="this is content, this is content, this is content"
+                  >
+                    <div>
+                      <el-input v-model="discount" type="number" size="mini" min="0" />
+                    </div>
+                    <i slot="reference" class="el-icon-edit-outline" style="cursor:pointer" />
+                  </el-popover>
+                </span>
+                <span style="float:right;">{{ discount }}</span>
               </div>
               <div>
-                <span>Tax :</span>
-                <span style="float:right;">0</span>
+                <span>Tax :
+                  <el-popover
+                    placement="top"
+                    title="Tax"
+                    width="200"
+                    trigger="click"
+                    content="this is content, this is content, this is content"
+                  >
+                    <div>
+                      <el-input v-model="tax" type="number" size="mini" min="0" max="100">
+                        <template slot="append">%</template>
+                      </el-input>
+                    </div>
+                    <i slot="reference" class="el-icon-edit-outline" style="cursor:pointer" />
+                  </el-popover>
+                </span>
+                <span style="float:right;">{{ tax }} %</span>
               </div>
               <!-- <div>
                 <span>FOC/Other :</span>
@@ -176,7 +197,7 @@
 
               <div>
                 <span>Net Ammount :</span>
-                <span style="float:right;">0</span>
+                <span style="float:right;">{{ (total+OtherChargeTotal) + (total+OtherChargeTotal)*(tax/100)- discount }}</span>
               </div>
               <hr>
               <div>
@@ -199,7 +220,7 @@
               <hr>
 
               <div style="text-align: right">
-                <el-button type="primary">Pay Now</el-button>
+                <el-button type="primary" @click="printClick">Pay Now</el-button>
                 <el-button type="primary">Pending</el-button>
               </div>
 
@@ -273,6 +294,96 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <el-dialog
+      :visible.sync="print"
+    >
+      <div id="printMe">
+        <div id="saleHeader" style="text-align:center; padding: 25px">
+          <h3>Sale</h3>
+          <div>Sale Receipt</div>
+          <h4>INVOICE</h4>
+          <div style="margin: 5px; color: #000000; font-weight: 600">
+            <span style="float: left"> Invoice Id : {{ Date.now() }}</span>
+            <span style="float: right">Date : {{ today.split(',')[0] }}</span>
+          </div><br>
+          <div style="margin: 5px; color: #000000; font-weight: 600">
+            <span style="float: left">Sold To : {{ customer }} </span>
+            <span style="float: right">Time : {{ today.split(',')[1] }}</span>
+          </div><br>
+          <div style="margin: 5px; color: #000000; font-weight: 600">
+            <span style="float: left">Sold By : {{ $store.getters.curUserInfo.username }}</span>
+          </div><br>
+          <div style="margin: 5px; color: #000000; font-weight: 600">
+            <span style="float: left">Phone : </span>
+          </div><br>
+          <div style="margin: 5px; color: #000000; font-weight: 600">
+            <span style="float: left">Address : </span>
+          </div><br>
+        </div>
+        <div style="margin: 25px">
+          <table style="width: 100%">
+            <thead>
+              <tr style="text-align:center">
+                <th style="width: 30%; text-align: left">Items</th>
+                <th style="width: 10%">Qty</th>
+                <th style="width: 20%">Price</th>
+                <th style="width: 20%">Discount</th>
+                <th style="width: 20%; text-align:right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item,i) of selectedItemList" id="trh" :key="i" style="text-align:center;border-bottom: 1px solid #dddddd;">
+                <td style="text-align: left">{{ item.data.productName }}({{ item.data.unitName }})</td>
+                <td>{{ item.count }}</td>
+                <td>{{ item.data.sellPrice }} MMK</td>
+                <td>{{ tax }}%</td>
+                <td style="text-align:right">{{ ((item.count * parseFloat(item.data.sellPrice)) + (item.count * parseFloat(item.data.sellPrice) * (item.tax/100))).toFixed(2) }} MMK</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td style="color: #000000b5;font-weight: bolder;">Other Charges : </td>
+                <td colspan="4">
+                  <div v-for="(data,i) of otherChargesList" :key="i">
+
+                    <span>{{ data.name }} : </span>
+
+                    <span> {{ data.amount }} MMK</span>
+                  </div>
+                </td>
+              </tr>
+
+            </tfoot>
+          </table>
+          <div id="footer" style="padding: 10px">
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Discount : </span>
+              <span style="float: right">{{ discount }} </span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Tax : </span>
+              <span style="float: right">{{ tax }} %</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Sub Total : </span>
+              <span style="float: right">{{ total }} MMK</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Other Total : </span>
+              <span style="float: right">{{ OtherChargeTotal }} MMK</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Grand Total : </span>
+              <span style="float: right">{{ (total+OtherChargeTotal) + (total+OtherChargeTotal)*(tax/100)- discount }} MMK</span>
+            </div><br>
+          </div>
+        </div>
+      </div>
+      <div style="height: 25px">
+        <el-button type="primary" style="float: right" @click="printData">Print</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -286,6 +397,19 @@ export default {
 </script>
 
 <style scoped>
+/* #trh td{
+   border-bottom: 1px solid #dddddd;
+    padding: 8px;
+} */
+   table,
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #d8b7b7;
+        border-top: 1px solid #d8b7b7;
+        border-collapse: collapse;
+      }
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */
