@@ -11,6 +11,8 @@ import { UnitsService } from './units.service';
 import { OutUnitsDto } from './dto/out-units.dto';
 import { InCreateUnitsDto } from './dto/in-create-units.dto';
 import { Units } from './units.entity';
+import { OutUnitsListDto } from './dto/out-units-list.dto';
+import { UnitsDto } from './dto/units.dto';
 
 @Controller('units')
 @ApiTags('units')
@@ -162,4 +164,28 @@ export class UnitsController {
             throw error;
         }
     }
+
+      //get Parent Units
+      @HttpCode(HttpStatus.OK)
+      @ApiResponse({
+        status: HttpStatus.OK,
+        type: OutUnitsListDto,
+        description: ''
+      })
+      @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
+      @ApiParam({ name: 'id'})
+      @Get(':id')
+      async getParentUnitWithId(@Param('id',ParseIntPipe) id){        
+        try {
+          return plainToClass(
+            OutUnitsListDto,
+            await this.unitsService.getParentUnitWithId({id})
+          );
+        } catch (error) {
+            console.log(error)
+          throw error;
+        }
+      }
+
+
 }

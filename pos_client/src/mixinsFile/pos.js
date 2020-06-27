@@ -1,21 +1,20 @@
-
+import { getCategory } from '@/api/category'
+import { getBrandList } from '@/api/brand'
+import { getCustomerList } from '@/api/customer'
+import { getProductList } from '@/api/product'
 export const POS = {
   data: function() {
     return {
+      baseUrl: process.env.VUE_APP_BASE_API,
+      device: this.$store.state.app.device,
       pos: 'pos',
-      searchValue: '',
+      searchProduct: '',
+      searchCategory: '',
+      searchBrand: '',
       searchType: '',
-      customer: '',
-      customerList: [
-        {
-          value: 'Mg Mg',
-          id: 1
-        },
-        {
-          value: 'Ma Ma',
-          id: 2
-        }
-      ],
+      today: new Date().toLocaleString(),
+      customer: 'walk-in',
+      customerData: '',
       num: 0,
       otherChargesList: [],
       otherCharge: {
@@ -23,55 +22,313 @@ export const POS = {
         amount: 0
       },
       name: '',
-      amount: 0
+      amount: 0,
+      itemList: [
+        {
+          code: 'code1',
+          name: 'p1',
+          type: 'type',
+          price: 100
+        },
+        {
+          code: 'code2',
+          name: 'p2',
+          type: 'type',
+          price: 200
+        },
+        {
+          code: 'code1',
+          name: 'p1',
+          type: 'type',
+          price: 100
+        },
+        {
+          code: 'code2',
+          name: 'p2',
+          type: 'type',
+          price: 200
+        }
+      ],
+      categoryList: [],
+      brandList: [],
+      dialogVisible: false,
+      popVisible: false,
+      selectedItemList: [],
+      selectedItem: '',
+      catActive: '',
+      total: 0,
+      OtherChargeTotal: 0,
+      discount: 0,
+      tax: 0,
+      customerCreateVisible: false,
+      customersCreateForm: {
+        name: '',
+        email: '',
+        phone: '',
+        imageUrl: '',
+        addressOne: '',
+        addressTwo: '',
+        city: '',
+        stateOrProvince: '',
+        zipCode: '',
+        country: '',
+        comments: '',
+        internalNotes: '',
+        companyName: '',
+        account: ''
+      },
+      printDataValue: {
+        invoiceId: Date.now(),
+        customer: '',
+        date: '',
+        time: '',
+        casher: '',
+        soldItemsList: [],
+        otherChargesList: [],
+        tax: 0,
+        discount: 0,
+        subTotal: 0,
+        grandTotal: 0,
+        otherCharges: 0
+      },
+
+      print: false
     }
   },
   created() {
     const self = this
+    this.getCategory()
+    this.getProductList()
     self.$store.dispatch('app/setBackHandle', true)
     window.onpopstate = function() {
       localStorage.setItem('back', true)
     }
-
   },
   methods: {
+    printData() {
+      this.sendPrintData()
+      this.$htmlToPaper('printMe')
+    },
+    sendPrintData() {
+      this.printDataValue = {
+        invoiceId: Date.now(),
+        date: this.today.split(',')[0],
+        time: this.today.split(',')[1],
+        customer: this.customerData,
+        casher: this.$store.getters.curUserInfo,
+        soldItemsList: this.selectedItemList,
+        otherChargesList: this.otherChargesList,
+        tax: this.tax,
+        discount: this.discount,
+        subTotal: this.total,
+        otherCharges: this.OtherChargeTotal,
+        grandTotal: (this.total + this.OtherChargeTotal) + (this.total + this.OtherChargeTotal) * (this.tax / 100) - this.discount
+      }
+      console.log('print data', this.printDataValue)
+      this.$store
+        .dispatch('customer/createCustomer', this.printDataValue)
+        .then(() => {
+          this.print = false
+        })
+        .catch(() => {
+          console.log('print Error')
+        })
+    },
+    printClick() {
+      this.print = true
+      // Pass the element id here
+      // this.$htmlToPaper('printMe');
+    },
+
+    async getProductList() {
+      const params = {
+        q: this.searchProduct ? this.searchProduct : ''
+      }
+
+      this.listLoading = true
+      await getProductList(params).then(response => {
+        this.itemList = response.data
+        console.log('product', this.itemList)
+      })
+    },
+
+    catOver(i) {
+      this.catActive = i
+    },
+    preCat() {
+      var cat = document.getElementById('cat')
+      cat.scrollLeft -= 200
+    },
+
+    nextCat() {
+      var cat = document.getElementById('cat')
+      cat.scrollLeft += 200
+    },
+
+    chooseCatecory(data) {
+      console.log('categor', data)
+    },
+
+    popShow(data) {
+      this.selectedItem = data
+      this.dialogVisible = true
+    },
+
+    addSaleItem(item) {
+      const selected = {
+        data: item,
+        tax: this.selectedItem.taxPercent,
+        count: 1
+      }
+      var exists = this.selectedItemList.some(function(field) {
+        var flag = field.data.id === selected.data.id
+        if (flag) {
+          field.count += 1
+        }
+        return flag
+      })
+      if (!exists) {
+        this.selectedItemList.push(selected)
+      }
+      this.dialogVisible = false
+      console.log('selectitem', selected)
+      this.setTotal()
+    },
+
+    removeItem(i) {
+      this.selectedItemList.splice(i, 1)
+    },
+
+    setTotal() {
+      this.total = 0
+      for (const i of this.selectedItemList) {
+        this.total += (parseFloat(i.data.sellPrice) * i.count) + ((parseFloat(i.data.sellPrice) * i.count) * i.tax / 100)
+      }
+    },
+
+    async getCategory() {
+      const params = {
+      }
+      await getCategory(params).then(response => {
+        this.categoryList = response.data
+      })
+    },
+
+    async getAllProduct() {
+    },
+
+    async customerSearch(q, cb) {
+      const params = {
+        q: q
+      }
+      await getCustomerList(params).then(response => {
+        this.customersData = response.data
+        cb(response.data)
+      })
+    },
+
+    async productSearch(q, cb) {
+      const params = {
+        q: q
+      }
+
+      this.listLoading = true
+      await getProductList(params).then(response => {
+        // this.itemList = response.data
+        cb(response.data)
+      })
+    },
+    async categorySearch(q, cb) {
+      const params = {
+        q: q
+      }
+      await getCategory(params).then(response => {
+        this.categoryList = response.data
+        cb(response.data)
+      })
+    },
+    async brandSearch(q, cb) {
+      const params = {
+        q: q
+      }
+      await getBrandList(params).then(response => {
+        this.brandList = response.data
+        cb(response.data)
+      })
+    },
+    async createCustomer() {
+      this.$store
+        .dispatch('customer/createCustomer', this.customersCreateForm)
+        .then(() => {
+          this.customerCreateVisible = false
+        })
+        .catch(() => {
+          console.log('Create customer error')
+        })
+    },
+
+    resetCreateCustomersForm() {
+      this.customersCreateForm.name = ''
+      this.customersCreateForm.email = ''
+      this.customersCreateForm.phone = ''
+      this.customersCreateForm.imageUrl = ''
+      this.customersCreateForm.addressOne = ''
+      this.customersCreateForm.addressTwo = ''
+      this.customersCreateForm.city = ''
+      this.customersCreateForm.stateOrProvince = ''
+      this.customersCreateForm.zipCode = ''
+      this.customersCreateForm.country = ''
+      this.customersCreateForm.comments = ''
+      this.customersCreateForm.internalNotes = ''
+      this.customersCreateForm.companyName = ''
+      this.customersCreateForm.account = ''
+    },
     setBackHandle() {
 
     },
-    searchClick() {
+    async searchClick() {
       console.log('rou', this.$route.name)
-      console.log('search', this.searchType)
-      console.log('search', this.searchValue)
+
+      const params = {
+        product: this.searchProduct ? this.searchProduct : '',
+        brand: this.searchBrand ? this.searchBrand : '',
+        category: this.searchCategory ? this.searchCategory : ''
+      }
+      await getProductList(params).then(response => {
+        this.itemList = response.data
+        console.log(this.itemList)
+      })
     },
     change(val) {
       console.log(val)
-    },
-
-    querySearch(queryString, cb) {
-      const customer = this.customerList
-      const results = queryString ? customer.filter(this.createFilter(queryString)) : customer
-      // call callback function to return suggestions
-      cb(results)
-    },
-    createFilter(queryString) {
-      return (link) => {
-        return (link.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0)
-      }
+      console.log(this.categoryList[val])
     },
     handleSelect(val) {
+      this.customerData = val
       console.log(val)
     },
     addOtherCharges() {
+      console.log(this.popVisible)
       if (!this.otherCharge.name) {
         return
       }
+      this.popVisible = false
       this.otherChargesList.push({ name: this.otherCharge.name, amount: this.otherCharge.amount })
-      // this.otherCharge.name = ''
-      // this.otherCharge.amount = 0
+      this.otherCharge.name = ''
+      this.otherCharge.amount = 0
       console.log(this.otherCharge.name)
+      this.setOtherTotal()
+    },
+    setOtherTotal() {
+      this.OtherChargeTotal = 0
+      for (const i of this.otherChargesList) {
+        this.OtherChargeTotal += parseFloat(i.amount)
+      }
+      console.log('othertotal', this.OtherChargeTotal)
     },
     otherChargeDelete(data) {
       this.otherChargesList.splice(this.otherChargesList.indexOf(data), 1)
+      this.setOtherTotal()
     }
   }
 

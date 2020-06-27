@@ -76,7 +76,7 @@ export const constantRoutes = [
       path: 'index',
       name: 'User',
       component: () => import('@/views/user/index'),
-      meta: { title: 'User(Example)', icon: 'user' }
+      meta: { title: 'User', icon: 'user' }
     }]
   },
 
@@ -99,7 +99,7 @@ export const constantRoutes = [
       path: 'index',
       name: 'UnitOfMeasure',
       component: () => import('@/views/unit/index'),
-      meta: { title: 'UnitOfMeasure', icon: 'ruler' }
+      meta: { title: 'UnitOfMeasure', icon: 'cup-measuring' }
 
     }]
   },
@@ -151,6 +151,88 @@ export const constantRoutes = [
     }]
   },
 
+  {
+    path: '/category',
+    component: Layout,
+    redirect: '/category',
+    children: [{
+      path: 'index',
+      permission: 'M001B00',
+      name: 'Category',
+      component: () => import('@/views/category/index'),
+      meta: { title: 'Category', icon: 'tree' }
+    }]
+  },
+
+  {
+    path: '/brand',
+    component: Layout,
+    redirect: '/brand',
+    children: [{
+      path: 'index',
+      permission: 'M001B00',
+      name: 'Brand',
+      component: () => import('@/views/brand/index'),
+      meta: { title: 'Brand', icon: 'tree' }
+    }]
+  },
+
+  {
+    path: '/product',
+    component: Layout,
+    redirect: '/product',
+    children: [{
+      path: 'index',
+      permission: 'M001B00',
+      name: 'Product',
+      component: () => import('@/views/product/index'),
+      meta: { title: 'Product', icon: 'tree' }
+    }]
+  },
+  {
+    path: '/branch',
+    component: Layout,
+    redirect: '/branch',
+    children: [{
+      path: 'index',
+      name: 'Branch',
+      component: () => import('@/views/branch/index'),
+      meta: { title: 'Branch', icon: 'tree' }
+    }]
+  },
+  {
+    path: '/dailyreport',
+    component: Layout,
+    redirect: '/dailyreport',
+    children: [{
+      path: 'index',
+      name: 'Dailyreport',
+      component: () => import('@/views/dailyreport/index'),
+      meta: { title: 'Dailyreport', icon: 'tree' }
+    }]
+  },
+
+  {
+    path: '/example',
+    component: Layout,
+    redirect: '/example/table',
+    name: 'Example',
+    meta: { title: 'Example', icon: 'example' },
+    children: [
+      {
+        path: 'table',
+        name: 'Table',
+        component: () => import('@/views/table/index'),
+        meta: { title: 'Table', icon: 'table' }
+      },
+      {
+        path: 'tree',
+        name: 'Tree',
+        component: () => import('@/views/tree/index'),
+        meta: { title: 'Tree', icon: 'tree' }
+      }
+    ]
+  },
   // {
   //   path: '/example',
   //   component: Layout,

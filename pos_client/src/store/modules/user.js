@@ -1,4 +1,4 @@
-import { getInfo, login, createUser } from '@/api/user'
+import { getInfo, login, createUser, updateUser, deleteUser } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -70,6 +70,30 @@ const actions = {
   async createUser({ commit }, userForm) {
     return await new Promise((resolve, reject) => {
       createUser(userForm).then(response => {
+        resolve(resolve)
+      }).catch(error => {
+        console.log(error)
+        reject(error)
+      })
+    })
+  },
+
+  // Delete User
+  async deleteUser({ commit }, userForm) {
+    return await new Promise((resolve, reject) => {
+      deleteUser(userForm).then(response => {
+        resolve(resolve)
+      }).catch(error => {
+        console.log(error)
+        reject(error)
+      })
+    })
+  },
+
+  // Create User
+  async updateUser({ commit }, userForm) {
+    return await new Promise((resolve, reject) => {
+      updateUser(userForm.userid, userForm).then(response => {
         resolve(resolve)
       }).catch(error => {
         console.log(error)

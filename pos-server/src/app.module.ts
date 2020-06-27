@@ -7,13 +7,16 @@ import { AuthModule } from './auth/auth.module';
 import { SharedModule } from './shared/shared.module';
 import { contextMiddleware } from './common/middlewares';
 import { PermissionModule } from './permission/permission.module';
-import { CategoryModule } from './category/category.module';
 import { CompanyModule } from './company/company.module';
 import { WarehouseModule } from './warehouse/warehouse.module';
-import { BrandModule } from './brand/brand.module';
 import { UnitsModule } from './units/units.module';
 import { CustomersModule } from './customers/customers.module';
 import { SuppliersModule } from './suppliers/suppliers.module';
+import { CategoryModule } from './category/category.module';
+import { BranchModule } from './branch/branch.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { BrandModule } from './brand/brand.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [   
@@ -46,13 +49,15 @@ import { SuppliersModule } from './suppliers/suppliers.module';
     CategoryModule,
     CompanyModule,
     WarehouseModule,
-    BrandModule,
     UnitsModule,
     CustomersModule,
-    SuppliersModule
-
+    SuppliersModule,
+    BranchModule,
+    DashboardModule,
+    BrandModule,
+    ProductsModule
   ],
-
+exports: [TypeOrmModule]
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer): MiddlewareConsumer | void {

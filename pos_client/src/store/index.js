@@ -10,6 +10,10 @@ import permission from './modules/permission'
 import customer from './modules/customer'
 import company from './modules/company'
 import supplier from './modules/supplier'
+import category from './modules/category'
+import branch from './modules/branch'
+import brand from './modules/brand'
+import product from './modules/product'
 
 Vue.use(Vuex)
 
@@ -23,7 +27,11 @@ const store = new Vuex.Store({
     warehouse,
     customer,
     company,
-    supplier
+    supplier,
+    category,
+    branch,
+    brand,
+    product
   },
   getters
 

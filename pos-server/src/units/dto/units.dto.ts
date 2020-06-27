@@ -1,7 +1,9 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Exclude } from "class-transformer";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class UnitsDto {
+
+    @ApiProperty()
+    id: number;
 
     @ApiProperty()
     unitName: string;

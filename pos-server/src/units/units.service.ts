@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, NotAcceptableException } from '@nestjs/common';
+import { Injectable, NotFoundException, NotAcceptableException, ConflictException, Options } from '@nestjs/common';
 import { Units } from './units.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -16,16 +16,24 @@ export class UnitsService {
 
     async create(options: { item: Units; }): Promise<any> {
         try {
+           await this.findByByUnitName({unitName: options.item.unitName}); 
            options.item.createDateTime = new Date();
-           return await this.unitsRepository.save(options.item);
+           return { data: await this.unitsRepository.save(options.item)};
 
-
-        } catch (error) {
-            if(error.code === '23505'){
-                throw new NotAcceptableException('Unit Name is already exists.')
-            }            
+        } catch (error) {           
             throw error;
         }   
+    }
+    async findByByUnitName(options: { unitName: string; }) {
+        let unit;
+        try {
+            unit = await this.unitsRepository.findOneOrFail({ unitName: options.unitName,delFlg: '0' });
+        } catch (error) {
+            unit = undefined;
+        }
+        if (unit && unit.unitName === options.unitName) {
+            throw new ConflictException(`User with userId "${options.unitName}" is exists`);
+        }
     }
 
     async delete(options: { item: Units; }): Promise<any> {
@@ -34,7 +42,7 @@ export class UnitsService {
             const unit = await this.findById({ id: options.item.id });  
             unit.delFlg = '1';
             await this.unitsRepository.update({id: unit.id},unit);
-            return options.item;
+            return {data: options.item };
         } catch (error) {
             throw error;  
         }
@@ -43,14 +51,15 @@ export class UnitsService {
         let item;
         try {
            
-            item = await this.unitsRepository.findOneOrFail({
+            item = await this.unitsRepository.findOne({
                 where: {
-                    childUnitId: options.id
+                    childUnitId: options.id,
+                    delFlg: '0'
                 },
             });
-    
+            
         } catch (error) {
-          return;  
+          return error;  
         }
         if(item){
             throw new NotAcceptableException('Unit Name is already used in Another Child.')  
@@ -60,8 +69,8 @@ export class UnitsService {
     async update(options: { id: any; item: Units; }): Promise<any> {
         try {
             await this.findById({ id: options.id });  
-            await this.unitsRepository.update({id: options.id},options.item);
-            return options.item;
+            await this.unitsRepository.update({id: options.id, delFlg: '0'},options.item);
+            return {data: options.item};
         } catch (error) {
             if(error.code === '23505'){
                 throw new NotAcceptableException('Unit Name is already exists.')
@@ -74,7 +83,8 @@ export class UnitsService {
            
             const item = await this.unitsRepository.findOneOrFail({
                 where: {
-                    id: options.id
+                    id: options.id,
+                    delFlg: '0'
                 },
             });
 
@@ -118,11 +128,37 @@ export class UnitsService {
     
         return {
             data: plainToClass(UnitsDto,objects[0]),
-            all: plainToClass(UnitsDto,await this.unitsRepository.find()),
+            all: plainToClass(UnitsDto,await this.unitsRepository.find({delFlg: '0',childUnitId: null})),
             meta: plainToClass(PageMetaDto,metaPage)
         };
        } catch (error) {
            throw new error;
        } 
     }
+
+    async getSmallestUnit() {
+        let objects: [Units[], number];
+        let qb = this.unitsRepository.createQueryBuilder('unit');
+        qb = qb.where('unit.delFlg = :d AND ( unit.childUnitId is null OR unit.childUnitId = :i)' ,{
+            d: '0',
+            i: ''
+        });
+        // eslint-disable-next-line prefer-const
+        objects = await qb.getManyAndCount();
+        return await plainToClass(UnitsDto, objects[0]);
+    }
+
+    async getParentUnitWithId(options: { id: number; }){
+        let objects: [Units[], number];
+        let qb = this.unitsRepository.createQueryBuilder('unit');
+        qb = qb.where('unit.delFlg = :d AND ( unit.childUnitId = :i OR unit.id = :i )' ,{
+            d: '0',
+            i: options.id
+        });
+        // eslint-disable-next-line prefer-const
+        objects = await qb.getManyAndCount();
+        return {data: await plainToClass(UnitsDto, objects[0])};
+    }
+    
+
 }

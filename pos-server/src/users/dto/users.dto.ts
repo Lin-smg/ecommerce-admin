@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { Exclude } from "class-transformer";
+//import { Exclude } from "class-transformer";
 
 
 export class UsersDto {
@@ -10,7 +10,6 @@ export class UsersDto {
     @ApiProperty()
     username: string;
 
-    @Exclude()
     @ApiProperty()
     password: string;
 
@@ -28,6 +27,9 @@ export class UsersDto {
 
     @ApiProperty()
     department: string;
+
+    @ApiProperty()
+    departmentname: string;
 
     @ApiPropertyOptional()
     email: string;
