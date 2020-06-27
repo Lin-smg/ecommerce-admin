@@ -60,6 +60,7 @@ export const POS = {
       OtherChargeTotal: 0,
       discount: 0,
       tax: 0,
+      taxInclude: false,
       customerCreateVisible: false,
       customersCreateForm: {
         name: '',
@@ -105,6 +106,9 @@ export const POS = {
     }
   },
   methods: {
+    setFocus(val) {
+      this.$refs[val][0].focus()
+    },
     printData() {
       this.sendPrintData()
       this.$htmlToPaper('printMe')
@@ -178,6 +182,7 @@ export const POS = {
       const selected = {
         data: item,
         tax: this.selectedItem.taxPercent,
+        discount: 0,
         count: 1
       }
       var exists = this.selectedItemList.some(function(field) {
@@ -201,8 +206,10 @@ export const POS = {
 
     setTotal() {
       this.total = 0
+      this.tax = 0
       for (const i of this.selectedItemList) {
-        this.total += (parseFloat(i.data.sellPrice) * i.count) + ((parseFloat(i.data.sellPrice) * i.count) * i.tax / 100)
+        this.total += (parseFloat(i.data.sellPrice) * i.count) // + ((parseFloat(i.data.sellPrice) * i.count) * i.tax / 100)
+        this.tax += (parseFloat(i.data.sellPrice) * i.tax / 100 * i.count)
       }
     },
 
