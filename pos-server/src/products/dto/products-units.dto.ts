@@ -1,6 +1,8 @@
 
 export class ProductsUnitsDto {
 
+    id: number;
+
     productId: number;
 
     productCode: string;
@@ -20,5 +22,7 @@ export class ProductsUnitsDto {
     sellPrice: number;
 
     effectiveDate: Date;
+
+    activeStatus: string;
     
 }

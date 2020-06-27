@@ -1,5 +1,6 @@
 import { getProductList, deletePhoto, getPKGWithSmallestUnit } from '@/api/product'
 import { getSupplierList } from '@/api/supplier'
+import { Message } from 'element-ui'
 export const Product = {
   data() {
     return {
@@ -22,6 +23,8 @@ export const Product = {
       selectedBrand: '',
       selectedSupplier: '',
       timeout: null,
+      selectedUnitForUpdate: [],
+      listLoading: true,
       rules: {
         productCode: [
           { required: true, message: 'Please input Product Code', trigger: 'blur' }
@@ -63,6 +66,7 @@ export const Product = {
     },
     initProductForm() {
       return {
+        id: null,
         productCode: '',
         productName: '',
         categoryCode: '',
@@ -96,16 +100,28 @@ export const Product = {
         this.packageUnitList = []
         this.createProductForm.unit = []
         for (const obj of response.data) {
-          const data = {
-            id: obj.id,
-            unitName: obj.unitName,
-            childUnitId: obj.childUnitId,
-            childUnitName: obj.childUnitName
+          if (this.activeName === 'add') {
+            this.createProductForm.unit.push(obj)
           }
-          if (data.id === this.selectedUnit.id) {
-            this.createProductForm.unit.push(data)
+          // this.packageUnitList.push(obj)
+        }
+        this.listLoading = false
+      })
+    },
+    async changeSelectedUnitForUpdate() {
+      this.listLoading = true
+      const id = this.selectedUnit.id
+      await getPKGWithSmallestUnit(id).then(response => {
+        for (var obj of response.data) {
+          var editData = this.selectedUnitForUpdate.find(x => x.unitId === obj.id)
+          if (editData) {
+            obj = editData
+            obj.isActive = true
+          } else {
+            obj.isActive = false
           }
-          this.packageUnitList.push(data)
+
+          this.updateProductForm.unit.push(obj)
         }
         this.listLoading = false
       })
@@ -176,12 +192,13 @@ export const Product = {
 
     // //
     handleTab(tab) {
-      if (tab === 'view') {
+      if (tab === 'view' || tab === 'add') {
         this.createProductForm = this.initProductForm()
         this.selectedUnit = ''
         this.selectedCategory = ''
         this.selectedBrand = ''
         this.selectedSupplier = ''
+        this.imageUrl = ''
         this.getProductList()
       }
       this.activeName = tab
@@ -189,6 +206,14 @@ export const Product = {
 
     createOk() {
       this.$refs.createForm.validate(valid => {
+        if (this.createProductForm.unit.length === 0) {
+          Message({
+            message: 'Please select unit',
+            type: 'error',
+            duration: 5 * 1000
+          })
+          return false
+        }
         if (valid) {
           this.createProductForm.unitId = this.selectedUnit.id
           this.createProductForm.unitName = this.selectedUnit.unitName
@@ -211,21 +236,45 @@ export const Product = {
     createReset() {
 
     },
-
+    changeActiveCheckbox(row) {
+      row.isActive = !row.isActive
+    },
     updateOk() {
-
+      console.log(this.updateProductForm.unit)
     },
     updateReset() {
 
     },
 
-    editClick(data) {
+    async editClick(data) {
       this.handleTab('update')
-      this.product = data
+      this.selectedUnitForUpdate = data.unit
+      this.updateProductForm = data
+      this.selectedCategory = {
+        categoryCode: data.categoryCode,
+        categoryName: data.categoryName
+      }
+      this.selectedBrand = {
+        brandCode: data.brandCode,
+        brandName: data.brandName
+      }
+      this.selectedSupplier = data.supplierName
+      this.selectedUnit = {
+        id: data.unitId,
+        unitName: data.unitName
+      }
+      this.imageUrl = this.baseUrl + data.imgPath
+      if (data.imgPath !== '') {
+        this.oldFileName = data.imgPath.substring(data.imgPath.lastIndexOf('/'))
+      } else {
+        this.oldFileName = ''
+      }
+      this.updateProductForm.unit = []
+      this.changeSelectedUnitForUpdate()
     },
-
     deleteProduct(data) {
 
     }
   }
 }
+

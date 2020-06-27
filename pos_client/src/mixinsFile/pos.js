@@ -1,7 +1,7 @@
 import { getCategory } from '@/api/category'
 import { getBrandList } from '@/api/brand'
 import { getCustomerList } from '@/api/customer'
-import { getProductList } from '@/api/product'
+import { getProductList, getPOSProductList } from '@/api/product'
 export const POS = {
   data: function() {
     return {
@@ -227,15 +227,15 @@ export const POS = {
       })
     },
 
-    async productSearch(q, cb) {
+    async productAutoCompleteSearch(q, cb) {
       const params = {
         q: q
       }
 
       this.listLoading = true
       await getProductList(params).then(response => {
-        // this.itemList = response.data
-        cb(response.data)
+        this.itemList = response.data
+        // cb(response.data)
       })
     },
     async categorySearch(q, cb) {
@@ -287,14 +287,12 @@ export const POS = {
 
     },
     async searchClick() {
-      console.log('rou', this.$route.name)
-
       const params = {
         product: this.searchProduct ? this.searchProduct : '',
         brand: this.searchBrand ? this.searchBrand : '',
         category: this.searchCategory ? this.searchCategory : ''
       }
-      await getProductList(params).then(response => {
+      await getPOSProductList(params).then(response => {
         this.itemList = response.data
         console.log(this.itemList)
       })

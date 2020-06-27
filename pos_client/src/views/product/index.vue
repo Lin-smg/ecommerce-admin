@@ -124,15 +124,15 @@
         </div>
       </el-tab-pane>
       <el-tab-pane label="Add Product" name="add">
-        <el-form ref="createForm" :model="createProductForm" :rules="rules" label-width="220px" style="width: 500px">
-          <el-form-item label="Product Code" prop="productCode">
-            <el-input v-model="createProductForm.productCode" type="text" placeholder="" autocomplete="off" />
+        <el-form ref="createForm" :model="createProductForm" :rules="rules" label-width="220px" style="width: 800px">
+          <el-form-item label="Product Code" prop="productCode" required>
+            <el-input v-model="createProductForm.productCode" type="text" placeholder="" autocomplete="off" style="width: 280px" />
           </el-form-item>
-          <el-form-item label="Product Name" prop="productName">
-            <el-input v-model="createProductForm.productName" type="text" placeholder="" autocomplete="off" />
+          <el-form-item label="Product Name" prop="productName" required>
+            <el-input v-model="createProductForm.productName" type="text" placeholder="" autocomplete="off" style="width: 280px" />
           </el-form-item>
           <el-form-item label="Product Description" prop="productDescription">
-            <el-input v-model="createProductForm.description" type="textarea" placeholder="" autocomplete="off" />
+            <el-input v-model="createProductForm.description" type="textarea" placeholder="" autocomplete="off" style="width: 280px" />
           </el-form-item>
           <el-form-item label="Category" prop="category">
             <el-select v-model="selectedCategory" value-key="categoryName" placeholder="Select" style="width: 280px">
@@ -178,7 +178,10 @@
               placeholder="Expire Date"
             />
           </el-form-item>
-          <el-form-item label="Unit" prop="Unit">
+          <el-form-item
+            label="Unit"
+            prop="Unit"
+          >
             <el-select v-model="selectedUnit" value-key="unitName" placeholder="Select" style="width: 280px" @change="changeSelectedUnit">
               <el-option
                 v-for="item of unitList"
@@ -188,16 +191,42 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item v-if="packageUnitList.length !== 0" label="Unit Package" prop="PKG">
-            <el-checkbox-group v-model="createProductForm.unit" value-key="unitName">
-              <el-checkbox v-for="(item,i) in packageUnitList" :key="i" :disabled="item.id===selectedUnit.id?true:false" :label="item">{{ item.unitName }}&nbsp;&nbsp; <span v-if="item.id !== selectedUnit.id">( {{ item.childUnitQty }} {{ item.childUnitName }} / {{ item.unitName }} )<span /></span></el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
+          <el-table v-if="createProductForm.unit.length !== 0" v-loading="listLoading" :data="createProductForm.unit" border fit highlight-current-row size="small" style="width: 502px">
+            <el-table-column align="left" label="Unit Name" width="220">
+              <template slot-scope="{row}">
+                <span>{{ row.unitName }}&nbsp;&nbsp; <span v-if="row.id !== selectedUnit.id"> ( {{ row.childUnitQty }} {{ row.childUnitName }} / {{ row.unitName }} )</span></span>
+              </template>
+            </el-table-column>
+            <el-table-column width="280" label="Sell-Price">
+              <template slot-scope="{row}">
+                <template>
+                  <el-input
+                    v-model.number="row.sellPrice"
+                    class="edit-input"
+                    size="small"
+                  />
+                </template>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column label="Effective Date" width="250">
+              <template slot-scope="{row}">
+                <template>
+                  <el-date-picker
+                    v-model="row.effectiveDate"
+                    type="date"
+                    placeholder="Effective Date"
+                    size="small"
+                  />
+                </template>
+              </template>
+            </el-table-column> -->
+          </el-table>
+          <br>
           <el-form-item label="Re-Order Limit" prop="reOrder">
-            <el-input v-model="createProductForm.reOrder" type="number" min="0" placeholder="0" autocomplete="off" />
+            <el-input v-model="createProductForm.reOrder" type="number" min="0" placeholder="0" autocomplete="off" style="width: 280px" />
           </el-form-item>
           <el-form-item label="Tax %" prop="reOrder">
-            <el-input v-model="createProductForm.taxPercent" type="number" min="0" placeholder="0" autocomplete="off" />
+            <el-input v-model="createProductForm.taxPercent" type="number" min="0" placeholder="0" autocomplete="off" style="width: 280px" />
           </el-form-item>
 
           <el-form-item label="image" prop="image">
@@ -219,21 +248,21 @@
         </el-form>
 
       </el-tab-pane>
-      <!-- <el-tab-pane label="Edit Products" name="update" :disabled="true">
-        <el-form ref="createForm" label-width="220px" style="width: 500px">
-          <el-form-item label="Labeler Code" prop="labelerCode">
-            <el-input v-model="product.labelerCode" type="text" placeholder="" autocomplete="off" />
-          </el-form-item>
+      <el-tab-pane label="Edit Products" name="update" :disabled="true">
+        <el-form ref="updateForm" :model="updateProductForm" :rules="rules" label-width="220px" style="width: 800px">
           <el-form-item label="Product Code" prop="productCode">
-            <el-input v-model="product.productCode" type="text" placeholder="" autocomplete="off" />
+            <el-input v-model="updateProductForm.productCode" type="text" :disabled="true" placeholder="" autocomplete="off" style="width: 280px" />
           </el-form-item>
           <el-form-item label="Product Name" prop="productName">
-            <el-input v-model="product.productName" type="text" placeholder="" autocomplete="off" />
+            <el-input v-model="updateProductForm.productName" type="text" placeholder="" autocomplete="off" style="width: 280px" />
+          </el-form-item>
+          <el-form-item label="Product Description" prop="productDescription">
+            <el-input v-model="updateProductForm.description" type="textarea" placeholder="" autocomplete="off" style="width: 280px" />
           </el-form-item>
           <el-form-item label="Category" prop="category">
-            <el-select v-model="product.category" placeholder="Select" style="width: 280px">
+            <el-select v-model="selectedCategory" value-key="categoryName" placeholder="Select" style="width: 280px">
               <el-option
-                v-for="item in categoryList"
+                v-for="item of categoryList"
                 :key="item.categoryCode"
                 :label="item.categoryName"
                 :value="item"
@@ -241,85 +270,116 @@
             </el-select>
           </el-form-item>
           <el-form-item label="Brand" prop="Brand">
-            <el-select v-model="product.brand" placeholder="Select" style="width: 280px">
+            <el-select v-model="selectedBrand" value-key="brandName" placeholder="Select" style="width: 280px">
               <el-option
-                v-for="item in categoryList"
-                :key="item.categoryCode"
-                :label="item.categoryName"
+                v-for="item of brandList"
+                :key="item.brandCode"
+                :label="item.brandName"
                 :value="item"
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="TypeIndicator" prop="TypeIndicator">
-            <el-input v-model="product.typeIndicator" type="text" placeholder="" autocomplete="off" />
+          <el-form-item label="Supplier" prop="supplier">
+            <el-autocomplete
+              v-model="selectedSupplier"
+              popper-class="my-autocomplete"
+              :fetch-suggestions="querySearchAsync"
+              placeholder="Please input"
+              style="width: 280px"
+              @select="handleSelect"
+            >
+              <template slot-scope="{ item }">
+                <div class="name">{{ item.name }}</div>
+                <span class="phone">{{ item.phone }}&nbsp;&nbsp;{{ item.addressOne }}</span>
+              </template>
+              <el-button slot="append" icon="el-icon-circle-plus-outline" />
+            </el-autocomplete>
           </el-form-item>
           <el-form-item label="Exp: Date" prop="expDate">
-            <el-input v-model="product.expDate" type="text" placeholder="" autocomplete="off" />
+            <el-date-picker
+              v-model="updateProductForm.expDate"
+              style="min-width: 280px"
+              type="date"
+              placeholder="Expire Date"
+            />
           </el-form-item>
-          <el-form-item label="Unit Type" prop="unitType">
-            <el-input v-model="product.unitType" type="text" placeholder="" autocomplete="off" />
+          <el-form-item label="Unit" prop="Unit">
+            <el-select v-model="selectedUnit" value-key="unitName" :disabled="true" placeholder="Select" style="width: 280px" @change="changeSelectedUnit">
+              <el-option
+                v-for="item of unitList"
+                :key="item.id"
+                :label="item.unitName"
+                :value="item"
+              />
+            </el-select>
           </el-form-item>
-          <el-form-item label="Unit Per Pkg Size" prop="unitPerPkgSize">
-            <el-input v-model="product.unitPerPkgSize" type="text" placeholder="" autocomplete="off" />
+          <el-table v-if="updateProductForm.unit.length !== 0" v-loading="listLoading" :data="updateProductForm.unit" border fit highlight-current-row size="small" style="width: 502px">
+            <el-table-column align="left" label="Unit Name" width="220">
+              <template slot-scope="{row}">
+                <span>{{ row.unitName }}&nbsp;&nbsp; <span v-if="row.id !== selectedUnit.id"> ( {{ row.childUnitQty }} {{ row.childUnitName }} / {{ row.unitName }} )</span></span>
+              </template>
+            </el-table-column>
+            <el-table-column width="280" label="Sell-Price">
+              <template slot-scope="{row}">
+                <template>
+                  <el-input
+                    v-model.number="row.sellPrice"
+                    class="edit-input"
+                    size="small"
+                  />
+                </template>
+              </template>
+            </el-table-column>
+            <!-- <el-table-column label="Effective Date" width="239">
+              <template slot-scope="{row}">
+                <template>
+                  <el-date-picker
+                    v-model="row.effectiveDate"
+                    type="date"
+                    placeholder="Effective Date"
+                    size="small"
+                  />
+                </template>
+              </template>
+            </el-table-column> -->
+            <!-- <el-table-column align="center" label="Active" width="60">
+              <template slot-scope="{row}">
+                <template>
+                  <el-checkbox
+                    v-model="row.isActive"
+                    size="small"
+                    @change="changeActiveCheckbox(row)"
+                  />
+                </template>
+              </template>
+            </el-table-column> -->
+          </el-table>
+          <br>
+
+          <el-form-item label="Re-Order Limit" prop="reOrder">
+            <el-input v-model="updateProductForm.reOrder" type="number" min="0" placeholder="0" autocomplete="off" style="width: 280px" />
           </el-form-item>
-          <el-form-item label="FDA Approval Date" prop="FDAApprovalDate">
-            <el-input v-model="product.FDAApprovalDate" type="date" placeholder="" autocomplete="off" />
+          <el-form-item label="Tax %" prop="reOrder">
+            <el-input v-model="updateProductForm.taxPercent" type="number" min="0" placeholder="0" autocomplete="off" style="width: 280px" />
           </el-form-item>
-          <el-form-item label="Market Date" prop="marketDate">
-            <el-input v-model="product.marketDate" type="date" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="tec" prop="tec">
-            <el-input v-model="product.tec" type="text" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="FDA ProductName" prop="FDAProductName">
-            <el-input v-model="product.FDAProductName" type="text" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="Clotting Factor Indicator" prop="clottingFactorIndicator">
-            <el-input v-model="product.clottingFactorIndicator" type="text" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="Pediatric Indicator" prop="pediatricIndicator">
-            <el-input v-model="product.pediatricIndicator" type="text" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="Pkg Size Intro Date" prop="PkgSizeIntroDate">
-            <el-input v-model="product.PkgSizeIntroDate" type="date" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="Purchased Product Date" prop="purchasedProductDate">
-            <el-input v-model="product.purchasedProductDate" type="date" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="COD Status" prop="CODStatus">
-            <el-input v-model="product.CODStatus" type="text" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="OTC" prop="OTC">
-            <el-input v-model="product.OTC" type="text" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="Reactivation Date" prop="reactivationDate">
-            <el-input v-model="product.reactivationDate" type="date" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="Line Extension Indicator" prop="lineExtensionIndicator">
-            <el-input v-model="product.lineExtensionIndicator" type="text" placeholder="" autocomplete="off" />
-          </el-form-item>
-          <el-form-item label="filler" prop="filler">
-            <el-input v-model="product.filler" type="text" placeholder="" autocomplete="off" />
-          </el-form-item>
+
           <el-form-item label="image" prop="image">
             <el-upload
               style="border: 1px dashed; width: 100px; height: 100px;"
               class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              :action="imageUploadUrl"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
             >
               <img v-if="imageUrl" :src="imageUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="updateOk">Update</el-button>
-            <el-button @click="updateReset">Reset</el-button>
-          </el-form-item>
-        </el-form>
-      </el-tab-pane> -->
+            <el-form-item>
+              <el-button type="primary" @click="updateOk">Update</el-button>
+              <el-button @click="updateReset">Reset</el-button>
+            </el-form-item>
+          </el-form-item></el-form>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsOptional } from "class-validator";
-import { UnitsDto } from "../../units/dto/units.dto";
+import { ProductsUnitsDto } from "./products-units.dto";
 
 export class InCreateProductsDto {
 
@@ -65,6 +65,6 @@ export class InCreateProductsDto {
     @IsOptional()
     imgPath: string;
     
-    unit: UnitsDto[]
+    unit: ProductsUnitsDto[]
 
 }

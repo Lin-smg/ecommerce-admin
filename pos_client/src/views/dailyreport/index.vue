@@ -4,17 +4,15 @@
       <div class="header" style="margin-bottom: 10px">
         <span style="line-height: 40px">Daily Report</span>
         <el-date-picker
-          style="margin-left: 30px"
           v-model="ddate"
+          style="margin-left: 30px"
           type="date"
           placeholder="Pick a day"
           :picker-options="pickerOptions"
-
-        >
-        </el-date-picker>
+        />
         <el-button type="primary">Search</el-button>
 
-        <el-button style="float: right; margin-left: 30px" type="primary" >Export Excel</el-button>
+        <el-button style="float: right; margin-left: 30px" type="primary">Export Excel</el-button>
 
       </div>
 
@@ -88,7 +86,7 @@
             </template>
           </el-table-column>
 
-           <el-table-column align="center">
+          <el-table-column align="center">
             <template slot="header">
               <span>Net Total</span>
             </template>

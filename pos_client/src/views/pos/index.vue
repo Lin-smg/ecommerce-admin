@@ -1,33 +1,39 @@
 <template>
   <div class="pos-container">
     <div>
-      <el-row :gutter="20" style="position: absolute;" :style="{width: device === 'mobile' ? '96%' : '100%'}">
-        <div style="height: 100vh;float: left; margin-right: 8px" :style="{width: device === 'mobile' ? '53%' : '60%'}">
+      <el-row :style="{width: device === 'mobile' ? '96%' : '100%'}">
+        <div style="height: 100vh;float: left; margin-right: 0px" :style="{width: device === 'mobile' ? '53%' : '65%'}">
           <div style="margin-bottom: 10px; border: 1px solid #f3f0f0; padding: 5px; border-radius: 5px">
-            <el-autocomplete
+            <el-input
               v-model="searchProduct"
-              style="margin: 2px"
+              popper-class="my-autocomplete"
+              style="width: 340px"
               size="small"
               value-key="productName"
-              :fetch-suggestions="productSearch"
               placeholder="Search Product"
-              @select="searchClick"
-            />
-            <el-autocomplete v-model="searchCategory" style="margin: 2px" size="small" value-key="categoryName" :fetch-suggestions="categorySearch" placeholder="Search Category" class="input-with-select" @select="searchClick" />
-            <el-autocomplete v-model="searchBrand" style="margin: 2px" size="small" value-key="brandName" :fetch-suggestions="brandSearch" placeholder="Search Brand" class="input-with-select" @select="searchClick" />
+              clearable
+              @input="productAutoCompleteSearch"
+            >
+              <!-- <template slot-scope="{ item }">
+                <div class="name">{{ item.productName }}</div>
+                <span class="phone">{{ item.supplierName }}&nbsp;&nbsp;{{ item.unitPrice }}</span>
+              </template> -->
+            </el-input>
+            <el-autocomplete v-model="searchCategory" style="margin: 0px" size="small" value-key="categoryName" clearable :fetch-suggestions="categorySearch" placeholder="Search Category" class="input-with-select" @select="searchClick" />
+            <el-autocomplete v-model="searchBrand" style="margin: 0px" size="small" value-key="brandName" clearable :fetch-suggestions="brandSearch" placeholder="Search Brand" class="input-with-select" @select="searchClick" />
             <el-button size="small" icon="el-icon-search" @click="searchClick" />
 
           </div>
 
           <div style="overflow-y: scroll;height: 80vh">
-            <el-card v-for="(item,i) in itemList" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; height: 135px; float: left; margin: 5px; cursor: grab">
+            <el-card v-for="(item,i) in itemList" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 200px; height: 150px; float: left; margin: 5px; cursor: grab">
               <div style="text-align: center" @click="popShow(item)">
                 <el-image v-if="item.imgPath !== ''" :src="baseUrl+item.imgPath" fit="fill" style="height: 90px; width: 100px" />
+                <el-image v-if="item.imgPath === ''" :src="baseUrl+'/shared/company_profile.jpg'" fit="fill" style="height: 90px; width: 100px" />
                 <!-- src="https://graphicriver.img.customer.envatousercontent.com/files/264957949/preview.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=590&s=2d1cf4f57526765a35de39bf26286c4e" -->
-                <div style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px">
+                <div style="text-align: center; padding: 3px; background: #f1f1f1; font-size: 14px; height: 100px">
                   <span>{{ item.productName }}</span><br>
-                  <span> {{ item.type }} {{ item.taxPercent }} </span><br>
-                  <!-- <span> {{ item.price }} Kyats</span> -->
+                  <span>{{ item.supplierName }}</span>
                 </div>
               </div>
             </el-card>
@@ -58,7 +64,7 @@
           </el-dialog>
 
         </div>
-        <div style="overflow-y: auto; height: 100vh; float: right;" :style="{width: device==='mobile' ? '45%' : '500px'}">
+        <div style="overflow-y: auto; height: 100vh;" :style="{width: device==='mobile' ? '45%' : '35%'}">
           <div>
             <el-card shadow="hover" class="box-card" style="bottom: 0px">
               <div ref="header">
@@ -71,18 +77,19 @@
                   :fetch-suggestions="customerSearch"
                   :highlight-first-item="true"
                   placeholder="Please Input"
+                  style="width : 90%"
                   @select="handleSelect"
                 >
                   <template slot="prepend"><span class="el-icon-user" /></template>
-                  <template slot-scope="{ item }" style="line-height: normal">
-                    <div class="value">{{ item.name }} ( {{ item.phone }} )</div>
-                    <!-- <span class="link" style="margin-top: -10px">{{ item.name }}</span> -->
+                  <template slot-scope="{ item }">
+                    <div class="name">{{ item.name }}</div>
+                    <span class="phone">{{ item.phone }}&nbsp;&nbsp;{{ item.addressOne }}</span>
                   </template>
+                  <el-button slot="append" icon="el-icon-circle-plus-outline" @click="customerCreateVisible = true" />
                 </el-autocomplete>
-                <el-button type="primary" size="small" class="el-icon-plus" @click="customerCreateVisible = true" />
               </div>
-
-              <div style="margin: 10px; min-height: 200px">
+              <br>
+              <div style="margin: 0px; min-height: 200px">
                 <el-row>
                   <el-col :span="10" style="text-align: center"><span>Name</span></el-col>
                   <el-col :span="6" style="text-align: center"><span>Qty</span></el-col>
@@ -439,7 +446,14 @@ input::-webkit-inner-spin-button {
       line-height: normal;
       padding: 7px;
   }
-
+  .my-autocomplete li .name {
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+  .my-autocomplete li .phone {
+        font-size: 12px;
+        color: #b4b4b4;
+  }
       /* .value {
         text-overflow: ellipsis;
         overflow: hidden;

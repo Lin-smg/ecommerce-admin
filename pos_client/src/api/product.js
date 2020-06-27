@@ -38,6 +38,14 @@ export async function getProductList(params) {
   })
 }
 
+export async function getPOSProductList(params) {
+  return request({
+    url: '/products/pos',
+    method: 'get',
+    params
+  })
+}
+
 export async function createProduct(data) {
   return request({
     url: '/products',

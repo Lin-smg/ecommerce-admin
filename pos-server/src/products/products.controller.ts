@@ -9,6 +9,9 @@ import { InCreateProductsDto } from './dto/in-create-products.dto';
 import { plainToClass } from 'class-transformer';
 import { Products } from './products.entity';
 import { OutProductsPageDto } from './dto/out-products-page.dto';
+// import { ProductsUnitsDto } from './dto/products-units.dto';
+import { ProductsUnitsService } from './products-units.service';
+import { OutProductsPosDto } from './dto/out-products-pos.dto';
 
 @Controller('products')
 @ApiTags('products')
@@ -19,6 +22,7 @@ export class ProductsController {
  //Servie Constructor
  constructor(
     private readonly productsService: ProductsService,
+    private readonly productsUnitsService: ProductsUnitsService,
 ) {}
 
  //Create
@@ -132,7 +136,7 @@ export class ProductsController {
 })
 @Get()
 //@Permissions(PermissionsType.USERS)
-async getCategory(
+async getProduct(
     @Query('cur_page', new DefaultValuePipe(1), ParseIntPipe) curPage,
     @Query('per_page', new DefaultValuePipe(10), ParseIntPipe) perPage,
     @Query('q') q,
@@ -154,6 +158,52 @@ async getCategory(
         throw error;
     }
 }
+
+//Find POS Product
+@HttpCode(HttpStatus.OK)
+@Get('pos')
+//@Permissions(PermissionsType.USERS)
+async getPOSProduct(
+    @Query('product') product,
+    @Query('brand') brand,
+    @Query('category') category
+) {
+    try {
+        return plainToClass(
+            OutProductsPosDto,
+            await this.productsService.getPOSProducts({
+                product,
+                brand,
+                category
+            })
+        );
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+
+ //get Parent Units
+//  @HttpCode(HttpStatus.OK)
+//  @ApiResponse({
+//    status: HttpStatus.OK,
+//    type: ProductsUnitsDto,
+//    description: ''
+//  })
+//  @ApiResponse({ status: HttpStatus.FORBIDDEN, description: 'Forbidden.' })
+//  @Get('productUnit')
+//  async getParentUnitWithId(@Query('id',ParseIntPipe) id, @Query('productCode') productCode){        
+//    try {
+//      return plainToClass(
+//         ProductsUnitsDto,
+//        await this.productsUnitsService.getProductUnitWithId({id,productCode})
+//      );
+//    } catch (error) {
+//        console.log(error)
+//      throw error;
+//    }
+//  }
 
 
 
