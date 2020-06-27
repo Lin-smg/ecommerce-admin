@@ -12,7 +12,8 @@ export const POS = {
       searchCategory: '',
       searchBrand: '',
       searchType: '',
-      customer: '',
+      today: new Date().toLocaleString(),
+      customer: 'walk-in',
       customerData: '',
       num: 0,
       otherChargesList: [],
@@ -57,6 +58,8 @@ export const POS = {
       catActive: '',
       total: 0,
       OtherChargeTotal: 0,
+      discount: 0,
+      tax: 0,
       customerCreateVisible: false,
       customersCreateForm: {
         name: '',
@@ -73,7 +76,23 @@ export const POS = {
         internalNotes: '',
         companyName: '',
         account: ''
-      }
+      },
+      printDataValue: {
+        invoiceId: Date.now(),
+        customer: '',
+        date: '',
+        time: '',
+        casher: '',
+        soldItemsList: [],
+        otherChargesList: [],
+        tax: 0,
+        discount: 0,
+        subTotal: 0,
+        grandTotal: 0,
+        otherCharges: 0
+      },
+
+      print: false
     }
   },
   created() {
@@ -86,6 +105,40 @@ export const POS = {
     }
   },
   methods: {
+    printData() {
+      this.sendPrintData()
+      this.$htmlToPaper('printMe')
+    },
+    sendPrintData() {
+      this.printDataValue = {
+        invoiceId: Date.now(),
+        date: this.today.split(',')[0],
+        time: this.today.split(',')[1],
+        customer: this.customerData,
+        casher: this.$store.getters.curUserInfo,
+        soldItemsList: this.selectedItemList,
+        otherChargesList: this.otherChargesList,
+        tax: this.tax,
+        discount: this.discount,
+        subTotal: this.total,
+        otherCharges: this.OtherChargeTotal,
+        grandTotal: (this.total + this.OtherChargeTotal) + (this.total + this.OtherChargeTotal) * (this.tax / 100) - this.discount
+      }
+      console.log('print data', this.printDataValue)
+      this.$store
+        .dispatch('customer/createCustomer', this.printDataValue)
+        .then(() => {
+          this.print = false
+        })
+        .catch(() => {
+          console.log('print Error')
+        })
+    },
+    printClick() {
+      this.print = true
+      // Pass the element id here
+      // this.$htmlToPaper('printMe');
+    },
 
     async getProductList() {
       const params = {
@@ -124,6 +177,7 @@ export const POS = {
     addSaleItem(item) {
       const selected = {
         data: item,
+        tax: this.selectedItem.taxPercent,
         count: 1
       }
       var exists = this.selectedItemList.some(function(field) {
@@ -137,6 +191,7 @@ export const POS = {
         this.selectedItemList.push(selected)
       }
       this.dialogVisible = false
+      console.log('selectitem', selected)
       this.setTotal()
     },
 
@@ -147,7 +202,7 @@ export const POS = {
     setTotal() {
       this.total = 0
       for (const i of this.selectedItemList) {
-        this.total += (parseFloat(i.data.sellPrice) * i.count)
+        this.total += (parseFloat(i.data.sellPrice) * i.count) + ((parseFloat(i.data.sellPrice) * i.count) * i.tax / 100)
       }
     },
 
@@ -179,7 +234,7 @@ export const POS = {
 
       this.listLoading = true
       await getProductList(params).then(response => {
-        this.itemList = response.data
+        // this.itemList = response.data
         cb(response.data)
       })
     },
@@ -269,7 +324,7 @@ export const POS = {
       for (const i of this.otherChargesList) {
         this.OtherChargeTotal += parseFloat(i.amount)
       }
-      console.log('othertotal',this.OtherChargeTotal)
+      console.log('othertotal', this.OtherChargeTotal)
     },
     otherChargeDelete(data) {
       this.otherChargesList.splice(this.otherChargesList.indexOf(data), 1)
