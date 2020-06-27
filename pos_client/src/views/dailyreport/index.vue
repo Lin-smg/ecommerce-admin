@@ -4,17 +4,15 @@
       <div class="header" style="margin-bottom: 10px">
         <span style="line-height: 40px">Daily Report</span>
         <el-date-picker
-          style="margin-left: 30px"
           v-model="ddate"
+          style="margin-left: 30px"
           type="date"
           placeholder="Pick a day"
           :picker-options="pickerOptions"
-
-        >
-        </el-date-picker>
+        />
         <el-button type="primary">Search</el-button>
 
-        <el-button style="float: right; margin-left: 30px" type="primary" >Export Excel</el-button>
+        <el-button style="float: right; margin-left: 30px" type="primary">Export Excel</el-button>
 
       </div>
 
@@ -25,7 +23,7 @@
           style="width: 100%;background-color: #e9e3e3"
           highlight-current-row
         >
-          <el-table-column fixed align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>ReceipeNo</span>
             </template>
@@ -34,7 +32,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>CustomerName</span>
             </template>
@@ -43,7 +41,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>Total</span>
             </template>
@@ -52,16 +50,16 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>Discount</span>
             </template>
-            <template slot-scope="{row}">
+            <template slot-scope="{row}" min-width="200">
               <span>{{ row.description }}</span>
             </template>
           </el-table-column>
 
-          <el-table-column align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>Tax</span>
             </template>
@@ -70,7 +68,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>NetAmount</span>
             </template>
@@ -79,7 +77,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>Old Credit Amount</span>
             </template>
@@ -87,8 +85,7 @@
               <span>{{ row.description }}</span>
             </template>
           </el-table-column>
-
-           <el-table-column align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>Net Total</span>
             </template>
@@ -97,7 +94,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>Cash Pay Amount</span>
             </template>
@@ -106,7 +103,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>Last Amount</span>
             </template>
@@ -115,7 +112,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center">
+          <el-table-column align="center" min-width="200">
             <template slot="header">
               <span>Other Amount</span>
             </template>
@@ -124,22 +121,13 @@
             </template>
           </el-table-column>
 
-          <el-table-column align="center" fixed="right">
+          <el-table-column align="center" fixed="right" min-width="200">
             <template slot="header">
               <span>Action</span>
             </template>
-            <template slot-scope="{row}">
+            <template slot-scope="{}">
               <el-button type="warning" size="mini">Detail</el-button>
-              <el-popconfirm
-                confirm-button-text="OK"
-                cancel-button-text="No, Thanks"
-                icon="el-icon-info"
-                icon-color="red"
-                title="Are you sure to delete this?"
-                @onConfirm="deleteBrand(row)"
-              >
-                <el-button slot="reference" type="danger" size="mini">Print</el-button>
-              </el-popconfirm>
+              <el-button slot="reference" type="danger" size="mini">Print</el-button>
             </template>
           </el-table-column>
         </el-table>

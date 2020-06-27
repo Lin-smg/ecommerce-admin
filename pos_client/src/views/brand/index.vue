@@ -90,7 +90,7 @@
           <el-input v-model="brand.brandCode" type="text" placeholder="brand code" autocomplete="off" :disabled="dialog.title === 'Edit' ? true : false" @input="toUpperCaseWord(brand,'brandCode')" />
         </el-form-item>
         <el-form-item label="Brand Name" prop="brandName">
-          <el-input v-model="brand.brandName" type="text" placeholder="brand name" autocomplete="off"  />
+          <el-input v-model="brand.brandName" type="text" placeholder="brand name" autocomplete="off" />
         </el-form-item>
         <el-form-item label="Description" prop="description">
           <el-input v-model="brand.description" type="textarea" :row="3" placeholder="description" autocomplete="off" />

@@ -23,7 +23,25 @@ export const User = {
       photoUploadUrl: '',
       photoUrl: '',
       oldFileName: '',
-      baseUrl: process.env.VUE_APP_BASE_API
+      baseUrl: process.env.VUE_APP_BASE_API,
+      rules: {
+        userid: [
+          { required: true, message: 'Please input User Id', trigger: 'blur' },
+          { min: 5, message: 'Length should be minium 5', trigger: 'blur' }
+        ],
+        username: [
+          { required: true, message: 'Please input User Name', trigger: 'blur' },
+          { min: 5, message: 'Length should be minium 5', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: 'Please input Password', trigger: 'blur' },
+          { min: 6, message: 'Length should be minium 6', trigger: 'blur' }
+        ],
+        selectDeptObject: [
+          { required: true, message: 'Please input Branch', trigger: 'blur' },
+          { min: 6, message: 'Length should be minium 6', trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {

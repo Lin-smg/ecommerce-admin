@@ -33,8 +33,9 @@ export class ProductsUnits extends BaseEntity {
     @Column('numeric',{ precision: 10, scale: 2, default: 0})
     sellPrice: number;
     
+    @Column({ name: 'active_status',type: 'boolean', default: true })
+    activeStatus: string;
+    
     @Column({ name: 'effective_date',type: 'date', nullable: true })
     effectiveDate: Date;
-
-    
 }
