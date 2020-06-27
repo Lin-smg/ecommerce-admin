@@ -1,6 +1,6 @@
 <template>
   <div :class="classObj" class="app-wrapper">
-    <div v-if="device==='mobile'&&sidebar.opened" class="drawer-bg" @click="handleClickOutside" />
+    <div v-if="(device==='mobile'&& !sidebar.opened)" class="drawer-bg" @click="handleClickOutside" />
     <sidebar class="sidebar-container" />
     <div class="main-container">
       <div :class="{'fixed-header':fixedHeader}">
@@ -35,16 +35,22 @@ export default {
     },
     classObj() {
       return {
-        hideSidebar: !this.sidebar.opened,
+        hideSidebar: !this.sidebar.opened || this.$route.meta.title === 'POS',
         openSidebar: this.sidebar.opened,
         withoutAnimation: this.sidebar.withoutAnimation,
         mobile: this.device === 'mobile'
       }
     }
   },
+  created() {
+    console.log('platform', this.device)
+  },
   methods: {
     handleClickOutside() {
       this.$store.dispatch('app/closeSideBar', { withoutAnimation: false })
+    },
+    dev() {
+      return this.$store.state.app.device
     }
   }
 }
