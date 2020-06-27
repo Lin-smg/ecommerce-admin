@@ -440,15 +440,11 @@ input::-webkit-inner-spin-button {
       padding: 7px;
   }
 
-      /* .value {
-        text-overflow: ellipsis;
-        overflow: hidden;
-      }
-      .link {
-        font-size: 12px;
-        color: #b4b4b4;
-      }
-
-  } */
+hr {
+    height: 1px;
+    overflow: visible;
+    border: none;
+    background: #dad2d2;
+}
 
 </style>
