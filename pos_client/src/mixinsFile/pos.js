@@ -59,9 +59,11 @@ export const POS = {
       total: 0,
       OtherChargeTotal: 0,
       discount: 0,
+      payAmount: 0,
       tax: 0,
       taxInclude: false,
       customerCreateVisible: false,
+      netAmount: 0,
       customersCreateForm: {
         name: '',
         email: '',
@@ -90,7 +92,9 @@ export const POS = {
         discount: 0,
         subTotal: 0,
         grandTotal: 0,
-        otherCharges: 0
+        otherCharges: 0,
+        payAmount: 0,
+        netAmount: 0
       },
 
       print: false
@@ -124,6 +128,7 @@ export const POS = {
         otherChargesList: this.otherChargesList,
         tax: this.tax,
         discount: this.discount,
+        payAmount: this.payAmount,
         subTotal: this.total,
         otherCharges: this.OtherChargeTotal,
         grandTotal: (this.total + this.OtherChargeTotal) + (this.total + this.OtherChargeTotal) * (this.tax / 100) - this.discount

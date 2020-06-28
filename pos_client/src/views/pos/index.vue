@@ -250,7 +250,7 @@
               <hr>
 
               <div>
-                <span>Net Ammount :</span>
+                <span>Net Amount :</span>
                 <span style="float:right;">{{ total+OtherChargeTotal+(taxInclude?Number(tax):0)-discount }}</span>
               </div>
               <hr>
@@ -264,12 +264,30 @@
                 <span style="float:right;">0</span>
               </div>
               <div>
-                <span>Cash Pay Amount :</span>
-                <span style="float:right;">0</span>
+                <!-- <span>Pay Amount :</span> -->
+                <!-- <el-input  -->
+                <el-popover
+                  title="Pay Amount :"
+                  width="200"
+                  trigger="click"
+                  content="this is content, this is content, this is content"
+                >
+                  <div>
+                    <el-input v-model="payAmount" type="number" size="mini" min="0" />
+                  </div>
+                  <div slot="reference" style="cursor: pointer">
+                    <span>Pay Amount :
+                    </span>
+                    <i class="el-icon-edit-outline" style="cursor:pointer" />
+                    <span style="float:right;">{{ payAmount }}</span>
+                  </div>
+                </el-popover>
+
+                <!-- <span style="float:right;">0</span> -->
               </div>
               <div>
                 <span>Left Amount :</span>
-                <span style="float:right;">0</span>
+                <span style="float:right;">{{ (total+OtherChargeTotal+(taxInclude?Number(tax):0)-discount ) - payAmount }}</span>
               </div>
               <hr>
 
@@ -277,7 +295,6 @@
                 <el-button type="primary" @click="printClick">Pay Now</el-button>
                 <el-button type="primary">Pending</el-button>
               </div>
-
             </el-card>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { getCategory } from '@/api/category'
 import { getBrandList } from '@/api/brand'
-import { getCustomerList } from '@/api/customer'
+import { getSupplierList } from '@/api/supplier'
 import { getProductList } from '@/api/product'
 
 export const Purchase = {
@@ -14,7 +14,7 @@ export const Purchase = {
       searchBrand: '',
       searchType: '',
       today: new Date().toLocaleString(),
-      customer: 'walk-in',
+      supplier: '',
       customerData: '',
       num: 0,
       otherChargesList: [],
@@ -61,8 +61,8 @@ export const Purchase = {
       OtherChargeTotal: 0,
       discount: 0,
       tax: 0,
-      customerCreateVisible: false,
-      customersCreateForm: {
+      supplierCreateVisible: false,
+      supplierCreateForm: {
         name: '',
         email: '',
         phone: '',
@@ -218,11 +218,11 @@ export const Purchase = {
     async getAllProduct() {
     },
 
-    async customerSearch(q, cb) {
+    async supplierSearch(q, cb) {
       const params = {
         q: q
       }
-      await getCustomerList(params).then(response => {
+      await getSupplierList(params).then(response => {
         this.customersData = response.data
         cb(response.data)
       })
@@ -257,9 +257,9 @@ export const Purchase = {
         cb(response.data)
       })
     },
-    async createCustomer() {
+    async createSupplier() {
       this.$store
-        .dispatch('customer/createCustomer', this.customersCreateForm)
+        .dispatch('supplier/createSupplier', this.customersCreateForm)
         .then(() => {
           this.customerCreateVisible = false
         })
@@ -306,6 +306,7 @@ export const Purchase = {
     },
     handleSelect(val) {
       this.customerData = val
+      this.supplier = val.name
       console.log(val)
     },
     addOtherCharges() {

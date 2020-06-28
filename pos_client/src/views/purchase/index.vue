@@ -20,15 +20,16 @@
           </div>
 
           <div style="overflow-y: scroll;height: 80vh">
-            <el-card v-for="(item,i) in itemList" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; height: 135px; float: left; margin: 5px; cursor: grab">
+            <el-card v-for="(item,i) in itemList" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; background: #f1f1f1; height: 50px; float: left; margin: 5px; cursor: grab">
               <div style="text-align: center" @click="popShow(item)">
-                <el-image v-if="item.imgPath !== ''" :src="baseUrl+item.imgPath" fit="fill" style="height: 90px; width: 100px" />
+                <!-- <el-image v-if="item.imgPath !== ''" :src="baseUrl+item.imgPath" fit="fill" style="height: 90px; width: 100px" /> -->
                 <!-- src="https://graphicriver.img.customer.envatousercontent.com/files/264957949/preview.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=590&s=2d1cf4f57526765a35de39bf26286c4e" -->
-                <div style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px">
-                  <span>{{ item.productName }}</span><br>
-                  <span> {{ item.type }} {{ item.taxPercent }} </span><br>
-                  <!-- <span> {{ item.price }} Kyats</span> -->
-                </div>
+                <!-- <div style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px"> -->
+                <span>{{ item.productName }}</span><br>
+                <span>{{ item.supplierName }}</span>
+                <!-- <span> {{ item.type }} {{ item.taxPercent }} </span><br> -->
+                <!-- <span> {{ item.price }} Kyats</span> -->
+                <!-- </div> -->
               </div>
             </el-card>
           </div>
@@ -63,30 +64,31 @@
             <el-card shadow="hover" class="box-card" style="bottom: 0px">
               <div ref="header">
                 <el-autocomplete
-                  v-model="customer"
+                  v-model="supplier"
                   popper-class="my-autocomplete"
                   size="small"
                   value-key="name"
                   class="inline-input"
-                  :fetch-suggestions="customerSearch"
+                  :fetch-suggestions="supplierSearch"
                   :highlight-first-item="true"
                   placeholder="Please Input"
+                  style="width : 90%"
                   @select="handleSelect"
                 >
                   <template slot="prepend"><span class="el-icon-user" /></template>
-                  <template slot-scope="{ item }" style="line-height: normal">
-                    <div class="value">{{ item.name }} ( {{ item.phone }} )</div>
-                    <!-- <span class="link" style="margin-top: -10px">{{ item.name }}</span> -->
+                  <template slot-scope="{ item }">
+                    <div class="name">{{ item.name }}</div>
+                    <span class="phone">{{ item.phone }}&nbsp;&nbsp;{{ item.addressOne }}</span>
                   </template>
+                  <el-button slot="append" icon="el-icon-circle-plus-outline" @click="supplierCreateVisible = true" />
                 </el-autocomplete>
-                <el-button type="primary" size="small" class="el-icon-plus" @click="customerCreateVisible = true" />
               </div>
 
               <div style="margin: 10px; min-height: 200px">
                 <el-row>
                   <el-col :span="10" style="text-align: center"><span>Name</span></el-col>
                   <el-col :span="6" style="text-align: center"><span>Qty</span></el-col>
-                  <el-col :span="6" style="text-align: center"><span>Price</span></el-col>
+                  <el-col :span="6" style="text-align: center"><span>Cost</span></el-col>
                   <el-col :span="2" />
                 </el-row>
                 <hr>
@@ -111,8 +113,7 @@
                 </el-row>
               </div>
               <hr>
-
-              <div>
+              <!--          <div>
                 <label>Other Charges</label>
                 <el-popover
                   v-model="popVisible"
@@ -141,13 +142,13 @@
                     <i class="el-icon-delete-solid" style="color: red" @click="otherChargeDelete(data)" />
                   </el-col>
                 </el-row>
-              </div>
-              <hr>
+              </div> -->
+              <!-- <hr> -->
               <div>
-                <span>Total : </span>
+                <span>Total Cost : </span>
                 <span style="float:right;">{{ total }}</span>
               </div>
-              <div>
+              <!-- <div>
                 <span>Other Total : </span>
                 <span style="float:right;">{{ OtherChargeTotal }}</span>
               </div>
@@ -187,15 +188,12 @@
                   </el-popover>
                 </span>
                 <span style="float:right;">{{ tax }} %</span>
-              </div>
+              </div> -->
               <!-- <div>
                 <span>FOC/Other :</span>
                 <span style="float:right;">0</span>
               </div> -->
-
-              <hr>
-
-              <div>
+              <!-- <div>
                 <span>Net Ammount :</span>
                 <span style="float:right;">{{ (total+OtherChargeTotal) + (total+OtherChargeTotal)*(tax/100)- discount }}</span>
               </div>
@@ -217,11 +215,11 @@
                 <span>Left Amount :</span>
                 <span style="float:right;">0</span>
               </div>
-              <hr>
+              <hr> -->
 
               <div style="text-align: right">
-                <el-button type="primary" @click="printClick">Pay Now</el-button>
-                <el-button type="primary">Pending</el-button>
+                <el-button type="primary" @click="printClick">Print</el-button>
+                <!-- <el-button type="primary">Pending</el-button> -->
               </div>
 
             </el-card>
@@ -232,64 +230,64 @@
 
     <el-dialog
       title="Tips"
-      :visible.sync="customerCreateVisible"
+      :visible.sync="supplierCreateVisible"
     >
 
       <el-form ref="createForm" label-width="220px" style="width: 500px">
         <el-form-item label="Name :" prop="name">
-          <el-input v-model="customersCreateForm.name" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.name" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="E-Mail :" prop="email">
-          <el-input v-model="customersCreateForm.email" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.email" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="Phone Number :" prop="phone">
-          <el-input v-model="customersCreateForm.phone" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.phone" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="Address 1 :" prop="addressOne">
-          <el-input v-model="customersCreateForm.addressOne" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.addressOne" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="Address 2 :" prop="addressTwo">
-          <el-input v-model="customersCreateForm.addressTwo" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.addressTwo" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="City :" prop="city">
-          <el-input v-model="customersCreateForm.city" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.city" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="State/Province :" prop="stateOrProvince">
-          <el-input v-model="customersCreateForm.stateOrProvince" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.stateOrProvince" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="Zip :" prop="zipCode">
-          <el-input v-model="customersCreateForm.zipCode" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.zipCode" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="Country :" prop="country">
-          <el-input v-model="customersCreateForm.country" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.country" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="Comments :" prop="comments">
-          <el-input v-model="customersCreateForm.comments" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.comments" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="Internal Notes :" prop="internalNotes">
-          <el-input v-model="customersCreateForm.internalNotes" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.internalNotes" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="Company Name :" prop="companyName">
-          <el-input v-model="customersCreateForm.companyName" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.companyName" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item label="Account # :" prop="account">
-          <el-input v-model="customersCreateForm.account" type="text" autocomplete="off" />
+          <el-input v-model="supplierCreateForm.account" type="text" autocomplete="off" />
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="createCustomer">Create</el-button>
+          <el-button type="primary" @click="createSupplier">Create</el-button>
           <el-button @click="resetCreateCustomersForm">Reset</el-button>
         </el-form-item>
       </el-form>
