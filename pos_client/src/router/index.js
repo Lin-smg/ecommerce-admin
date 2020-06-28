@@ -190,6 +190,18 @@ export const constantRoutes = [
     }]
   },
   {
+    path: '/purchase',
+    component: Layout,
+    redirect: '/purchase',
+    children: [{
+      path: 'index',
+      permission: 'M001B00',
+      name: 'Purchase',
+      component: () => import('@/views/purchase/index'),
+      meta: { title: 'Purchase', icon: 'purchase' }
+    }]
+  },
+  {
     path: '/branch',
     component: Layout,
     redirect: '/branch',
