@@ -89,7 +89,7 @@ export class ProductsController {
         OutProductsDto,
         await this.productsService.update({
             productCode,
-          item: await plainToClass(Products, dto)
+          item: dto
         })
       );
     } catch (error) {

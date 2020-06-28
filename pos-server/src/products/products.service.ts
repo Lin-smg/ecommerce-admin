@@ -118,13 +118,58 @@ export class ProductsService {
 
     }
     //Update
-    async update(options: { productCode: string; item: Products; }){
+    async update(options: { productCode: string;item: InCreateProductsDto; }){
         try {
-         const item = await this.findByproductCode({ productCode: options.productCode });  
-         await this.productsRepository.update({productCode: options.productCode, delFlg: '0'},options.item);
-         return  {data: plainToClass(ProductsDto,item)};
+            await this.findByproductCode({ productCode: options.item.productCode });
+            if(options.item.supplierName !== ''){
+            await this.isExistProductWithSupplier(options.item);
+            }
+            await this.productsUnitsService.checkIsExistProductUnit(options.item);
+            const queryRunner = this.connection.createQueryRunner();
+            await queryRunner.connect();
+            await queryRunner.startTransaction();
+
+            const toEntity = {
+                    id: options.item.id,
+                    productCode: options.item.productCode,
+                    productName: options.item.productName,
+                    categoryCode: options.item.categoryCode,
+                    categoryName: options.item.categoryName,
+                    brandCode: options.item.brandCode,
+                    brandName: options.item.brandName,
+                    supplierId: options.item.supplierId,
+                    supplierName: options.item.supplierName,
+                    unitId: options.item.unitId,
+                    unitName: options.item.unitName,
+                    unitPrice: options.item.unit[0].sellPrice,
+                    expDate: options.item.expDate,
+                    taxPercent: options.item.taxPercent,
+                    reOrder: options.item.reOrder,
+                    description: options.item.description,
+                    imgPath: options.item.imgPath
+            }
+            const pdata = await plainToClass(Products,toEntity);
+            try {
+            //pdata.unitPrice = options.item.unit[0].sellPrice;
+            //await queryRunner.manager.createQueryBuilder
+            await this.productsRepository.update({productCode: options.item.productCode,delFlg: '0'},pdata);
+            //await queryRunner.manager.update(Products,{productCode: pdata.productCode},pdata);
+            await this.productsUnitsService.updateProductUnit(options.item.productCode,options.item,queryRunner);
+
+            await queryRunner.commitTransaction();
+            } catch (err) {
+             // since we have errors lets rollback the changes we made
+            await queryRunner.rollbackTransaction();
+            throw new UnprocessableEntityException(err);
+             } finally {
+          // you need to release a queryRunner which was manually instantiated
+          await queryRunner.release();
+        }
+            return {data: plainToClass(ProductsDto, options.item) };
+
         } catch (error) {
-          throw error;  
+            console.log(error)
+            throw error;
         }
 
     }
@@ -134,6 +179,7 @@ export class ProductsService {
         const item = await this.findByproductCode({ productCode: options.item.productCode });  
         item.delFlg = '1'
         await this.productsRepository.update({productCode: item.productCode,delFlg: '0'},item);
+        await this.productsUnitsService.deleteByProductCode({ productCode: options.item.productCode });
         return  { data: options.item };
        } catch (error) {
          throw error;  
@@ -209,7 +255,7 @@ export class ProductsService {
             return item;
     
         } catch (error) {
-            throw new NotFoundException(`User with email "${options.productCode}" not founded`);
+            throw new NotFoundException(`This "${options.productCode}"is not founded`);
         }
     }
 

@@ -286,7 +286,7 @@
               :fetch-suggestions="querySearchAsync"
               placeholder="Please input"
               style="width: 280px"
-              @select="handleSelect"
+              @select="handleSelectForUpdate"
             >
               <template slot-scope="{ item }">
                 <div class="name">{{ item.name }}</div>
@@ -342,17 +342,7 @@
                 </template>
               </template>
             </el-table-column> -->
-            <!-- <el-table-column align="center" label="Active" width="60">
-              <template slot-scope="{row}">
-                <template>
-                  <el-checkbox
-                    v-model="row.isActive"
-                    size="small"
-                    @change="changeActiveCheckbox(row)"
-                  />
-                </template>
-              </template>
-            </el-table-column> -->
+
           </el-table>
           <br>
 

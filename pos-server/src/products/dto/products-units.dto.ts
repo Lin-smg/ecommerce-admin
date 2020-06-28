@@ -22,7 +22,5 @@ export class ProductsUnitsDto {
     sellPrice: number;
 
     effectiveDate: Date;
-
-    activeStatus: string;
     
 }

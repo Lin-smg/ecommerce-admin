@@ -64,6 +64,11 @@ export const Product = {
       this.createProductForm.supplierName = item.name
       this.selectedSupplier = item.name
     },
+    handleSelectForUpdate(item) {
+      this.updateProductForm.supplierId = item.id
+      this.updateProductForm.supplierName = item.name
+      this.selectedSupplier = item.name
+    },
     initProductForm() {
       return {
         id: null,
@@ -116,9 +121,6 @@ export const Product = {
           var editData = this.selectedUnitForUpdate.find(x => x.unitId === obj.id)
           if (editData) {
             obj = editData
-            obj.isActive = true
-          } else {
-            obj.isActive = false
           }
 
           this.updateProductForm.unit.push(obj)
@@ -236,11 +238,35 @@ export const Product = {
     createReset() {
 
     },
-    changeActiveCheckbox(row) {
-      row.isActive = !row.isActive
-    },
+
     updateOk() {
-      console.log(this.updateProductForm.unit)
+      this.$refs.updateForm.validate(valid => {
+        if (this.updateProductForm.unit.length === 0) {
+          Message({
+            message: 'Please select unit',
+            type: 'error',
+            duration: 5 * 1000
+          })
+          return false
+        }
+        if (valid) {
+          this.loading = true
+          this.updateProductForm.unitId = this.selectedUnit.id
+          this.updateProductForm.unitName = this.selectedUnit.unitName
+          this.updateProductForm.categoryCode = this.selectedCategory.categoryCode
+          this.updateProductForm.categoryName = this.selectedCategory.categoryName
+          this.updateProductForm.brandCode = this.selectedBrand.brandCode
+          this.updateProductForm.brandName = this.selectedBrand.brandName
+          this.$store.dispatch('product/updateProductData', this.updateProductForm).then(() => {
+            this.handleTab('view')
+            this.loading = false
+          }).catch(() => {
+            this.loading = false
+          })
+        } else {
+          return false
+        }
+      })
     },
     updateReset() {
 
@@ -273,7 +299,13 @@ export const Product = {
       this.changeSelectedUnitForUpdate()
     },
     deleteProduct(data) {
-
+      this.$store.dispatch('product/deleteProduct', data).then(() => {
+        this.handleTab('view')
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
+        return false
+      })
     }
   }
 }

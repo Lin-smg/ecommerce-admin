@@ -26,7 +26,7 @@ const actions = {
   },
 
   // Create Product
-  async updateProduct({ commit }, formData) {
+  async updateProductData({ commit }, formData) {
     return await new Promise((resolve, reject) => {
       updateProduct(formData.productCode, formData).then(response => {
         resolve(resolve)
