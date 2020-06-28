@@ -1,6 +1,8 @@
 
 export class ProductsUnitsDto {
 
+    id: number;
+
     productId: number;
 
     productCode: string;

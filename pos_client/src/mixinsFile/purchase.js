@@ -1,8 +1,9 @@
 import { getCategory } from '@/api/category'
 import { getBrandList } from '@/api/brand'
-import { getCustomerList } from '@/api/customer'
-import { getProductList, getPOSProductList } from '@/api/product'
-export const POS = {
+import { getSupplierList } from '@/api/supplier'
+import { getProductList } from '@/api/product'
+
+export const Purchase = {
   data: function() {
     return {
       baseUrl: process.env.VUE_APP_BASE_API,
@@ -13,7 +14,7 @@ export const POS = {
       searchBrand: '',
       searchType: '',
       today: new Date().toLocaleString(),
-      customer: 'walk-in',
+      supplier: '',
       customerData: '',
       num: 0,
       otherChargesList: [],
@@ -59,12 +60,9 @@ export const POS = {
       total: 0,
       OtherChargeTotal: 0,
       discount: 0,
-      payAmount: 0,
       tax: 0,
-      taxInclude: false,
-      customerCreateVisible: false,
-      netAmount: 0,
-      customersCreateForm: {
+      supplierCreateVisible: false,
+      supplierCreateForm: {
         name: '',
         email: '',
         phone: '',
@@ -92,9 +90,7 @@ export const POS = {
         discount: 0,
         subTotal: 0,
         grandTotal: 0,
-        otherCharges: 0,
-        payAmount: 0,
-        netAmount: 0
+        otherCharges: 0
       },
 
       print: false
@@ -110,9 +106,6 @@ export const POS = {
     }
   },
   methods: {
-    setFocus(val) {
-      this.$refs[val][0].focus()
-    },
     printData() {
       this.sendPrintData()
       this.$htmlToPaper('printMe')
@@ -128,7 +121,6 @@ export const POS = {
         otherChargesList: this.otherChargesList,
         tax: this.tax,
         discount: this.discount,
-        payAmount: this.payAmount,
         subTotal: this.total,
         otherCharges: this.OtherChargeTotal,
         grandTotal: (this.total + this.OtherChargeTotal) + (this.total + this.OtherChargeTotal) * (this.tax / 100) - this.discount
@@ -187,7 +179,6 @@ export const POS = {
       const selected = {
         data: item,
         tax: this.selectedItem.taxPercent,
-        discount: 0,
         count: 1
       }
       var exists = this.selectedItemList.some(function(field) {
@@ -211,10 +202,8 @@ export const POS = {
 
     setTotal() {
       this.total = 0
-      this.tax = 0
       for (const i of this.selectedItemList) {
-        this.total += (parseFloat(i.data.sellPrice) * i.count) // + ((parseFloat(i.data.sellPrice) * i.count) * i.tax / 100)
-        this.tax += (parseFloat(i.data.sellPrice) * i.tax / 100 * i.count)
+        this.total += (parseFloat(i.data.sellPrice) * i.count) + ((parseFloat(i.data.sellPrice) * i.count) * i.tax / 100)
       }
     },
 
@@ -229,25 +218,25 @@ export const POS = {
     async getAllProduct() {
     },
 
-    async customerSearch(q, cb) {
+    async supplierSearch(q, cb) {
       const params = {
         q: q
       }
-      await getCustomerList(params).then(response => {
+      await getSupplierList(params).then(response => {
         this.customersData = response.data
         cb(response.data)
       })
     },
 
-    async productAutoCompleteSearch(q, cb) {
+    async productSearch(q, cb) {
       const params = {
         q: q
       }
 
       this.listLoading = true
       await getProductList(params).then(response => {
-        this.itemList = response.data
-        // cb(response.data)
+        // this.itemList = response.data
+        cb(response.data)
       })
     },
     async categorySearch(q, cb) {
@@ -268,9 +257,9 @@ export const POS = {
         cb(response.data)
       })
     },
-    async createCustomer() {
+    async createSupplier() {
       this.$store
-        .dispatch('customer/createCustomer', this.customersCreateForm)
+        .dispatch('supplier/createSupplier', this.customersCreateForm)
         .then(() => {
           this.customerCreateVisible = false
         })
@@ -299,12 +288,14 @@ export const POS = {
 
     },
     async searchClick() {
+      console.log('rou', this.$route.name)
+
       const params = {
         product: this.searchProduct ? this.searchProduct : '',
         brand: this.searchBrand ? this.searchBrand : '',
         category: this.searchCategory ? this.searchCategory : ''
       }
-      await getPOSProductList(params).then(response => {
+      await getProductList(params).then(response => {
         this.itemList = response.data
         console.log(this.itemList)
       })
@@ -315,6 +306,7 @@ export const POS = {
     },
     handleSelect(val) {
       this.customerData = val
+      this.supplier = val.name
       console.log(val)
     },
     addOtherCharges() {
@@ -341,5 +333,4 @@ export const POS = {
       this.setOtherTotal()
     }
   }
-
 }

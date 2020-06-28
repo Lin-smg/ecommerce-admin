@@ -67,28 +67,39 @@ export const constantRoutes = [
       meta: { title: 'POS', icon: 'supermarket' }
     }]
   },
-
   {
-    path: '/user',
+    path: '/product',
     component: Layout,
-    redirect: '/user',
+    redirect: '/product',
     children: [{
       path: 'index',
-      name: 'User',
-      component: () => import('@/views/user/index'),
-      meta: { title: 'User', icon: 'user' }
+      permission: 'M001B00',
+      name: 'Product',
+      component: () => import('@/views/product/index'),
+      meta: { title: 'Product', icon: 'list' }
     }]
   },
-
   {
-    path: '/warehouse',
+    path: '/purchase',
     component: Layout,
-    redirect: '/warehouse',
+    redirect: '/purchase',
     children: [{
       path: 'index',
-      name: 'Warehouse',
-      component: () => import('@/views/warehouse/index'),
-      meta: { title: 'Warehouse', icon: 'factory' }
+      permission: 'M001B00',
+      name: 'Purchase',
+      component: () => import('@/views/purchase/index'),
+      meta: { title: 'Purchase', icon: 'purchase' }
+    }]
+  },
+  {
+    path: '/dailyreport',
+    component: Layout,
+    redirect: '/dailyreport',
+    children: [{
+      path: 'index',
+      name: 'Dailyreport',
+      component: () => import('@/views/dailyreport/index'),
+      meta: { title: 'Dailyreport', icon: 'chart' }
     }]
   },
   {
@@ -97,33 +108,35 @@ export const constantRoutes = [
     redirect: '/unit',
     children: [{
       path: 'index',
-      name: 'UnitOfMeasure',
+      name: 'Units',
       component: () => import('@/views/unit/index'),
-      meta: { title: 'UnitOfMeasure', icon: 'cup-measuring' }
+      meta: { title: 'Units', icon: 'cup-measuring' }
 
     }]
   },
   {
-    path: '/permission',
+    path: '/category',
     component: Layout,
-    redirect: '/permission',
-    children: [{
-      path: 'index',
-      name: 'Permission Group',
-      component: () => import('@/views/permission/index'),
-      meta: { title: 'Permission Group', icon: 'shield' }
-    }]
-  },
-  {
-    path: '/company',
-    component: Layout,
-    redirect: '/company',
+    redirect: '/category',
     children: [{
       path: 'index',
       permission: 'M001B00',
-      name: 'Company',
-      component: () => import('@/views/company/index'),
-      meta: { title: 'Company', icon: 'tree' }
+      name: 'Category',
+      component: () => import('@/views/category/index'),
+      meta: { title: 'Category', icon: 'tree' }
+    }]
+  },
+
+  {
+    path: '/brand',
+    component: Layout,
+    redirect: '/brand',
+    children: [{
+      path: 'index',
+      permission: 'M001B00',
+      name: 'Brand',
+      component: () => import('@/views/brand/index'),
+      meta: { title: 'Brand', icon: 'list' }
     }]
   },
 
@@ -150,43 +163,38 @@ export const constantRoutes = [
       meta: { title: 'Suppliers', icon: 'user' }
     }]
   },
-
   {
-    path: '/category',
+    path: '/user',
     component: Layout,
-    redirect: '/category',
+    redirect: '/user',
     children: [{
       path: 'index',
-      permission: 'M001B00',
-      name: 'Category',
-      component: () => import('@/views/category/index'),
-      meta: { title: 'Category', icon: 'tree' }
+      name: 'User',
+      component: () => import('@/views/user/index'),
+      meta: { title: 'User', icon: 'user' }
+    }]
+  },
+  {
+    path: '/warehouse',
+    component: Layout,
+    redirect: '/warehouse',
+    children: [{
+      path: 'index',
+      name: 'Warehouse',
+      component: () => import('@/views/warehouse/index'),
+      meta: { title: 'Warehouse', icon: 'factory' }
     }]
   },
 
   {
-    path: '/brand',
+    path: '/permission',
     component: Layout,
-    redirect: '/brand',
+    redirect: '/permission',
     children: [{
       path: 'index',
-      permission: 'M001B00',
-      name: 'Brand',
-      component: () => import('@/views/brand/index'),
-      meta: { title: 'Brand', icon: 'tree' }
-    }]
-  },
-
-  {
-    path: '/product',
-    component: Layout,
-    redirect: '/product',
-    children: [{
-      path: 'index',
-      permission: 'M001B00',
-      name: 'Product',
-      component: () => import('@/views/product/index'),
-      meta: { title: 'Product', icon: 'tree' }
+      name: 'Permission Group',
+      component: () => import('@/views/permission/index'),
+      meta: { title: 'Permission Group', icon: 'shield' }
     }]
   },
   {
@@ -200,39 +208,41 @@ export const constantRoutes = [
       meta: { title: 'Branch', icon: 'tree' }
     }]
   },
+
   {
-    path: '/dailyreport',
+    path: '/company',
     component: Layout,
-    redirect: '/dailyreport',
+    redirect: '/company',
     children: [{
       path: 'index',
-      name: 'Dailyreport',
-      component: () => import('@/views/dailyreport/index'),
-      meta: { title: 'Dailyreport', icon: 'tree' }
+      permission: 'M001B00',
+      name: 'Company',
+      component: () => import('@/views/company/index'),
+      meta: { title: 'Company', icon: 'star' }
     }]
   },
 
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'example' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
+  // {
+  //   path: '/example',
+  //   component: Layout,
+  //   redirect: '/example/table',
+  //   name: 'Example',
+  //   meta: { title: 'Example', icon: 'example' },
+  //   children: [
+  //     {
+  //       path: 'table',
+  //       name: 'Table',
+  //       component: () => import('@/views/table/index'),
+  //       meta: { title: 'Table', icon: 'table' }
+  //     },
+  //     {
+  //       path: 'tree',
+  //       name: 'Tree',
+  //       component: () => import('@/views/tree/index'),
+  //       meta: { title: 'Tree', icon: 'tree' }
+  //     }
+  //   ]
+  // },
   // {
   //   path: '/example',
   //   component: Layout,

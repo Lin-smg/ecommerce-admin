@@ -12,7 +12,6 @@ import { OutUnitsDto } from './dto/out-units.dto';
 import { InCreateUnitsDto } from './dto/in-create-units.dto';
 import { Units } from './units.entity';
 import { OutUnitsListDto } from './dto/out-units-list.dto';
-import { UnitsDto } from './dto/units.dto';
 
 @Controller('units')
 @ApiTags('units')

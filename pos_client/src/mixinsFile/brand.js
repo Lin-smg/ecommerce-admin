@@ -29,9 +29,6 @@ export const Brand = {
         ],
         brandName: [
           { required: true, trigger: 'blur', validator: validateBrand }
-        ],
-        description: [
-          { required: true, trigger: 'blur', validator: validateBrand }
         ]
       }
     }

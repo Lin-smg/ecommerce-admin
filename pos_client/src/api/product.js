@@ -8,7 +8,7 @@ export function deletePhoto(data) {
   })
 }
 
-export async function updatProductr(productCode, data) {
+export async function updateProduct(productCode, data) {
   return request({
     url: `/products/${productCode}`,
     method: 'put',
@@ -33,6 +33,14 @@ export async function getSupplierList() {
 export async function getProductList(params) {
   return request({
     url: '/products',
+    method: 'get',
+    params
+  })
+}
+
+export async function getPOSProductList(params) {
+  return request({
+    url: '/products/pos',
     method: 'get',
     params
   })

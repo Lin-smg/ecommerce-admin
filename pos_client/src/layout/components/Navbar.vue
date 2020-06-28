@@ -8,7 +8,9 @@
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <!-- <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar"> -->
-          <img :src="'https://logomaster.ai/static/media/sample.c8bf2b04.svg'" class="user-avatar">
+          <img v-if="imageUrl !== ''" :src="baseUrl+imageUrl" class="user-avatar" :title="userid" :alt="userid">
+          <img v-if="imageUrl === ''" :src="baseUrl+'/shared/company_profile.jpg'" class="user-avatar" :title="userid" :alt="userid">
+          <!-- <img :src="'https://logomaster.ai/static/media/sample.c8bf2b04.svg'" class="user-avatar"> -->
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
@@ -17,12 +19,12 @@
               Home
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
+          <!-- <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
             <el-dropdown-item>Github</el-dropdown-item>
           </a>
           <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
             <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
+          </a> -->
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">Log Out</span>
           </el-dropdown-item>
@@ -41,6 +43,13 @@ export default {
   components: {
     Breadcrumb,
     Hamburger
+  },
+  data() {
+    return {
+      userid: this.$store.getters.userid,
+      imageUrl: this.$store.getters.curUserInfo.imagePath,
+      baseUrl: process.env.VUE_APP_BASE_API
+    }
   },
   computed: {
     ...mapGetters([

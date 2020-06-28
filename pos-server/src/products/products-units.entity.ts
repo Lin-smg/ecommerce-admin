@@ -35,6 +35,4 @@ export class ProductsUnits extends BaseEntity {
     
     @Column({ name: 'effective_date',type: 'date', nullable: true })
     effectiveDate: Date;
-
-    
 }

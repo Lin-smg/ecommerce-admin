@@ -1,9 +1,12 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { IsOptional } from "class-validator";
-import { UnitsDto } from "../../units/dto/units.dto";
+import { ProductsUnitsDto } from "./products-units.dto";
+import { Exclude, Type } from "class-transformer";
 
 export class InCreateProductsDto {
 
+    id: number;
+    
     @ApiProperty()
     productCode: string;
 
@@ -65,6 +68,8 @@ export class InCreateProductsDto {
     @IsOptional()
     imgPath: string;
     
-    unit: UnitsDto[]
+    @Exclude()
+    @Type(() => ProductsUnitsDto)
+    unit: ProductsUnitsDto[]
 
 }
