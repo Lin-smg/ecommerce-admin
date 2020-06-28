@@ -1,10 +1,10 @@
 <template>
   <div :class="{'has-logo':showLogo}">
-    <logo v-if="showLogo" :collapse="isCollapse" />
+    <logo v-if="showLogo" :collapse="isCollapse || $route.meta.title === 'POS'" />
     <el-scrollbar wrap-class="scrollbar-wrapper">
       <el-menu
         :default-active="activeMenu"
-        :collapse="isCollapse"
+        :collapse="isCollapse || $route.meta.title === 'POS'"
         :background-color="variables.menuBg"
         :text-color="variables.menuText"
         :unique-opened="false"
