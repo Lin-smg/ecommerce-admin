@@ -1,7 +1,7 @@
 import { getCategory } from '@/api/category'
 import { getBrandList } from '@/api/brand'
 import { getSupplierList } from '@/api/supplier'
-import { getProductList } from '@/api/product'
+import { getProductList,getPOSProductList } from '@/api/product'
 
 export const Purchase = {
   data: function() {
@@ -24,32 +24,7 @@ export const Purchase = {
       },
       name: '',
       amount: 0,
-      itemList: [
-        {
-          code: 'code1',
-          name: 'p1',
-          type: 'type',
-          price: 100
-        },
-        {
-          code: 'code2',
-          name: 'p2',
-          type: 'type',
-          price: 200
-        },
-        {
-          code: 'code1',
-          name: 'p1',
-          type: 'type',
-          price: 100
-        },
-        {
-          code: 'code2',
-          name: 'p2',
-          type: 'type',
-          price: 200
-        }
-      ],
+      itemList: [],
       categoryList: [],
       brandList: [],
       dialogVisible: false,
@@ -93,7 +68,7 @@ export const Purchase = {
         otherCharges: 0
       },
 
-      print: false
+      print: false,
     }
   },
   created() {
@@ -143,14 +118,36 @@ export const Purchase = {
 
     async getProductList() {
       const params = {
-        q: this.searchProduct ? this.searchProduct : ''
+        product: this.searchProduct ? this.searchProduct : '',
+        brand: this.searchBrand ? this.searchBrand : '',
+        category: this.searchCategory ? this.searchCategory : ''
       }
-
-      this.listLoading = true
-      await getProductList(params).then(response => {
+      await getPOSProductList(params).then(response => {
         this.itemList = response.data
-        console.log('product', this.itemList)
+        console.log('PRODUCT LIST => ', this.itemList)
       })
+    },
+
+    setPurchaseItem(item) {
+      const selected = {
+        data: item,
+        tax: this.selectedItem.taxPercent,
+        count: 1
+      }
+      var exists = this.selectedItemList.some(function(field) {
+        var flag = field.data.id === selected.data.id
+        if (flag) {
+          field.count += 1
+        }
+        return flag
+      })
+      if (!exists) {
+        this.selectedItemList.push(selected)
+      }
+      console.log('selected item', selected)
+      console.log('selectedItemList', this.selectedItemList)
+
+      //this.setTotal()
     },
 
     catOver(i) {
@@ -167,33 +164,12 @@ export const Purchase = {
     },
 
     chooseCatecory(data) {
-      console.log('categor', data)
+      //console.log('categor', data)
     },
 
     popShow(data) {
       this.selectedItem = data
       this.dialogVisible = true
-    },
-
-    addSaleItem(item) {
-      const selected = {
-        data: item,
-        tax: this.selectedItem.taxPercent,
-        count: 1
-      }
-      var exists = this.selectedItemList.some(function(field) {
-        var flag = field.data.id === selected.data.id
-        if (flag) {
-          field.count += 1
-        }
-        return flag
-      })
-      if (!exists) {
-        this.selectedItemList.push(selected)
-      }
-      this.dialogVisible = false
-      console.log('selectitem', selected)
-      this.setTotal()
     },
 
     removeItem(i) {
