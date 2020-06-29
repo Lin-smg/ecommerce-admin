@@ -2,7 +2,7 @@
   <div class="pos-container">
     <div>
       <el-row :style="{width: device === 'mobile' ? '96%' : '100%'}">
-        <div style="height: 100vh;float: left; margin-right: 0px" :style="{width: device === 'mobile' ? '53%' : '65%'}">
+        <div style="height: 100vh;float: left; margin-right: 0px" :style="{width: device === 'mobile' ? '50%' : '50%'}">
           <div style="margin-bottom: 10px; border: 1px solid #f3f0f0; padding: 5px; border-radius: 5px">
             <el-input
               v-model="searchProduct"
@@ -22,6 +22,7 @@
             <el-autocomplete v-model="searchCategory" style="margin: 0px" size="small" value-key="categoryName" clearable :fetch-suggestions="categorySearch" placeholder="Search Category" class="input-with-select" @select="searchClick" />
             <el-autocomplete v-model="searchBrand" style="margin: 0px" size="small" value-key="brandName" clearable :fetch-suggestions="brandSearch" placeholder="Search Brand" class="input-with-select" @select="searchClick" />
             <el-button size="small" icon="el-icon-search" @click="searchClick" />
+            <el-button size="small" icon="el-icon-search" @click="openNewTab('Product')" />
 
           </div>
 
@@ -62,7 +63,7 @@
           </el-dialog>
 
         </div>
-        <div style="overflow-y: auto; height: 100vh;" :style="{width: device==='mobile' ? '45%' : '35%'}">
+        <div style="overflow-y: auto; height: 100vh;" :style="{width: device==='mobile' ? '50%' : '50%'}">
           <div>
             <el-card shadow="hover" class="box-card" style="bottom: 0px; color: #928585;font-family: initial">
               <div ref="header">
@@ -76,6 +77,7 @@
                   :highlight-first-item="true"
                   placeholder="Please Input"
                   style="width : 90%"
+                  :clearable="true"
                   @select="handleSelect"
                 >
                   <template slot="prepend"><span class="el-icon-user" /></template>
@@ -89,75 +91,63 @@
               <br>
               <div style="margin: 0px; min-height: 200px">
                 <el-row>
-                  <el-col :span="10" style="text-align: center"><span>Name</span></el-col>
+                  <el-col :span="1" style="text-align: center"><span>#</span></el-col>
+                  <el-col :span="6" style="text-align: center"><span>Name</span></el-col>
+                  <el-col :span="4" style="text-align: center"><span>Price</span></el-col>
                   <el-col :span="6" style="text-align: center"><span>Qty</span></el-col>
-                  <el-col :span="6" style="text-align: center"><span>Price</span></el-col>
-                  <el-col :span="2" />
+                  <el-col :span="6" style="text-align: center"><span>Total</span></el-col>
+                  <el-col :span="1" />
                 </el-row>
                 <hr>
-                <el-popover
+                <!-- <el-popover
                   v-for="(item,i) of selectedItemList"
                   :key="i"
                   placement="bottom"
                   :title="item.data.productName"
                   width="400"
-                  trigger="click"
                 >
                   <div>
                     <el-row :gutter="10">
                       <el-col :span="8">
                         <span>Quantity</span><br>
-                        <el-input v-model="item.count" size="mini" @change="setTotal" />
+                        <el-input v-model="item.count" type="number" size="mini" min="0" @change="setTotal" />
                       </el-col>
                       <el-col :span="8">
                         <span>Price(MMK)</span><br>
-                        <el-input v-model="item.data.sellPrice" size="mini" @change="setTotal" />
+                        <el-input v-model="item.data.sellPrice" type="number" size="mini" min="0" @change="setTotal" />
                       </el-col>
                       <el-col :span="8">
                         <span>Discount(%)</span><br>
-                        <el-input v-model="item.discount" size="mini" @change="setTotal" />
+                        <el-input v-model="item.discount" type="number" size="mini" min="0" max="100" @change="setTotal" />
                       </el-col>
 
                     </el-row>
-                  </div>
-                  <el-row slot="reference" style="margin-bottom: 5px;line-height: 25px; cursor: pointer">
-                    <el-col :span="10"><div>{{ item.data.productName }}({{ item.data.unitName }})</div></el-col>
-                    <el-col :span="6" style="text-align: center">
-                      <el-row>
-                        <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" />
-                        <input v-model="item.count" :style="{width: device==='mobile'? '21px' : '25px'}" style="width: 25px; text-align: center; border: none" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
-                        <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click="item.count++, setTotal()" />
+                  </div> -->
+                <el-row v-for="(item,i) of selectedItemList" :key="i" slot="reference" style="margin-bottom: 5px;line-height: 25px; cursor: pointer">
+                  <el-col :span="1" style="text-align: center; color: #000000"><span>{{ i+1 }}.</span></el-col>
+                  <el-col :span="6"><div> {{ item.data.productName }}</div></el-col>
+                  <el-col :span="4" style="text-align: center">
+                    <el-input v-model="item.data.sellPrice" size="mini" min="0" @change="setTotal" />
+                    <!-- <span>{{ item.data.sellPrice }}</span> -->
+                  </el-col>
+                  <el-col :span="6" style="text-align: center">
+                    <el-row>
+                      <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click.stop="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" />
+                      <input v-model="item.count" :style="{width: device==='mobile'? '21px' : '69px'}" style="text-align: center; border: none" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
+                      <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click.stop="item.count++, setTotal()" />
 
-                      </el-row>
+                    </el-row>
 
-                    </el-col>
-                    <el-col :span="6" style="text-align: center">
-                      <span>{{ item.count * parseFloat(item.data.sellPrice) }}</span>
-                      <!-- (item.count * parseFloat(item.data.sellPrice) * (item.tax/100))).toFixed(2) -->
-                    </el-col>
-                    <el-col :span="2" style="text-align: center">
-                      <i class="el-icon-delete-solid" style="color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
-                    </el-col>
-                  </el-row>
-                </el-popover>
-                <!-- <el-row v-for="(item,i) of selectedItemList" slot="reference" :key="i" style="margin-bottom: 5px;line-height: 25px">
-                    <el-col :span="10"><div>{{ item.data.productName }}({{ item.data.unitName }})</div></el-col>
-                    <el-col :span="6" style="text-align: center">
-                      <el-row>
-                        <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" />
-                        <input v-model="item.count" :style="{width: device==='mobile'? '21px' : '25px'}" style="width: 25px; text-align: center; border: none" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
-                        <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click="item.count++, setTotal()" />
-
-                      </el-row>
-
-                    </el-col>
-                    <el-col :span="6" style="text-align: center">
-                      <span>{{ ((item.count * parseFloat(item.data.sellPrice)) + (item.count * parseFloat(item.data.sellPrice) * (item.tax/100))).toFixed(2) }}</span>
-                    </el-col>
-                    <el-col :span="2" style="text-align: center">
-                      <i class="el-icon-delete-solid" style="color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
-                    </el-col>
-                  </el-row> -->
+                  </el-col>
+                  <el-col :span="6" style="text-align: center">
+                    <span>{{ item.count * parseFloat(item.data.sellPrice) - (item.count * parseFloat(item.data.sellPrice)* (item.discount/100)) }}</span>
+                    <!-- (item.count * parseFloat(item.data.sellPrice) * (item.tax/100))).toFixed(2) -->
+                  </el-col>
+                  <el-col :span="1" style="text-align: center">
+                    <i class="el-icon-delete-solid" style="color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
+                  </el-col>
+                </el-row>
+                <!-- </el-popover> -->
 
               </div>
               <hr>
@@ -185,7 +175,7 @@
                     <span>{{ data.name }}</span>
                   </el-col>
                   <el-col :span="6" style="text-align: center">
-                    <el-input v-model="data.amount" size="mini" style="width: 60px" />
+                    <el-input v-model="data.amount" type="number" size="mini" style="width: 100px" min="0" /> MMK
                   </el-col>
                   <el-col :span="3" style="text-align: right">
                     <i class="el-icon-delete-solid" style="color: red" @click="otherChargeDelete(data)" />
@@ -212,37 +202,25 @@
                   <el-input v-model="discount" type="number" size="mini" min="0" />
                 </div>
                 <div slot="reference" style="cursor: pointer">
-                  <span>Discount :
+                  <span>Discount on entire sale :
                   </span>
                   <i class="el-icon-edit-outline" style="cursor:pointer" />
                   <span style="float:right;">{{ discount }}</span>
                 </div>
               </el-popover>
-              <!-- <el-popover
-                placement="top"
-                title="Tax"
-                width="200"
-                trigger="click"
-                content="this is content, this is content, this is content"
-              > -->
-              <!-- <div>
-                <el-input v-model="tax" type="number" size="mini" min="0" max="100">
-                  <template slot="append">MMK</template>
-                </el-input>
-              </div> -->
+
               <div style="cursor: pointer">
                 <span>Tax :
                 </span>
-                <span style="float:right;">{{ tax }} </span>
+                <span style="float:right;">{{ tax.toFixed(2) }} </span>
               </div>
-              <!-- </el-popover> -->
 
               <hr>
               <div style="line-height: 30px; height: 30px">
                 <label>Product Price Tax</label>
                 <span style="float: right">
-                  <el-button size="mini" :type="!taxInclude? 'info': ''" round @click="taxInclude=false">Excluded</el-button>
-                  <el-button size="mini" :type="taxInclude? 'info': ''" round @click="taxInclude=true">Included</el-button>
+                  <el-button size="mini" :type="!taxInclude? 'info': ''" round @click="taxInclude=false, setTotal()">No Tax</el-button>
+                  <el-button size="mini" :type="taxInclude? 'info': ''" round @click="taxInclude=true, setTotal()">Tax</el-button>
                 </span>
 
               </div>
@@ -251,49 +229,58 @@
 
               <div>
                 <span>Net Amount :</span>
-                <span style="float:right;">{{ total+OtherChargeTotal+(taxInclude?Number(tax):0)-discount }}</span>
+                <span style="float:right;">{{ netAmount.toFixed(2) }}</span>
               </div>
               <hr>
               <div>
                 <span>Old Credit Amount :</span>
-                <span style="float:right;">0</span>
+                <span style="float:right;">{{ customerData.oldCreditAmount }}</span>
               </div>
               <hr>
               <div>
                 <span>Net Total Amount :</span>
-                <span style="float:right;">0</span>
+                <span style="float:right;">{{ (netAmount+customerData.oldCreditAmount).toFixed(2) }}</span>
               </div>
-              <div>
-                <!-- <span>Pay Amount :</span> -->
-                <!-- <el-input  -->
-                <el-popover
-                  title="Pay Amount :"
-                  width="200"
-                  trigger="click"
-                  content="this is content, this is content, this is content"
-                >
-                  <div>
-                    <el-input v-model="payAmount" type="number" size="mini" min="0" />
-                  </div>
-                  <div slot="reference" style="cursor: pointer">
-                    <span>Pay Amount :
-                    </span>
-                    <i class="el-icon-edit-outline" style="cursor:pointer" />
-                    <span style="float:right;">{{ payAmount }}</span>
-                  </div>
-                </el-popover>
-
-                <!-- <span style="float:right;">0</span> -->
+              <hr>
+              <div style="height: 30px">
+                <label>Pay Amount :
+                </label>
+                <i class="el-icon-edit-outline" style="cursor:pointer" />
+                <span style="float:right;">
+                  <el-input v-model="payAmount" type="number" size="mini" min="0" style="width: 200px;" @click="setTotal" /> MMK
+                </span>
               </div>
-              <div>
-                <span>Left Amount :</span>
-                <span style="float:right;">{{ (total+OtherChargeTotal+(taxInclude?Number(tax):0)-discount ) - payAmount }}</span>
+              <div v-if="payAmount >= (netAmount+customerData.oldCreditAmount).toFixed(2)" style="line-height: 35px">
+                <span>Change Amount :</span>
+                <span style="float:right;">{{ (payAmount - (netAmount+customerData.oldCreditAmount).toFixed(2)).toFixed(2) }} MMK</span>
+              </div>
+              <div v-if="payAmount < (netAmount+customerData.oldCreditAmount).toFixed(2)" style="line-height: 35px">
+                <span>Credit Amount :</span>
+                (Due Date:
+                <el-date-picker
+                  v-model="dueDate"
+                  type="date"
+                  placeholder="Pick a day"
+                  size="mini"
+                  style="width: 150px"
+                />)
+                <span style="float:right;">{{ (netAmount+customerData.oldCreditAmount - payAmount).toFixed(2) }} MMK</span>
               </div>
               <hr>
 
               <div style="text-align: right">
-                <el-button type="primary" @click="printClick">Pay Now</el-button>
-                <el-button type="primary">Pending</el-button>
+                <el-popconfirm
+                  confirm-button-text="OK"
+                  cancel-button-text="No, Thanks"
+                  icon="el-icon-info"
+                  icon-color="red"
+                  title="Are you sure to delete this?"
+                  @onConfirm="clearItemList"
+                >
+                  <el-button slot="reference" type="danger">Cancel</el-button>
+                </el-popconfirm>
+                <el-button type="primary" @click="printClick(1)">Pay Now</el-button>
+                <el-button type="primary" @click="printClick(2)">Order</el-button>
               </div>
             </el-card>
           </div>
@@ -367,7 +354,7 @@
     </el-dialog>
 
     <el-dialog
-      :visible.sync="print"
+      :visible.sync="printPay"
     >
       <div id="printMe">
         <div id="saleHeader" style="text-align:center; padding: 25px">
@@ -409,7 +396,7 @@
                 <td>{{ item.count }}</td>
                 <td>{{ item.data.sellPrice }} MMK</td>
                 <td>{{ item.tax }}%</td>
-                <td style="text-align:right">{{ ((item.count * parseFloat(item.data.sellPrice))).toFixed(2) }} MMK</td>
+                <td style="text-align:right">{{ (item.count * parseFloat(item.data.sellPrice) - (item.count * parseFloat(item.data.sellPrice)* (item.discount/100))).toFixed(2) }} MMK</td>
               </tr>
             </tbody>
             <tfoot>
@@ -434,7 +421,7 @@
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Tax : </span>
-              <span style="float: right"><s v-if="!taxInclude">{{ tax }} MMK</s> <span v-if="taxInclude">{{ tax }} MMK</span></span>
+              <span style="float: right"><s v-if="!taxInclude">{{ tax.toFixed(2) }} MMK</s> <span v-if="taxInclude">{{ tax.toFixed(2) }} MMK</span></span>
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Sub Total : </span>
@@ -445,14 +432,144 @@
               <span style="float: right">{{ OtherChargeTotal }} MMK</span>
             </div><br>
             <div style="margin: 5px">
-              <span style="color: #000000b5;font-weight: bolder; float: left">Grand Total : </span>
-              <span style="float: right">{{ total+OtherChargeTotal+(taxInclude?Number(tax):0)-discount }} MMK</span>
+              <span style="color: #000000b5;font-weight: bolder; float: left">Net Amount : </span>
+              <span style="float: right">{{ netAmount }} MMK</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Old Credit Amount :</span>
+              <span style="float:right;">{{ customerData.oldCreditAmount }} MMK</span>
+            </div>
+            <br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Net Total Amount :</span>
+              <span style="float:right;">{{ (netAmount+customerData.oldCreditAmount).toFixed(2) }} MMK</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Pay Amount : </span>
+              <span style="float: right">{{ payAmount }} MMK</span>
+            </div><br>
+            <div v-if="payAmount >= (netAmount+customerData.oldCreditAmount).toFixed(2)" style="line-height: 35px; margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Change Amount :</span>
+              <span style="float:right;">{{ (payAmount - (netAmount+customerData.oldCreditAmount).toFixed(2)).toFixed(2) }} MMK</span>
+            </div>
+            <div v-if="payAmount < (netAmount+customerData.oldCreditAmount).toFixed(2)" style="line-height: 35px; margin:5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Credit Amount :</span>
+              <span style="float:right;">{{ (netAmount+customerData.oldCreditAmount - payAmount).toFixed(2) }} MMK</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="height: 25px">
+        <el-button size="small" type="danger" style="float: right; margin-left: 10px" @click="printPay = false">Cancel</el-button>
+        <el-button size="small" type="primary" style="float: right" @click="printData">Print Pay</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog
+      :visible.sync="printOrder"
+    >
+      <div id="printMe">
+        <div id="saleHeader" style="text-align:center; padding: 25px">
+          <h3>Sale</h3>
+          <div>Sale Order Receipt</div>
+          <h4>INVOICE</h4>
+          <div style="margin: 5px; color: #000000; font-weight: 600">
+            <span style="float: left"> Invoice Id : {{ Date.now() }}</span>
+            <span style="float: right">Date : {{ today.split(',')[0] }}</span>
+          </div><br>
+          <div style="margin: 5px; color: #000000; font-weight: 600">
+            <span style="float: left">Sold To : {{ customer }} </span>
+            <span style="float: right">Time : {{ today.split(',')[1] }}</span>
+          </div><br>
+          <div style="margin: 5px; color: #000000; font-weight: 600">
+            <span style="float: left">Sold By : {{ $store.getters.curUserInfo.username }}</span>
+          </div><br>
+          <div style="margin: 5px; color: #000000; font-weight: 600">
+            <span style="float: left">Phone : </span>
+          </div><br>
+          <div style="margin: 5px; color: #000000; font-weight: 600">
+            <span style="float: left">Address : </span>
+          </div><br>
+        </div>
+        <div style="margin: 25px">
+          <table style="width: 100%">
+            <thead>
+              <tr style="text-align:center">
+                <th style="width: 30%; text-align: left">Items</th>
+                <th style="width: 10%">Qty</th>
+                <th style="width: 20%">Price</th>
+                <th style="width: 20%">Tax(%)</th>
+                <th style="width: 20%; text-align:right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item,i) of selectedItemList" id="trh" :key="i" style="text-align:center;border-bottom: 1px solid #dddddd;">
+                <td style="text-align: left">{{ item.data.productName }}({{ item.data.unitName }})</td>
+                <td>{{ item.count }}</td>
+                <td>{{ item.data.sellPrice }} MMK</td>
+                <td>{{ item.tax }}%</td>
+                <td style="text-align:right">{{ (item.count * parseFloat(item.data.sellPrice) - (item.count * parseFloat(item.data.sellPrice)* (item.discount/100))).toFixed(2) }} MMK</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td style="color: #000000b5;font-weight: bolder;">Other Charges : </td>
+                <td colspan="4">
+                  <div v-for="(data,i) of otherChargesList" :key="i">
+
+                    <span>{{ data.name }} : </span>
+
+                    <span> {{ data.amount }} MMK</span>
+                  </div>
+                </td>
+              </tr>
+
+            </tfoot>
+          </table>
+          <div id="footer" style="padding: 10px">
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Discount : </span>
+              <span style="float: right">{{ discount }} MMK</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Tax : </span>
+              <span style="float: right"><s v-if="!taxInclude">{{ tax.toFixed(2) }} MMK</s> <span v-if="taxInclude">{{ tax.toFixed(2) }} MMK</span></span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Sub Total : </span>
+              <span style="float: right">{{ total }} MMK</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Other Total : </span>
+              <span style="float: right">{{ OtherChargeTotal }} MMK</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Net Amount : </span>
+              <span style="float: right">{{ netAmount }} MMK</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Old Credit Amount :</span>
+              <span style="float:right;">{{ customerData.oldCreditAmount }} MMK</span>
+            </div>
+            <br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Net Total Amount :</span>
+              <span style="float:right;">{{ (netAmount+customerData.oldCreditAmount).toFixed(2) }} MMK</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Pay Amount : </span>
+              <span style="float: right">{{ payAmount }} MMK</span>
+            </div><br>
+            <div style="margin: 5px">
+              <span style="color: #000000b5;font-weight: bolder; float: left">Left Amount : </span>
+              <span style="float: right">{{ (netAmount-payAmount).toFixed(2) }} MMK</span>
             </div><br>
           </div>
         </div>
       </div>
       <div style="height: 25px">
-        <el-button type="primary" style="float: right" @click="printData">Print</el-button>
+        <el-button size="small" type="danger" style="float: right; margin-left: 10px" @click="printOrder = false">Cancel</el-button>
+        <el-button size="small" type="primary" style="float: right" @click="printOrderData">Print Order</el-button>
       </div>
     </el-dialog>
   </div>
