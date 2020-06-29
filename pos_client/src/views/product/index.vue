@@ -11,8 +11,9 @@
           <el-table
             border
             :data="productData"
-            style="width: 100%;background-color: #e9e3e3"
+            style="width: 100%;"
             highlight-current-row
+            :row-class-name="productQtyReOrder"
           >
             <el-table-column align="center" min-width="90">
               <template slot="header">
@@ -48,12 +49,36 @@
                 <span>{{ row.categoryName }}</span>
               </template>
             </el-table-column>
+            <el-table-column align="center" min-width="150px">
+              <template slot="header">
+                <span>unit</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.unitName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" min-width="150px">
+              <template slot="header">
+                <span>Qty</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.unitQty }}</span>
+              </template>
+            </el-table-column>
             <el-table-column align="center" min-width="200px">
               <template slot="header">
                 <span>supplier</span>
               </template>
               <template slot-scope="{row}">
                 <span>{{ row.supplierName }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" min-width="150px">
+              <template slot="header">
+                <span>EXP Date</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.expDate }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" min-width="300px">
@@ -66,26 +91,10 @@
             </el-table-column>
             <el-table-column align="center" min-width="150px">
               <template slot="header">
-                <span>EXP Date</span>
-              </template>
-              <template slot-scope="{row}">
-                <span>{{ row.expDate }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" min-width="150px">
-              <template slot="header">
                 <span>brand</span>
               </template>
               <template slot-scope="{row}">
                 <span>{{ row.brandName }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" min-width="150px">
-              <template slot="header">
-                <span>unit</span>
-              </template>
-              <template slot-scope="{row}">
-                <span>{{ row.unitName }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" fixed="right" min-width="150px">
@@ -161,6 +170,8 @@
               :fetch-suggestions="querySearchAsync"
               placeholder="Please input"
               style="width: 280px"
+              clearable
+              @clear="handleClear"
               @select="handleSelect"
             >
               <template slot-scope="{ item }">
@@ -286,6 +297,8 @@
               :fetch-suggestions="querySearchAsync"
               placeholder="Please input"
               style="width: 280px"
+              clearable
+              @clear="handleClearForUpdate"
               @select="handleSelectForUpdate"
             >
               <template slot-scope="{ item }">
@@ -381,7 +394,11 @@ export default {
   mixins: [Product]
 }
 </script>
-
+<style>
+ .el-table .row-color {
+    background: #f5cf5e7a!important;
+  }
+</style>
 <style scoped>
 .product-container {
   margin: 30px;

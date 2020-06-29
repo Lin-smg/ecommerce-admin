@@ -34,9 +34,16 @@ export class Products extends BaseEntity {
     @Column({ name: 'unit_name', nullable: false })
     unitName: string;
 
+    @Column({ name: 'unit_qty', default: 0 })
+    unitQty: number;
+
     @Column({name: 'unit_price', nullable: true})
     @Column('numeric',{ precision: 10, scale: 2, default: 0 })
     unitPrice: number;
+
+    @Column({name: 'unit_price', nullable: true})
+    @Column('numeric',{ precision: 10, scale: 2, default: 0 })
+    unitCost: number;
 
     @Column({ name: 'reorder', default: 0, nullable: false })
     reOrder: number;
@@ -52,4 +59,11 @@ export class Products extends BaseEntity {
     
     @Column({ name: 'imgpath', nullable: true })
     imgPath: string;
+
+    @Column({ name: 'type', nullable: true })
+    type: string;
+
+    @Column({ name: 'package_size', nullable: true })
+    packageSize: string;
+    
 }

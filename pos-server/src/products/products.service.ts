@@ -122,9 +122,9 @@ export class ProductsService {
         try {
             await this.findByproductCode({ productCode: options.item.productCode });
             if(options.item.supplierName !== ''){
-            await this.isExistProductWithSupplier(options.item);
+            //await this.isExistProductWithSupplier(options.item);
             }
-            await this.productsUnitsService.checkIsExistProductUnit(options.item);
+            //await this.productsUnitsService.checkIsExistProductUnit(options.item);
             const queryRunner = this.connection.createQueryRunner();
             await queryRunner.connect();
             await queryRunner.startTransaction();

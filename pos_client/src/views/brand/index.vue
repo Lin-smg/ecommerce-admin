@@ -8,7 +8,7 @@
 
         <div style="width: 250px; float: right">
           <el-input v-model="searchValue" placeholder="Please input" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search" />
+            <el-button slot="append" icon="el-icon-search" @click="getBrand" />
           </el-input>
         </div>
       </div>
@@ -68,14 +68,15 @@
         </el-table>
 
         <el-pagination
-          :page-sizes="[10,20,30]"
+          v-if="brandData.length > 0"
+          :page-sizes="[5,10,20,30]"
           :page-size="pageSize"
           :page-index="pageIndex"
           layout="sizes, prev, pager, next"
-          :total="brandData.length"
+          :total="totalCount"
           style="float:right;"
-          @size-change="onPageSizeChange"
-          @current-change="onPageIndexChange"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
       </div>
     </el-card>

@@ -77,7 +77,7 @@ export class CategoryService {
             d: '0'
         });
         if (options.q) {
-            qb = qb.andWhere('category.categoryCode like :q OR category.categoryName like :q', {
+            qb = qb.andWhere('category.categoryCode like :q OR LOWER(category.categoryName) like LOWER(:q)', {
                 q: `%${options.q}%`,
             });
         }
