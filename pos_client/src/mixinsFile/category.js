@@ -82,6 +82,9 @@ export const Category = {
         this.category = data
       }
     },
+    searchClick() {
+      this.getCategory()
+    },
 
     deleteCategory(data) {
       this.$store.dispatch('category/deleteCategory', data)
@@ -93,12 +96,14 @@ export const Category = {
         })
     },
 
-    onPageSizeChange(val) {
+    handleSizeChange(val) {
       this.pageSize = val
+      this.getCategory()
     },
 
-    onPageIndexChange(val) {
+    handleCurrentChange(val) {
       this.pageIndex = val
+      this.getCategory()
     }
   }
 

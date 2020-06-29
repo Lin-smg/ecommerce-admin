@@ -42,6 +42,12 @@ export const Product = {
     this.getProductList()
   },
   methods: {
+    productQtyReOrder({ row, rowIndex }) {
+      if (row.unitQty <= row.reOrder) {
+        return 'row-color'
+      }
+      return ''
+    },
     async querySearchAsync(queryString, cb) {
       const params = {
         group: '',
@@ -64,6 +70,14 @@ export const Product = {
       this.createProductForm.supplierName = item.name
       this.selectedSupplier = item.name
     },
+    handleClear() {
+      this.createProductForm.supplierId = null
+      this.createProductForm.supplierName = ''
+    },
+    handleClearForUpdate() {
+      this.updateProductForm.supplierId = null
+      this.updateProductForm.supplierName = ''
+    },
     handleSelectForUpdate(item) {
       this.updateProductForm.supplierId = item.id
       this.updateProductForm.supplierName = item.name
@@ -84,6 +98,8 @@ export const Product = {
         supplierId: null,
         supplierName: '',
         unitPrice: 0,
+        unitCost: 0,
+        unitQty: 0,
         description: '',
         reOrder: 0,
         taxPercent: 0,
@@ -176,7 +192,7 @@ export const Product = {
       }
       this.oldFileName = res.filename
       this.createProductForm.imgPath = `/shared/${res.filename}`
-      this.createProductForm.imgPath = `/shared/${res.filename}`
+      this.updateProductForm.imgPath = `/shared/${res.filename}`
       this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {

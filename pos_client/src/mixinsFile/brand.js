@@ -64,12 +64,14 @@ export const Brand = {
         })
     },
 
-    onPageSizeChange(val) {
+    handleSizeChange(val) {
       this.pageSize = val
+      this.getBrand()
     },
 
-    onPageIndexChange(val) {
+    handleCurrentChange(val) {
       this.pageIndex = val
+      this.getBrand()
     },
 
     async getBrand() {
