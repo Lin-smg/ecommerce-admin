@@ -1,51 +1,107 @@
 <template>
   <div class="purchase-container">
     <div>
-      <el-row :gutter="20" style="position: absolute;" :style="{width: device === 'mobile' ? '96%' : '100%'}">
-        <div style="height: 100vh;float: left; margin-right: 8px" :style="{width: device === 'mobile' ? '53%' : '60%'}">
-          <div style="margin-bottom: 10px; border: 1px solid #f3f0f0; padding: 5px; border-radius: 5px">
+      <el-row
+        :gutter="20"
+        style="position: absolute;"
+        :style="{width: device === 'mobile' ? '96%' : '100%'}"
+      >
+        <div
+          style="height: 100vh;float: left; margin-right: 8px"
+          :style="{width: device === 'mobile' ? '45%' : '30%'}"
+        >
+          <div
+            style="margin-bottom: 10px; border: 1px solid #f3f0f0; padding: 5px; border-radius: 5px"
+          >
             <el-autocomplete
               v-model="searchProduct"
-              style="margin: 2px"
+              style="margin: 2px;width:25%"
               size="small"
               value-key="productName"
               :fetch-suggestions="productSearch"
               placeholder="Search Product"
               @select="searchClick"
             />
-            <el-autocomplete v-model="searchCategory" style="margin: 2px" size="small" value-key="categoryName" :fetch-suggestions="categorySearch" placeholder="Search Category" class="input-with-select" @select="searchClick" />
-            <el-autocomplete v-model="searchBrand" style="margin: 2px" size="small" value-key="brandName" :fetch-suggestions="brandSearch" placeholder="Search Brand" class="input-with-select" @select="searchClick" />
+            <el-autocomplete
+              v-model="searchCategory"
+              style="margin: 2px"
+              size="small"
+              value-key="categoryName"
+              :fetch-suggestions="categorySearch"
+              placeholder="Search Category"
+              class="input-with-select"
+              @select="searchClick"
+            />
+            <el-autocomplete
+              v-model="searchBrand"
+              style="margin: 2px"
+              size="small"
+              value-key="brandName"
+              :fetch-suggestions="brandSearch"
+              placeholder="Search Brand"
+              class="input-with-select"
+              @select="searchClick"
+            />
             <el-button size="small" icon="el-icon-search" @click="searchClick" />
-
           </div>
 
-          <div style="overflow-y: scroll;height: 80vh">
-            <el-card v-for="(item,i) in itemList" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 140px; background: #f1f1f1; height: 50px; float: left; margin: 5px; cursor: grab">
-              <div style="text-align: center" @click="popShow(item)">
-                <!-- <el-image v-if="item.imgPath !== ''" :src="baseUrl+item.imgPath" fit="fill" style="height: 90px; width: 100px" /> -->
-                <!-- src="https://graphicriver.img.customer.envatousercontent.com/files/264957949/preview.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=590&s=2d1cf4f57526765a35de39bf26286c4e" -->
-                <!-- <div style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px"> -->
-                <span>{{ item.productName }}</span><br>
-                <span>{{ item.supplierName }}</span>
-                <!-- <span> {{ item.type }} {{ item.taxPercent }} </span><br> -->
-                <!-- <span> {{ item.price }} Kyats</span> -->
-                <!-- </div> -->
-              </div>
-            </el-card>
+          <div style="overflow-y: scroll;height: 80vh;padding:5px">
+            <el-table
+              :data="itemList"
+              border
+              style="width: 100%;background-color: #e9e3e3"
+              highlight-current-row
+              size="small"
+            >
+              <el-table-column align="center">
+                <template slot="header">
+                  <span>Name</span>
+                </template>
+                <template slot-scope="{row}">
+                  <span>{{row.productName}}</span>
+                </template>
+              </el-table-column>
+
+              <el-table-column align="center">
+                <template slot="header">
+                  <span>Supplier</span>
+                </template>
+                <template slot-scope="{row}">
+                  <span>{{row.supplierName}}</span>
+                </template>
+              </el-table-column>
+
+              <el-table-column align="center">
+                <template slot="header">
+                  <span>Operation</span>
+                </template>
+                <template slot-scope="{row}">
+                  <el-button type="primary" size="mini" @click="setPurchaseItem(row)">
+                    <i size="large" class="el-icon-plus" />
+                  </el-button>
+                </template>
+              </el-table-column>
+            </el-table>
           </div>
 
-          <el-dialog
-            :visible.sync="dialogVisible"
-            :title="selectedItem.productName"
-          >
+          <el-dialog :visible.sync="dialogVisible" :title="selectedItem.productName">
             <el-row>
-              <el-card v-for="(item,i) in selectedItem.unit" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 150px; height: 85px; float: left; margin: 5px; cursor: grab; border: 2px solid #cedae2;">
+              <el-card
+                v-for="(item,i) in selectedItem.unit"
+                :key="i"
+                shadow="hover"
+                :body-style="{ padding: '0px' }"
+                style="width: 150px; height: 85px; float: left; margin: 5px; cursor: grab; border: 2px solid #cedae2;"
+              >
                 <div style="text-align: center">
                   <!-- <el-image fit="fill" style="height: 90px; width: 100px" src="https://graphicriver.img.customer.envatousercontent.com/files/264957949/preview.jpg?auto=compress%2Cformat&fit=crop&crop=top&w=590&h=590&s=2d1cf4f57526765a35de39bf26286c4e" /> -->
-                  <div style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px; height: 30px" @click="addSaleItem(item)">
+                  <div
+                    style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px; height: 30px"
+                    @click="addSaleItem(item)"
+                  >
                     <span>{{ item.unitName }}</span>
                   </div>
-                  <br>
+                  <br />
                   <div>
                     <el-input v-model="item.sellPrice" style="width: 50%" size="mini" />MMK
                   </div>
@@ -54,12 +110,14 @@
             </el-row>
             <span slot="footer" class="dialog-footer">
               <!-- <el-button size="small" type="primary" @click="addSaleItem">Confirm</el-button>
-              <el-button size="small" @click="dialogVisible = false">Cancel</el-button> -->
+              <el-button size="small" @click="dialogVisible = false">Cancel</el-button>-->
             </span>
           </el-dialog>
-
         </div>
-        <div style="overflow-y: auto; height: 100vh; float: right;" :style="{width: device==='mobile' ? '45%' : '500px'}">
+        <div
+          style="overflow-y: auto; height: 100vh; float: right;"
+          :style="{width: device==='mobile' ? '45%' : '69%'}"
+        >
           <div>
             <el-card shadow="hover" class="box-card" style="bottom: 0px">
               <div ref="header">
@@ -75,44 +133,126 @@
                   style="width : 90%"
                   @select="handleSelect"
                 >
-                  <template slot="prepend"><span class="el-icon-user" /></template>
+                  <template slot="prepend">
+                    <span class="el-icon-user" />
+                  </template>
                   <template slot-scope="{ item }">
                     <div class="name">{{ item.name }}</div>
                     <span class="phone">{{ item.phone }}&nbsp;&nbsp;{{ item.addressOne }}</span>
                   </template>
-                  <el-button slot="append" icon="el-icon-circle-plus-outline" @click="supplierCreateVisible = true" />
+                  <el-button
+                    slot="append"
+                    icon="el-icon-circle-plus-outline"
+                    @click="supplierCreateVisible = true"
+                  />
                 </el-autocomplete>
               </div>
 
               <div style="margin: 10px; min-height: 200px">
                 <el-row>
-                  <el-col :span="10" style="text-align: center"><span>Name</span></el-col>
-                  <el-col :span="6" style="text-align: center"><span>Qty</span></el-col>
-                  <el-col :span="6" style="text-align: center"><span>Cost</span></el-col>
-                  <el-col :span="2" />
-                </el-row>
-                <hr>
-
-                <el-row v-for="(item,i) of selectedItemList" :key="i" style="margin-bottom: 5px;line-height: 25px">
-                  <el-col :span="10"><div>{{ item.data.productName }}({{ item.data.unitName }})</div></el-col>
-                  <el-col :span="6" style="text-align: center">
-                    <el-row>
-                      <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" />
-                      <input v-model="item.count" :style="{width: device==='mobile'? '21px' : '25px'}" style="width: 25px; text-align: center; border: none" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
-                      <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click="item.count++, setTotal()" />
-
-                    </el-row>
-
+                  <el-col :span="4" style="text-align: center">
+                    <span>Name</span>
                   </el-col>
-                  <el-col :span="6" style="text-align: center">
-                    <span>{{ ((item.count * parseFloat(item.data.sellPrice)) + (item.count * parseFloat(item.data.sellPrice) * (item.tax/100))).toFixed(2) }}</span>
+                  <el-col :span="4" style="text-align: center">
+                    <span>Qty</span>
+                  </el-col>
+                  <el-col :span="3" style="text-align: center">
+                    <span>Unit Cost</span>
+                  </el-col>
+                  <el-col :span="4" style="text-align: center">
+                    <span>Exp</span>
+                  </el-col>
+                  <el-col :span="3" style="text-align: center">
+                    <span>Cost</span>
                   </el-col>
                   <el-col :span="2" style="text-align: center">
-                    <i class="el-icon-delete-solid" style="color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
+                    <span>Promo</span>
+                  </el-col>
+
+                  <el-col :span="2" />
+                </el-row>
+                <hr />
+
+                <el-row
+                  v-for="(item,i) of selectedItemList"
+                  :key="i"
+                  style="margin-bottom: 5px;line-height: 25px"
+                >
+                  <el-col :span="4">
+                    <div>{{ item.data.productName }}</div>
+                  </el-col>
+
+                  <el-col :span="4" style="text-align: center">
+                    <el-row>
+                      <span
+                        size="mini"
+                        class="el-icon-remove"
+                        :style="{fontSize: device==='mobile'? '18px' : '25px'}"
+                        style="font-size: 25px; color: #8a7443; cursor: pointer;"
+                        @click="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()"
+                      />
+                      <input
+                        v-model="item.count"
+                        :style="{width: device==='mobile'? '21px' : '50px'}"
+                        style=" text-align: center; border: none"
+                        type="number"
+                        @change="item.count == 0 ? removeItem(i) : '', setTotal()"
+                      />
+                      <span
+                        size="mini"
+                        class="el-icon-circle-plus"
+                        :style="{fontSize: device==='mobile'? '18px' : '25px'}"
+                        style="font-size: 25px;color: #73c715 cursor: pointer;"
+                        @click="item.count++, setTotal()"
+                      />
+                    </el-row>
+                  </el-col>
+
+                  <el-col :span="3" style="text-align: center">
+                    <input
+                      :style="{width: device==='mobile'? '21px' : '50px'}"
+                      style=" text-align: center; border: none"
+                      type="number"
+                    />
+                  </el-col>
+
+                  <el-col :span="4" style="text-align: center">
+                    <el-date-picker
+                    v-model="item.data.expDate"
+                      :style="{width: device==='mobile'? '21px' : '130px'}"
+                      style=" text-align: center; border: none;"
+                      size="mini"
+                      :clearable="false"
+                      format="d-m-yyyy"
+                    />
+                  </el-col>
+
+                  <el-col :span="3" style="text-align: center">
+                    100000
+                  </el-col>
+
+                  <el-col :span="2" style="text-align: center">
+                    <input
+                      :style="{width: device==='mobile'? '21px' : '50px'}"
+                      style=" text-align: center;"
+                      type="number"
+                    />
+                  </el-col>
+
+                  <el-col :span="2" style="text-align: center">
+                    <i
+                      class="el-icon-delete-solid"
+                      style="color: red; cursor: pointer;"
+                      @click="removeItem(i), setTotal()"
+                    />
+
+                    <el-tooltip class="item" effect="dark" content="Warehouse" placement="top">
+                      <i class="el-icon-box" style="color: green; cursor: pointer;" />
+                    </el-tooltip>
                   </el-col>
                 </el-row>
               </div>
-              <hr>
+              <hr />
               <!--          <div>
                 <label>Other Charges</label>
                 <el-popover
@@ -142,10 +282,10 @@
                     <i class="el-icon-delete-solid" style="color: red" @click="otherChargeDelete(data)" />
                   </el-col>
                 </el-row>
-              </div> -->
+              </div>-->
               <!-- <hr> -->
               <div>
-                <span>Total Cost : </span>
+                <span>Total Cost :</span>
                 <span style="float:right;">{{ total }}</span>
               </div>
               <!-- <div>
@@ -188,11 +328,11 @@
                   </el-popover>
                 </span>
                 <span style="float:right;">{{ tax }} %</span>
-              </div> -->
+              </div>-->
               <!-- <div>
                 <span>FOC/Other :</span>
                 <span style="float:right;">0</span>
-              </div> -->
+              </div>-->
               <!-- <div>
                 <span>Net Ammount :</span>
                 <span style="float:right;">{{ (total+OtherChargeTotal) + (total+OtherChargeTotal)*(tax/100)- discount }}</span>
@@ -215,24 +355,19 @@
                 <span>Left Amount :</span>
                 <span style="float:right;">0</span>
               </div>
-              <hr> -->
+              <hr>-->
 
               <div style="text-align: right">
                 <el-button type="primary" @click="printClick">Print</el-button>
                 <!-- <el-button type="primary">Pending</el-button> -->
               </div>
-
             </el-card>
           </div>
         </div>
       </el-row>
     </div>
 
-    <el-dialog
-      title="Tips"
-      :visible.sync="supplierCreateVisible"
-    >
-
+    <el-dialog title="Tips" :visible.sync="supplierCreateVisible">
       <el-form ref="createForm" label-width="220px" style="width: 500px">
         <el-form-item label="Name :" prop="name">
           <el-input v-model="supplierCreateForm.name" type="text" autocomplete="off" />
@@ -293,31 +428,34 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog
-      :visible.sync="print"
-    >
+    <el-dialog :visible.sync="print">
       <div id="printMe">
         <div id="saleHeader" style="text-align:center; padding: 25px">
           <h3>Sale</h3>
           <div>Sale Receipt</div>
           <h4>INVOICE</h4>
           <div style="margin: 5px; color: #000000; font-weight: 600">
-            <span style="float: left"> Invoice Id : {{ Date.now() }}</span>
+            <span style="float: left">Invoice Id : {{ Date.now() }}</span>
             <span style="float: right">Date : {{ today.split(',')[0] }}</span>
-          </div><br>
+          </div>
+          <br />
           <div style="margin: 5px; color: #000000; font-weight: 600">
-            <span style="float: left">Sold To : {{ customer }} </span>
+            <!-- <span style="float: left">Sold To : {{ customer }} </span> -->
             <span style="float: right">Time : {{ today.split(',')[1] }}</span>
-          </div><br>
+          </div>
+          <br />
           <div style="margin: 5px; color: #000000; font-weight: 600">
             <span style="float: left">Sold By : {{ $store.getters.curUserInfo.username }}</span>
-          </div><br>
+          </div>
+          <br />
           <div style="margin: 5px; color: #000000; font-weight: 600">
-            <span style="float: left">Phone : </span>
-          </div><br>
+            <span style="float: left">Phone :</span>
+          </div>
+          <br />
           <div style="margin: 5px; color: #000000; font-weight: 600">
-            <span style="float: left">Address : </span>
-          </div><br>
+            <span style="float: left">Address :</span>
+          </div>
+          <br />
         </div>
         <div style="margin: 25px">
           <table style="width: 100%">
@@ -331,50 +469,62 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item,i) of selectedItemList" id="trh" :key="i" style="text-align:center;border-bottom: 1px solid #dddddd;">
+              <tr
+                v-for="(item,i) of selectedItemList"
+                id="trh"
+                :key="i"
+                style="text-align:center;border-bottom: 1px solid #dddddd;"
+              >
                 <td style="text-align: left">{{ item.data.productName }}({{ item.data.unitName }})</td>
                 <td>{{ item.count }}</td>
                 <td>{{ item.data.sellPrice }} MMK</td>
                 <td>{{ tax }}%</td>
-                <td style="text-align:right">{{ ((item.count * parseFloat(item.data.sellPrice)) + (item.count * parseFloat(item.data.sellPrice) * (item.tax/100))).toFixed(2) }} MMK</td>
+                <td
+                  style="text-align:right"
+                >{{ ((item.count * parseFloat(item.data.sellPrice)) + (item.count * parseFloat(item.data.sellPrice) * (item.tax/100))).toFixed(2) }} MMK</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
-                <td style="color: #000000b5;font-weight: bolder;">Other Charges : </td>
+                <td style="color: #000000b5;font-weight: bolder;">Other Charges :</td>
                 <td colspan="4">
                   <div v-for="(data,i) of otherChargesList" :key="i">
+                    <span>{{ data.name }} :</span>
 
-                    <span>{{ data.name }} : </span>
-
-                    <span> {{ data.amount }} MMK</span>
+                    <span>{{ data.amount }} MMK</span>
                   </div>
                 </td>
               </tr>
-
             </tfoot>
           </table>
           <div id="footer" style="padding: 10px">
             <div style="margin: 5px">
-              <span style="color: #000000b5;font-weight: bolder; float: left">Discount : </span>
-              <span style="float: right">{{ discount }} </span>
-            </div><br>
+              <span style="color: #000000b5;font-weight: bolder; float: left">Discount :</span>
+              <span style="float: right">{{ discount }}</span>
+            </div>
+            <br />
             <div style="margin: 5px">
-              <span style="color: #000000b5;font-weight: bolder; float: left">Tax : </span>
+              <span style="color: #000000b5;font-weight: bolder; float: left">Tax :</span>
               <span style="float: right">{{ tax }} %</span>
-            </div><br>
+            </div>
+            <br />
             <div style="margin: 5px">
-              <span style="color: #000000b5;font-weight: bolder; float: left">Sub Total : </span>
+              <span style="color: #000000b5;font-weight: bolder; float: left">Sub Total :</span>
               <span style="float: right">{{ total }} MMK</span>
-            </div><br>
+            </div>
+            <br />
             <div style="margin: 5px">
-              <span style="color: #000000b5;font-weight: bolder; float: left">Other Total : </span>
+              <span style="color: #000000b5;font-weight: bolder; float: left">Other Total :</span>
               <span style="float: right">{{ OtherChargeTotal }} MMK</span>
-            </div><br>
+            </div>
+            <br />
             <div style="margin: 5px">
-              <span style="color: #000000b5;font-weight: bolder; float: left">Grand Total : </span>
-              <span style="float: right">{{ (total+OtherChargeTotal) + (total+OtherChargeTotal)*(tax/100)- discount }} MMK</span>
-            </div><br>
+              <span style="color: #000000b5;font-weight: bolder; float: left">Grand Total :</span>
+              <span
+                style="float: right"
+              >{{ (total+OtherChargeTotal) + (total+OtherChargeTotal)*(tax/100)- discount }} MMK</span>
+            </div>
+            <br />
           </div>
         </div>
       </div>
@@ -386,16 +536,16 @@
 </template>
 
 <script>
-import { Purchase } from '../../mixinsFile/purchase'
+import { Purchase } from "../../mixinsFile/purchase";
 
 export default {
-  name: 'Index',
+  name: "Index",
   mixins: [Purchase]
-}
+};
 </script>
 
 <style scoped>
 .purchase-container {
-    margin: 10px
+  margin: 10px;
 }
 </style>
