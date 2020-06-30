@@ -49,7 +49,7 @@ export class SuppliersService {
         });
         // eslint-disable-next-line prefer-const
         objects = await qb.getManyAndCount();
-        return await plainToClass(SuppliersDto, objects[0]);
+        return { data: await plainToClass(SuppliersDto, objects[0]) };
 
     }
     async delete(options: { item: Suppliers; }): Promise<any> {

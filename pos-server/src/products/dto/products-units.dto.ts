@@ -17,7 +17,11 @@ export class ProductsUnitsDto {
 
     childUnitName: string;
 
-    purchasePrice: number;
+    unitCost: number;
+
+    qty: number;
+
+    cost: number;
 
     sellPrice: number;
 

@@ -38,7 +38,7 @@ export class ProductsDto {
 
     unitCost: number;
 
-    unitQty: number;
+    productQty: number;
 
     type: string;
 

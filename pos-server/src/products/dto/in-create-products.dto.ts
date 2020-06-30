@@ -29,45 +29,46 @@ export class InCreateProductsDto {
     @IsOptional()
     brandName: string;
 
-    
     @ApiPropertyOptional()
-    @IsOptional()
     supplierId: number;
 
     @ApiPropertyOptional()
-    @IsOptional()
     supplierName: string;
     
     @ApiPropertyOptional()
+    @IsOptional()
     unitId: number;
 
     @ApiPropertyOptional()
+    @IsOptional()
     unitName: string;
 
     @ApiPropertyOptional()
-    @IsOptional()
     unitPrice: number;
 
+    unitCost: number;
+
+    productQty: number;
+
+    type: string;
+
+    packageSize: string;
+
     @ApiPropertyOptional()
-    @IsOptional()    
     expDate: Date;
     
     @ApiPropertyOptional()
-    @IsOptional()
     taxPercent: number;
 
     @ApiPropertyOptional()
-    @IsOptional()
     reOrder: number;
 
     @ApiPropertyOptional()
-    @IsOptional()
     description: string;
     
     @ApiPropertyOptional()
-    @IsOptional()
     imgPath: string;
-    
+      
     @Type(() => ProductsUnitsDto)
     unit: ProductsUnitsDto[]
 

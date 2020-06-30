@@ -99,7 +99,7 @@ export const Product = {
         supplierName: '',
         unitPrice: 0,
         unitCost: 0,
-        unitQty: 0,
+        productQty: 0,
         description: '',
         reOrder: 0,
         taxPercent: 0,
@@ -137,6 +137,9 @@ export const Product = {
           var editData = this.selectedUnitForUpdate.find(x => x.unitId === obj.id)
           if (editData) {
             obj = editData
+          } else {
+            obj.unitId = obj.id
+            obj.id = null
           }
 
           this.updateProductForm.unit.push(obj)
@@ -252,7 +255,13 @@ export const Product = {
       })
     },
     createReset() {
-
+      this.$refs['createForm'].resetFields()
+      this.createProductForm = this.initProductForm()
+      this.selectedUnit = ''
+      this.selectedCategory = ''
+      this.selectedBrand = ''
+      this.selectedSupplier = ''
+      this.imageUrl = ''
     },
 
     updateOk() {
@@ -285,7 +294,7 @@ export const Product = {
       })
     },
     updateReset() {
-
+      this.handleTab('view')
     },
 
     async editClick(data) {

@@ -62,7 +62,7 @@
                 <span>Qty</span>
               </template>
               <template slot-scope="{row}">
-                <span>{{ row.unitQty }}</span>
+                <span>{{ row.productQty }}</span>
               </template>
             </el-table-column>
             <el-table-column align="center" min-width="200px">
@@ -140,11 +140,17 @@
           <el-form-item label="Product Name" prop="productName" required>
             <el-input v-model="createProductForm.productName" type="text" placeholder="" autocomplete="off" style="width: 280px" />
           </el-form-item>
+          <el-form-item label="Package Size" prop="packageSize">
+            <el-input v-model="createProductForm.packageSize" type="text" placeholder="" autocomplete="off" style="width: 280px" />
+          </el-form-item>
           <el-form-item label="Product Description" prop="productDescription">
             <el-input v-model="createProductForm.description" type="textarea" placeholder="" autocomplete="off" style="width: 280px" />
           </el-form-item>
+          <el-form-item label="Product Type" prop="productType">
+            <el-input v-model="createProductForm.type" type="text" placeholder="" autocomplete="off" style="width: 280px" />
+          </el-form-item>
           <el-form-item label="Category" prop="category">
-            <el-select v-model="selectedCategory" value-key="categoryName" placeholder="Select" style="width: 280px">
+            <el-select v-model="selectedCategory" value-key="categoryName" filterable clearable placeholder="Select" style="width: 280px">
               <el-option
                 v-for="item of categoryList"
                 :key="item.categoryCode"
@@ -154,7 +160,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="Brand" prop="Brand">
-            <el-select v-model="selectedBrand" value-key="brandName" placeholder="Select" style="width: 280px">
+            <el-select v-model="selectedBrand" value-key="brandName" filterable clearable placeholder="Select" style="width: 280px">
               <el-option
                 v-for="item of brandList"
                 :key="item.brandCode"
@@ -267,11 +273,17 @@
           <el-form-item label="Product Name" prop="productName">
             <el-input v-model="updateProductForm.productName" type="text" placeholder="" autocomplete="off" style="width: 280px" />
           </el-form-item>
+          <el-form-item label="Package Size" prop="packageSize">
+            <el-input v-model="updateProductForm.packageSize" type="text" placeholder="" autocomplete="off" style="width: 280px" />
+          </el-form-item>
           <el-form-item label="Product Description" prop="productDescription">
             <el-input v-model="updateProductForm.description" type="textarea" placeholder="" autocomplete="off" style="width: 280px" />
           </el-form-item>
+          <el-form-item label="Product Type" prop="productType">
+            <el-input v-model="updateProductForm.type" type="text" placeholder="" autocomplete="off" style="width: 280px" />
+          </el-form-item>
           <el-form-item label="Category" prop="category">
-            <el-select v-model="selectedCategory" value-key="categoryName" placeholder="Select" style="width: 280px">
+            <el-select v-model="selectedCategory" value-key="categoryName" filterable clearable placeholder="Select" style="width: 280px">
               <el-option
                 v-for="item of categoryList"
                 :key="item.categoryCode"
@@ -281,7 +293,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="Brand" prop="Brand">
-            <el-select v-model="selectedBrand" value-key="brandName" placeholder="Select" style="width: 280px">
+            <el-select v-model="selectedBrand" value-key="brandName" filterable clearable placeholder="Select" style="width: 280px">
               <el-option
                 v-for="item of brandList"
                 :key="item.brandCode"
@@ -329,7 +341,7 @@
           <el-table v-if="updateProductForm.unit.length !== 0" v-loading="listLoading" :data="updateProductForm.unit" border fit highlight-current-row size="small" style="width: 502px">
             <el-table-column align="left" label="Unit Name" width="220">
               <template slot-scope="{row}">
-                <span>{{ row.unitName }}&nbsp;&nbsp; <span v-if="row.id !== selectedUnit.id"> ( {{ row.childUnitQty }} {{ row.childUnitName }} / {{ row.unitName }} )</span></span>
+                <span>{{ row.unitName }}&nbsp;&nbsp; <span v-if="row.childUnitId !== null"> ( {{ row.childUnitQty }} {{ row.childUnitName }} / {{ row.unitName }} )</span></span>
               </template>
             </el-table-column>
             <el-table-column width="280" label="Sell-Price">
@@ -379,7 +391,7 @@
             </el-upload>
             <el-form-item>
               <el-button type="primary" @click="updateOk">Update</el-button>
-              <el-button @click="updateReset">Reset</el-button>
+              <el-button @click="updateReset">Cancel</el-button>
             </el-form-item>
           </el-form-item></el-form>
       </el-tab-pane>

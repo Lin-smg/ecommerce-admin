@@ -142,10 +142,14 @@ export class ProductsService {
                     unitId: options.item.unitId,
                     unitName: options.item.unitName,
                     unitPrice: options.item.unit[0].sellPrice,
+                    unitCost: options.item.unit[0].unitCost,
                     expDate: options.item.expDate,
                     taxPercent: options.item.taxPercent,
                     reOrder: options.item.reOrder,
                     description: options.item.description,
+                    type: options.item.type,
+                    packageSize: options.item.packageSize,
+                    productQty: options.item.productQty,
                     imgPath: options.item.imgPath
             }
             const pdata = await plainToClass(Products,toEntity);

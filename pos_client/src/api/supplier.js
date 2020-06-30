@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function getSupplierList(params) {
+export async function getSupplierList(params) {
   return request({
     url: '/suppliers',
     method: 'get',
@@ -8,7 +8,13 @@ export function getSupplierList(params) {
   })
 }
 
-export function createSupplier(data) {
+export async function exportExcelSupplierList() {
+  return request({
+    url: '/suppliers/All',
+    method: 'get'
+  })
+}
+export async function createSupplier(data) {
   return request({
     url: '/suppliers',
     method: 'post',
@@ -16,7 +22,7 @@ export function createSupplier(data) {
   })
 }
 
-export function updateSupplier(id, data) {
+export async function updateSupplier(id, data) {
   return request({
     url: `/suppliers/${id}`,
     method: 'put',
@@ -24,7 +30,7 @@ export function updateSupplier(id, data) {
   })
 }
 
-export function deleteSupplier(data) {
+export async function deleteSupplier(data) {
   return request({
     url: `/suppliers/delete`,
     method: 'post',

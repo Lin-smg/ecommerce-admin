@@ -25,9 +25,13 @@ export class ProductsUnits extends BaseEntity {
     @Column({ name: 'child_unit_name', nullable: true })
     childUnitName: string;
 
-    @Column({name: 'purchase_price', nullable: true})
+    @Column({name: 'unit_cost', nullable: true})
     @Column('numeric',{ precision: 10, scale: 2, default: 0 })
-    purchasePrice: number;
+    unitCost: number;
+
+    @Column({name: 'cost', nullable: true})
+    @Column('numeric',{ precision: 10, scale: 2, default: 0 })
+    cost: number;
 
     @Column({name: 'sellPrice_price', nullable: true})
     @Column('numeric',{ precision: 10, scale: 2, default: 0})

@@ -1,4 +1,5 @@
-import { getSupplierList } from '@/api/supplier'
+import { getSupplierList, exportExcelSupplierList } from '@/api/supplier'
+import { parseTime } from '@/utils'
 export const User = {
   name: 'Index',
   data() {
@@ -11,6 +12,11 @@ export const User = {
       suppliersCreateForm: this.resetCreateSupplierForm(),
       suppliersUpdateForm: this.resetCreateSupplierForm(),
       searchValue: '',
+      downloadLoading: false,
+      filename: 'supplierList',
+      autoWidth: true,
+      bookType: 'xlsx',
+      exportList: [],
       supplierRule: {
         name: [{ required: true, message: 'Please input Name', trigger: 'blur' }],
         email: [{ type: 'email', message: 'Please input Email', trigger: 'blur' }],
@@ -24,6 +30,50 @@ export const User = {
     this.getSuppliers()
   },
   methods: {
+    async exportExcelSupplierList() {
+      await exportExcelSupplierList().then(response => {
+        var i = 1
+        for (const obj of response.data) {
+          obj.count = i
+          this.exportList.push(obj)
+          i = i + 1
+        }
+      })
+    },
+    async handleDownload() {
+      this.downloadLoading = true
+      await this.exportExcelSupplierList()
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['No', 'Name', 'Phone', 'Address', 'City']
+        const filterVal = ['count', 'name', 'phone', 'addressOne', 'city']
+        const list = this.exportList
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    },
+    resetCreate() {
+      this.$refs['suppliersCreateForm'].resetFields()
+      this.suppliersCreateForm = this.resetCreateSupplierForm()
+    },
+    updateCancel() {
+      this.handleTab('view')
+    },
     handleTab(tab) {
       this.activeName = tab
       if (this.activeName === 'view') {
@@ -61,7 +111,7 @@ export const User = {
       }
 
       this.listLoading = true
-      getSupplierList(params).then(response => {
+      await getSupplierList(params).then(response => {
         this.suppliersData = response.data
         this.pageIndex = response.meta.curPage
         this.pageSize = response.meta.perPage

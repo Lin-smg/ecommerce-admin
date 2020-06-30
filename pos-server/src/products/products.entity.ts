@@ -34,14 +34,14 @@ export class Products extends BaseEntity {
     @Column({ name: 'unit_name', nullable: false })
     unitName: string;
 
-    @Column({ name: 'unit_qty', default: 0 })
-    unitQty: number;
+    @Column({ name: 'product_qty', default: 0 })
+    productQty: number;
 
     @Column({name: 'unit_price', nullable: true})
     @Column('numeric',{ precision: 10, scale: 2, default: 0 })
     unitPrice: number;
 
-    @Column({name: 'unit_price', nullable: true})
+    @Column({name: 'unit_cost', nullable: true})
     @Column('numeric',{ precision: 10, scale: 2, default: 0 })
     unitCost: number;
 

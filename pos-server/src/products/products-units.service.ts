@@ -33,7 +33,7 @@ export class ProductsUnitsService {
             for (const obj of item.unit) {
                 const data = await this.productsUnitRepository.find({productCode: item.productCode,unitId: obj.id , delFlg: '0'})
                 if(data){
-                    throw new ConflictException(`User with userId "${item.productCode}" is exists`);
+                    throw new ConflictException(`This "${item.productCode}" is already exists`);
                 }
             }
         } catch (error) {
@@ -59,15 +59,35 @@ export class ProductsUnitsService {
         for (const obj of item.unit) {
             const data = plainToClass(ProductsUnits,obj);
             //data.activeStatus = '0';
-            if(data.productCode === ''){
-            data.productId = item.id;
-            data.productCode = item.productCode
-            data.productName = item.productName;
-            data.unitId = obj.id;
-            data.id = null;
-            await queryRunner.manager.save(data)
+            if(data.id === null){
+            const pUnit = {
+                id: null,
+                productId: item.id,
+                productCode: item.productCode,
+                productName: item.productName,
+                unitId: data.unitId,
+                unitName: data.unitName,
+                childUnitId: data.childUnitId,
+                childUnitName: data.childUnitName,
+                unitCost: 0,
+                sellPrice: data.sellPrice,
+            }
+            await queryRunner.manager.save(plainToClass(ProductsUnits,pUnit))
             }else {
-            await this.productsUnitRepository.update({id:data.id, productCode: productCode,delFlg: '0'},data)
+            const pUnit = {
+                id: data.id,
+                productId: data.productId,
+                productCode: data.productCode,
+                productName: data.productName,
+                unitId: data.unitId,
+                unitName: data.unitName,
+                childUnitId: data.childUnitId,
+                childUnitName: data.childUnitName,
+                unitCost: data.unitCost,
+                sellPrice: data.sellPrice,
+            }
+           
+            await this.productsUnitRepository.update({id:data.id, productCode: productCode,delFlg: '0'},pUnit)
             }
             //data.activeStatus = '0';
             //await this.productsRepository.save(data)
