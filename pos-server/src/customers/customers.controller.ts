@@ -11,6 +11,7 @@ import { CustomersService } from './customers.service';
 import { OutCustomersDto } from './dto/out-customers.dto';
 import { InCreateCustomersDto } from './dto/in-create-customers.dto';
 import { Customers } from './customers.entity';
+import { OutCustomersAllDto } from './dto/out-customers-all.dto';
 
 @Controller('customers')
 @ApiTags('customers')
@@ -165,4 +166,19 @@ export class CustomersController {
              throw error;
          }
      }
+
+     @HttpCode(HttpStatus.OK)
+     @Get('All')
+     @Permissions(PermissionsType.USERS)
+     async getAllCustomers() {
+         try {
+             return plainToClass(
+                 OutCustomersAllDto,
+                 await this.customersService.getAllCustomers()
+             );
+         } catch (error) {
+             throw error;
+         }
+     }
+
 }

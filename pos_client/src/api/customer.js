@@ -8,6 +8,13 @@ export function getCustomerList(params) {
   })
 }
 
+export async function exportExcelCustomerList() {
+  return request({
+    url: '/customers/All',
+    method: 'get'
+  })
+}
+
 export function createCustomer(data) {
   return request({
     url: '/customers',
