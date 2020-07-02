@@ -40,6 +40,19 @@ export const Product = {
   created() {
     this.imageUploadUrl = this.baseUrl + '/shared/productIMG'
     this.getProductList()
+    if (this.$route.query.data === 'add') {
+      this.activeName = 'add'
+    }
+  },
+  computed: {
+    getTab() {
+      return this.$store.getters.newTab
+    }
+  },
+  watch: {
+    getTab() {
+      console.log('tab', this.$store.getters.newTab)
+    }
   },
   methods: {
     async querySearchAsync(queryString, cb) {
