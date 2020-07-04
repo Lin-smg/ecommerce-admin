@@ -3,6 +3,26 @@
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleTab(activeName)">
       <el-tab-pane label="All Products" name="view">
         <div>
+          <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="el-icon-document" @click="handleDownload">
+            Export Excel
+          </el-button>
+          By
+          <el-autocomplete
+            v-model="selectedSupplier"
+            popper-class="my-autocomplete"
+            :fetch-suggestions="querySearchAsync"
+            placeholder="Supplier Name"
+            style="width: 200px"
+            clearable
+            @clear="handleClear"
+            @select="handleSelect"
+          >
+            <template slot-scope="{ item }">
+              <div class="name">{{ item.name }}</div>
+              <span class="phone">{{ item.phone }}&nbsp;&nbsp;{{ item.addressOne }}</span>
+            </template>
+
+          </el-autocomplete>
           <el-input v-model="searchValue" placeholder="Please input" style="width: 300px; float: right">
             <el-button slot="append" icon="el-icon-search" @click="searchClick" />
           </el-input>
@@ -15,7 +35,7 @@
             highlight-current-row
             :row-class-name="productQtyReOrder"
           >
-            <el-table-column align="center" min-width="90">
+            <el-table-column header-align="center" align="center" min-width="90">
               <template slot="header">
                 <span>Image</span>
               </template>
@@ -25,7 +45,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" min-width="200px">
+            <el-table-column header-align="center" align="center" min-width="150px">
               <template slot="header">
                 <span>product Code</span>
               </template>
@@ -33,7 +53,7 @@
                 <span>{{ row.productCode }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" min-width="250px">
+            <el-table-column header-align="center" align="left" min-width="300px">
               <template slot="header">
                 <span>product name</span>
               </template>
@@ -41,7 +61,7 @@
                 <span>{{ row.productName }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" min-width="150px">
+            <el-table-column header-align="center" align="left" min-width="150px">
               <template slot="header">
                 <span>category</span>
               </template>
@@ -49,7 +69,7 @@
                 <span>{{ row.categoryName }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" min-width="150px">
+            <el-table-column header-align="center" align="left" min-width="120px">
               <template slot="header">
                 <span>unit</span>
               </template>
@@ -57,7 +77,15 @@
                 <span>{{ row.unitName }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" min-width="150px">
+            <el-table-column header-align="center" align="right" min-width="150px">
+              <template slot="header">
+                <span>unit price</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.unitPrice }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column header-align="center" align="left" min-width="100px">
               <template slot="header">
                 <span>Qty</span>
               </template>
@@ -65,7 +93,7 @@
                 <span>{{ row.productQty }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" min-width="200px">
+            <el-table-column header-align="center" align="left" min-width="200px">
               <template slot="header">
                 <span>supplier</span>
               </template>
@@ -73,7 +101,7 @@
                 <span>{{ row.supplierName }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" min-width="150px">
+            <el-table-column header-align="center" align="left" min-width="150px">
               <template slot="header">
                 <span>EXP Date</span>
               </template>
@@ -81,7 +109,7 @@
                 <span>{{ row.expDate }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" min-width="300px">
+            <el-table-column header-align="center" align="left" min-width="300px">
               <template slot="header">
                 <span>description</span>
               </template>
@@ -89,7 +117,7 @@
                 <span>{{ row.description }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" min-width="150px">
+            <el-table-column header-align="center" align="left" min-width="150px">
               <template slot="header">
                 <span>brand</span>
               </template>
@@ -97,7 +125,7 @@
                 <span>{{ row.brandName }}</span>
               </template>
             </el-table-column>
-            <el-table-column align="center" fixed="right" min-width="150px">
+            <el-table-column header-align="center" align="left" fixed="right" min-width="150px">
               <template slot="header">
                 <span>Action</span>
               </template>
@@ -123,7 +151,7 @@
             :page-sizes="[5,10,20,30]"
             :page-size="pageSize"
             :page-index="pageIndex"
-            layout="sizes, prev, pager, next"
+            layout="total,sizes, prev, pager, next"
             :total="totalCount"
             style="float:right;"
             @size-change="handleSizeChange"
@@ -184,7 +212,7 @@
                 <div class="name">{{ item.name }}</div>
                 <span class="phone">{{ item.phone }}&nbsp;&nbsp;{{ item.addressOne }}</span>
               </template>
-              <el-button slot="append" icon="el-icon-circle-plus-outline" />
+              <el-button slot="append" icon="el-icon-circle-plus-outline" @click="newSupplier" />
             </el-autocomplete>
           </el-form-item>
           <el-form-item label="Exp: Date" prop="expDate">
@@ -317,7 +345,7 @@
                 <div class="name">{{ item.name }}</div>
                 <span class="phone">{{ item.phone }}&nbsp;&nbsp;{{ item.addressOne }}</span>
               </template>
-              <el-button slot="append" icon="el-icon-circle-plus-outline" />
+              <el-button slot="append" icon="el-icon-circle-plus-outline" @click="newSupplier" />
             </el-autocomplete>
           </el-form-item>
           <el-form-item label="Exp: Date" prop="expDate">
@@ -396,6 +424,71 @@
           </el-form-item></el-form>
       </el-tab-pane>
     </el-tabs>
+
+    <el-dialog
+      title="Create Supplier"
+      :visible.sync="supplierDialogVisible"
+    >
+      <el-form ref="suppliersCreateForm" :model="suppliersCreateForm" :rules="supplierRule" label-width="220px" style="width: 500px">
+        <el-form-item label="Name :" prop="name">
+          <el-input v-model="suppliersCreateForm.name" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="E-Mail :" prop="email">
+          <el-input v-model="suppliersCreateForm.email" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Phone Number :" prop="phone">
+          <el-input v-model="suppliersCreateForm.phone" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Address 1 :" prop="addressOne">
+          <el-input v-model="suppliersCreateForm.addressOne" type="textarea" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Address 2 :" prop="addressTwo">
+          <el-input v-model="suppliersCreateForm.addressTwo" type="textarea" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="City :" prop="city">
+          <el-input v-model="suppliersCreateForm.city" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="State/Province :" prop="stateOrProvince">
+          <el-input v-model="suppliersCreateForm.stateOrProvince" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Zip :" prop="zipCode">
+          <el-input v-model="suppliersCreateForm.zipCode" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Country :" prop="country">
+          <el-input v-model="suppliersCreateForm.country" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Comments :" prop="comments">
+          <el-input v-model="suppliersCreateForm.comments" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Internal Notes :" prop="internalNotes">
+          <el-input v-model="suppliersCreateForm.internalNotes" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Company Name :" prop="companyName">
+          <el-input v-model="suppliersCreateForm.companyName" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item label="Account # :" prop="account">
+          <el-input v-model="suppliersCreateForm.account" type="text" autocomplete="off" />
+        </el-form-item>
+
+        <el-form-item>
+          <el-button type="primary" @click="createSupplier">Create</el-button>
+          <el-button @click="supplierCancel">Cancel</el-button>
+        </el-form-item>
+      </el-form>
+
+    </el-dialog>
   </div>
 </template>
 <script>

@@ -12,7 +12,7 @@
             style="width: 250px; float: right;margin-bottom: 10px;"
             clearable
           >
-           <el-button slot="append" icon="el-icon-search" @click="searchClick" />
+            <el-button slot="append" icon="el-icon-search" @click="searchClick" />
           </el-input>
         </div>
         <div>
@@ -253,7 +253,7 @@
 
           <el-form-item>
             <el-button type="primary" @click="updateCustomerOk">Update</el-button>
-            <el-button @click="resetCreateCustomersForm">Reset</el-button>
+            <el-button @click="resetUpdateCustomersForm">Cancel</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>

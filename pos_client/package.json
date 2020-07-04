@@ -22,6 +22,7 @@
     "normalize.css": "7.0.0",
     "nprogress": "0.2.0",
     "path-to-regexp": "2.4.0",
+    "screenfull": "^5.0.2",
     "vue": "2.6.10",
     "vue-count-to": "^1.0.13",
     "vue-html-to-paper": "^1.3.1",

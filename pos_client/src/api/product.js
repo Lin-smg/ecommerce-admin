@@ -46,6 +46,20 @@ export async function getPOSProductList(params) {
   })
 }
 
+export async function getAllProductList() {
+  return request({
+    url: '/products/All',
+    method: 'get'
+  })
+}
+
+export async function getProductListWithSupplier(supplierId) {
+  return request({
+    url: `/products/${supplierId}`,
+    method: 'get'
+  })
+}
+
 export async function createProduct(data) {
   return request({
     url: '/products',

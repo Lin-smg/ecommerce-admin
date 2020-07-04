@@ -45,7 +45,9 @@ export const User = {
         this.resetCreateCustomersForm()
       }
     },
-
+    resetUpdateCustomersForm() {
+      this.handleTab('view')
+    },
     async exportExcelCustomerList() {
       await exportExcelCustomerList().then(response => {
         var i = 1

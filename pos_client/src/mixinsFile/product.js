@@ -1,5 +1,6 @@
-import { getProductList, deletePhoto, getPKGWithSmallestUnit } from '@/api/product'
+import { getProductList, deletePhoto, getPKGWithSmallestUnit, getAllProductList, getProductListWithSupplier } from '@/api/product'
 import { getSupplierList } from '@/api/supplier'
+import { parseTime } from '@/utils'
 import { Message } from 'element-ui'
 export const Product = {
   data() {
@@ -25,6 +26,13 @@ export const Product = {
       timeout: null,
       selectedUnitForUpdate: [],
       listLoading: true,
+      downloadLoading: false,
+      filename: 'productList',
+      autoWidth: true,
+      bookType: 'xlsx',
+      exportList: [],
+      supplierDialogVisible: false,
+      suppliersCreateForm: this.resetCreateSupplierForm(),
       rules: {
         productCode: [
           { required: true, message: 'Please input Product Code', trigger: 'blur' }
@@ -34,6 +42,13 @@ export const Product = {
           { required: true, message: 'Please input Product Name', trigger: 'blur' },
           { min: 5, message: 'Length should be minium 5', trigger: 'blur' }
         ]
+      },
+      supplierRule: {
+        name: [{ required: true, message: 'Please input Name', trigger: 'blur' }],
+        email: [{ type: 'email', message: 'Please input Email', trigger: 'blur' }],
+        phone: [{ required: true, message: 'Please input Phone', trigger: 'blur' }],
+        addressOne: [{ required: true, message: 'Please input Address', trigger: 'blur' }]
+
       }
     }
   },
@@ -42,6 +57,103 @@ export const Product = {
     this.getProductList()
   },
   methods: {
+    supplierCancel() {
+      this.supplierDialogVisible = false
+    },
+    newSupplier() {
+      this.suppliersCreateForm = this.resetCreateSupplierForm()
+      this.supplierDialogVisible = true
+    },
+    async createSupplier() {
+      this.$refs.suppliersCreateForm.validate(valid => {
+        if (valid) {
+          this.$store
+            .dispatch('supplier/createSupplier', this.suppliersCreateForm)
+            .then(() => {
+              // this.handleTab('view')
+              this.supplierDialogVisible = false
+            })
+            .catch(() => {
+              console.log('Create supplier error')
+            })
+        }
+      })
+    },
+
+    resetCreateSupplierForm() {
+      return {
+        name: '',
+        email: '',
+        phone: '',
+        imageUrl: '',
+        addressOne: '',
+        addressTwo: '',
+        city: '',
+        stateOrProvince: '',
+        zipCode: '',
+        country: '',
+        comments: '',
+        internalNotes: '',
+        companyName: '',
+        account: ''
+      }
+    },
+
+    async exportExcelProductList() {
+      await getAllProductList().then(response => {
+        var i = 1
+        for (const obj of response.data) {
+          obj.count = i
+          this.exportList.push(obj)
+          i = i + 1
+        }
+      })
+    },
+    async exportExcelProductListWithSupplier() {
+      await getProductListWithSupplier(this.createProductForm.supplierId).then(response => {
+        var i = 1
+        for (const obj of response.data) {
+          obj.count = i
+          this.exportList.push(obj)
+          i = i + 1
+        }
+      })
+    },
+    async handleDownload() {
+      this.downloadLoading = true
+      this.exportList = []
+      if (this.createProductForm.supplierId !== null &&
+        this.createProductForm.supplierName !== ''
+      ) {
+        await this.exportExcelProductListWithSupplier()
+      } else {
+        await this.exportExcelProductList()
+      }
+
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['No', 'Product Code', 'Product Name', 'Description', 'Package Size', 'Type', 'Supplier', 'Category', 'Brand', 'Unit', 'Unit Price', 'Quantity', 'Expire Date']
+        const filterVal = ['count', 'productCode', 'productName', 'description', 'packageSize', 'type', 'supplierName', 'categoryName', 'brandName', 'unitName', 'unitPrice', 'productQty', 'expDate']
+        const list = this.exportList
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    },
     productQtyReOrder({ row, rowIndex }) {
       if (row.unitQty <= row.reOrder) {
         return 'row-color'
@@ -51,7 +163,7 @@ export const Product = {
     async querySearchAsync(queryString, cb) {
       const params = {
         group: '',
-        sort: '',
+        sort: 'productQty',
         cur_page: this.pageIndex,
         per_page: this.pageSize,
         q: queryString || ''
@@ -62,7 +174,7 @@ export const Product = {
         clearTimeout(this.timeout)
         this.timeout = setTimeout(() => {
           cb(results)
-        }, 1000 * Math.random())
+        }, 500 * Math.random())
       })
     },
     handleSelect(item) {

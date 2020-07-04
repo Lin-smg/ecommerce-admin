@@ -100,7 +100,7 @@ export class SuppliersService {
                 d: '0'
             });
             if (options.q) {
-                qb = qb.where('LOWER(supplier.name) like LOWER(:q)', {
+                qb = qb.andWhere('LOWER(supplier.name) like LOWER(:q)', {
                     q: `%${options.q}%`,
                 });
             }

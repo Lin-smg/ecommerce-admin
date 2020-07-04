@@ -76,9 +76,9 @@ export class ProductsUnitsService {
             }else {
             const pUnit = {
                 id: data.id,
-                productId: data.productId,
-                productCode: data.productCode,
-                productName: data.productName,
+                productId: item.id,
+                productCode: item.productCode,
+                productName: item.productName,
                 unitId: data.unitId,
                 unitName: data.unitName,
                 childUnitId: data.childUnitId,

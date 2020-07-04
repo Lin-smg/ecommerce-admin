@@ -10,6 +10,7 @@ import { CategoryService } from '../category/category.service';
 import { UnitsService } from '../units/units.service';
 import { InCreateProductsDto } from './dto/in-create-products.dto';
 import { ProductsUnitsService } from './products-units.service';
+import { Order } from '../common/constants/order';
 
 @Injectable()
 export class ProductsService {
@@ -23,32 +24,57 @@ export class ProductsService {
         private readonly categoryService: CategoryService,
         private readonly unitService: UnitsService
     ) { }
-   
-    async getPOSProducts(options: { product: string; brand: string; category: string; }){
+
+    async productPurchaseDataUpdate(product: Products) {
+        try {
+            await this.productsRepository.update({id: product.id,delFlg: '0'},product);
+        } catch (error) {
+           throw error; 
+        }
+    }
+    async getProductsWithSupplier(supplierId: any){
+        try {
+            return {
+                data : await (await this.productsRepository.find({ where: {delFlg: '0',supplierId: supplierId }, order: {productQty: Order.ASC}}))
+            } 
+         } catch (error) {
+          throw new error;   
+         }
+    }
+    async getAllProducts(){
+        try {
+           return {
+               data : await (await this.productsRepository.find({ where: {delFlg: '0'}, order: {productQty: Order.ASC}}))
+           } 
+        } catch (error) {
+         throw new error;   
+        }
+    }
+        
+    async getPOSProducts(options: { product: string; supplier: string; category: string; }){
         try {
             let objects: [Products[], number];
             let qb = this.productsRepository.createQueryBuilder('product');
             qb = qb.where('product.delFlg = :q',{
                 q: '0'
             });
-            if (options.product) {
-                qb = qb.andWhere('LOWER(product.productName) like LOWER(:q1) or LOWER(product.supplierName) like LOWER(:q2)', {
-                    q1: `${options.product}`,
-                    q2: `${options.product}`
+            if (options.product && options.product !== '') {
+                qb = qb.andWhere('LOWER(product.productName) like LOWER(:q1)', {
+                    q1: `%${options.product}%`
                 });
             }
-            if (options.brand) {
-                qb = qb.andWhere('LOWER(product.brandName) like LOWER(:b1)', {
-                    b1: `${options.brand}`
+            if (options.supplier && options.supplier !== '') {
+                qb = qb.andWhere('LOWER(product.supplierName) like LOWER(:s1)', {
+                    s1: `${options.supplier}`
                 });
             }
-            if (options.category) {
+            if (options.category && options.category !== '') {
                 qb = qb.andWhere('LOWER(product.categoryName) like LOWER(:c1)', {
                     c1: `${options.category}`
                 });
             }
-            qb = qb.orderBy('product.id', 'DESC');
-            qb = qb.take(20);
+            qb = qb.orderBy('product.productQty', 'DESC');
+            qb = qb.take(15);
             // eslint-disable-next-line prefer-const
             objects = await qb.getManyAndCount();
             const resultObj = []
@@ -143,7 +169,7 @@ export class ProductsService {
                     unitName: options.item.unitName,
                     unitPrice: options.item.unit[0].sellPrice,
                     unitCost: options.item.unit[0].unitCost,
-                    expDate: options.item.expDate,
+                    expDate: new Date(options.item.expDate),
                     taxPercent: options.item.taxPercent,
                     reOrder: options.item.reOrder,
                     description: options.item.description,
@@ -205,6 +231,7 @@ export class ProductsService {
             try {
             //const product = await this.productsRepository.save(plainToClass(Products,options.item));
             pdata.unitPrice = options.item.unit[0].sellPrice;
+            pdata.expDate = new Date(pdata.expDate);
             const product = await queryRunner.manager.save(pdata);
             await this.productsUnitsService.saveProductUnit(product,options.item,queryRunner);
 
@@ -247,6 +274,22 @@ export class ProductsService {
         }
     }
     async findByproductCode(options: { productCode: string; }){
+        try {
+           
+            const item = await this.productsRepository.findOneOrFail({
+                where: {
+                    productCode: options.productCode,
+                    delFlg: '0'
+                },
+            });
+
+            return item;
+    
+        } catch (error) {
+            throw new NotFoundException(`This "${options.productCode}"is not founded`);
+        }
+    }
+    async findProductByproductCode(options: { productCode: string; }) {
         try {
            
             const item = await this.productsRepository.findOneOrFail({

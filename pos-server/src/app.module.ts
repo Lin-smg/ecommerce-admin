@@ -17,6 +17,7 @@ import { BranchModule } from './branch/branch.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { BrandModule } from './brand/brand.module';
 import { ProductsModule } from './products/products.module';
+import { PosModule } from './pos/pos.module';
 
 @Module({
   imports: [   
@@ -55,7 +56,8 @@ import { ProductsModule } from './products/products.module';
     BranchModule,
     DashboardModule,
     BrandModule,
-    ProductsModule
+    ProductsModule,
+    PosModule
   ],
 exports: [TypeOrmModule]
 })
