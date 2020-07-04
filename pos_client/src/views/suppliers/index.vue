@@ -10,6 +10,7 @@
             v-model="searchValue"
             placeholder="Search..."
             style="width: 250px; float: right;margin-bottom: 10px;"
+            clearable
           >
             <el-button slot="append" icon="el-icon-search" @click="searchClick" />
           </el-input>
@@ -60,7 +61,7 @@
 
             <el-table-column header-align="center" align="left" width="300">
               <template slot="header">
-                <span>Address</span>
+                <span>City</span>
               </template>
               <template slot-scope="{row}">
                 <span>{{ row.city }}</span>

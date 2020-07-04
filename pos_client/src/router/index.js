@@ -374,7 +374,7 @@ window.onpopstate = function() {
 const router = createRouter()
 router.beforeEach((to, from, next) => {
   // const IsItABackButton = window.popStateDetected
-  if (from.name === 'POS' && localStorage.getItem('back') === 'true') {
+  if (localStorage.getItem('back') === 'true') {
     next(false)
     localStorage.setItem('back', false)
     return ''

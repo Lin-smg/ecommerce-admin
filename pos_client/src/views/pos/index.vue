@@ -3,11 +3,11 @@
     <div>
       <el-row :style="{width: device === 'mobile' ? '96%' : '100%'}">
         <div style="height: 100vh;float: left; margin-right: 0px" :style="{width: device === 'mobile' ? '50%' : '50%'}">
-          <div style="margin-bottom: 10px; border: 1px solid #f3f0f0; padding: 5px; border-radius: 5px">
+          <div style="margin-bottom: 10px; border: 1px solid #f3f0f0; padding: 5px 0; border-radius: 5px;">
             <el-input
               v-model="searchProduct"
               popper-class="my-autocomplete"
-              style="width: 340px"
+              style="width: 65%; padding: 5px 0;"
               size="small"
               value-key="productName"
               placeholder="Search Product"
@@ -18,12 +18,28 @@
                 <div class="name">{{ item.productName }}</div>
                 <span class="phone">{{ item.supplierName }}&nbsp;&nbsp;{{ item.unitPrice }}</span>
               </template> -->
+              <el-button slot="append" size="small" icon="el-icon-plus" @click="openNewTab('Product')" />
             </el-input>
-            <el-autocomplete v-model="searchCategory" style="margin: 0px" size="small" value-key="categoryName" clearable :fetch-suggestions="categorySearch" placeholder="Search Category" class="input-with-select" @select="searchClick" />
-            <el-autocomplete v-model="searchBrand" style="margin: 0px" size="small" value-key="brandName" clearable :fetch-suggestions="brandSearch" placeholder="Search Brand" class="input-with-select" @select="searchClick" />
-            <el-button size="small" icon="el-icon-search" @click="searchClick" />
-            <el-button size="small" icon="el-icon-search" @click="openNewTab('Product')" />
 
+            <el-autocomplete
+              v-model="selectedSupplier"
+              popper-class="my-autocomplete"
+              :fetch-suggestions="querySearchAsync"
+              placeholder="Search Supplier"
+              style="width: 30%;padding: 5px 0;"
+              clearable
+              size="small"
+              @clear="handleClear"
+              @select="handleSelectSupplier"
+            >
+              <template slot-scope="{ item }">
+                <div class="name">{{ item.name }}</div>
+                <span class="phone">{{ item.phone }}&nbsp;&nbsp;{{ item.addressOne }}</span>
+              </template>
+            </el-autocomplete>
+
+            <el-autocomplete v-model="searchCategory" style="width: 200px" size="small" value-key="categoryName" clearable :fetch-suggestions="categorySearch" placeholder="Search Category" class="input-with-select" @select="searchClick" />
+            <el-button size="small" icon="el-icon-search" @click="searchClick" />
           </div>
 
           <div style="overflow-y: scroll;height: 80vh">
@@ -42,12 +58,14 @@
           <el-dialog
             :visible.sync="dialogVisible"
             :title="selectedItem.productName"
+            width="25%"
+            style="overflow-wrap: break-word;"
           >
             <el-row>
               <el-card v-for="(item,i) in selectedItem.unit" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 150px; height: 85px; float: left; margin: 5px; cursor: grab; border: 2px solid #cedae2;">
                 <div style="text-align: center" @click="addSaleItem(item)">
                   <div style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px; height: 30px">
-                    <span>{{ item.unitName }}</span>
+                    <span style="overflow-wrap: break-word;">{{ item.unitName }}</span>
                   </div>
                   <br>
                   <div @click.stop="setFocus('price')">
@@ -99,33 +117,9 @@
                   <el-col :span="1" />
                 </el-row>
                 <hr>
-                <!-- <el-popover
-                  v-for="(item,i) of selectedItemList"
-                  :key="i"
-                  placement="bottom"
-                  :title="item.data.productName"
-                  width="400"
-                >
-                  <div>
-                    <el-row :gutter="10">
-                      <el-col :span="8">
-                        <span>Quantity</span><br>
-                        <el-input v-model="item.count" type="number" size="mini" min="0" @change="setTotal" />
-                      </el-col>
-                      <el-col :span="8">
-                        <span>Price(MMK)</span><br>
-                        <el-input v-model="item.data.sellPrice" type="number" size="mini" min="0" @change="setTotal" />
-                      </el-col>
-                      <el-col :span="8">
-                        <span>Discount(%)</span><br>
-                        <el-input v-model="item.discount" type="number" size="mini" min="0" max="100" @change="setTotal" />
-                      </el-col>
-
-                    </el-row>
-                  </div> -->
                 <el-row v-for="(item,i) of selectedItemList" :key="i" slot="reference" style="margin-bottom: 5px;line-height: 25px; cursor: pointer">
                   <el-col :span="1" style="text-align: center; color: #000000"><span>{{ i+1 }}.</span></el-col>
-                  <el-col :span="6"><div> {{ item.data.productName }}</div></el-col>
+                  <el-col :span="6"><div style="overflow-wrap: break-word;"> {{ item.data.productName }}</div></el-col>
                   <el-col :span="4" style="text-align: center">
                     <el-input v-model="item.data.sellPrice" size="mini" min="0" @change="setTotal" />
                     <!-- <span>{{ item.data.sellPrice }}</span> -->
@@ -133,7 +127,7 @@
                   <el-col :span="6" style="text-align: center">
                     <el-row>
                       <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click.stop="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" />
-                      <input v-model="item.count" :style="{width: device==='mobile'? '21px' : '69px'}" style="text-align: center; border: none" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
+                      <input v-model="item.count" :style="{width: device==='mobile'? '21px' : '69px'}" style="text-align: center; border: none;font-size: 18px;" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
                       <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click.stop="item.count++, setTotal()" />
 
                     </el-row>

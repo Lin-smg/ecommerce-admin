@@ -1,13 +1,15 @@
 import { getCategory } from '@/api/category'
-import { getBrandList } from '@/api/brand'
+// import { getBrandList } from '@/api/brand'
 import { getCustomerList } from '@/api/customer'
-import { getProductList, getPOSProductList } from '@/api/product'
+import { getSupplierList } from '@/api/supplier'
+import { getPOSProductList } from '@/api/product'
 export const POS = {
   data: function() {
     return {
       baseUrl: process.env.VUE_APP_BASE_API,
       device: this.$store.state.app.device,
       pos: 'pos',
+      selectedSupplier: '',
       searchProduct: '',
       searchCategory: '',
       searchBrand: '',
@@ -112,28 +114,6 @@ export const POS = {
     }
   },
   methods: {
-    openNewTab(name) {
-      // this.$store.dispatch('app/setNewTab', true)
-      const routeData = this.$router.resolve({ name: name, query: { data: 'someData' }})
-      window.open(routeData.href, '_blank')
-    },
-    setFocus(val) {
-      this.$refs[val][0].focus()
-    },
-    printData() {
-      this.sendPrintData()
-      this.$htmlToPaper('printMe')
-    },
-    printOrderData() {
-      this.sendOrderData()
-      this.$htmlToPaper('printMe')
-    },
-    clearItemList() {
-      this.selectedItemList = []
-      this.otherChargesList = []
-      this.setTotal()
-      this.setOtherTotal()
-    },
     sendOrderData() {
       this.printDataValue = {
         invoiceId: Date.now(),
@@ -195,6 +175,52 @@ export const POS = {
           console.log('print Error')
         })
     },
+    async querySearchAsync(queryString, cb) {
+      const params = {
+        group: '',
+        sort: '',
+        cur_page: this.pageIndex,
+        per_page: this.pageSize,
+        q: queryString || ''
+      }
+
+      await getSupplierList(params).then(response => {
+        var results = response.data
+        clearTimeout(this.timeout)
+        this.timeout = setTimeout(() => {
+          cb(results)
+        }, 500 * Math.random())
+      })
+    },
+    handleSelectSupplier(item) {
+      this.selectedSupplier = item.name
+      this.searchClick()
+    },
+    handleClear() {
+      this.selectedSupplier = ''
+    },
+    openNewTab(name) {
+      // this.$store.dispatch('app/setNewTab', true)
+      const routeData = this.$router.resolve({ name: name, query: { data: 'someData' }})
+      window.open(routeData.href, '_blank')
+    },
+    setFocus(val) {
+      this.$refs[val][0].focus()
+    },
+    printData() {
+      this.sendPrintData()
+      this.$htmlToPaper('printMe')
+    },
+    printOrderData() {
+      this.sendOrderData()
+      this.$htmlToPaper('printMe')
+    },
+    clearItemList() {
+      this.selectedItemList = []
+      this.otherChargesList = []
+      this.setTotal()
+      this.setOtherTotal()
+    },
     printClick(state) {
       console.log(state)
       if (state === 1) {
@@ -205,15 +231,7 @@ export const POS = {
     },
 
     async getProductList() {
-      const params = {
-        q: this.searchProduct ? this.searchProduct : ''
-      }
-
-      this.listLoading = true
-      await getProductList(params).then(response => {
-        this.itemList = response.data
-        console.log('product', this.itemList)
-      })
+      this.searchClick()
     },
 
     catOver(i) {
@@ -301,15 +319,15 @@ export const POS = {
       })
     },
 
-    async productAutoCompleteSearch(q, cb) {
+    async productAutoCompleteSearch() {
       const params = {
-        q: q
+        product: this.searchProduct ? this.searchProduct : '',
+        supplier: this.selectedSupplier ? this.selectedSupplier : '',
+        category: this.searchCategory ? this.searchCategory : ''
       }
-
-      this.listLoading = true
-      await getProductList(params).then(response => {
+      await getPOSProductList(params).then(response => {
         this.itemList = response.data
-        // cb(response.data)
+        // console.log(this.itemList)
       })
     },
     async categorySearch(q, cb) {
@@ -318,15 +336,6 @@ export const POS = {
       }
       await getCategory(params).then(response => {
         this.categoryList = response.data
-        cb(response.data)
-      })
-    },
-    async brandSearch(q, cb) {
-      const params = {
-        q: q
-      }
-      await getBrandList(params).then(response => {
-        this.brandList = response.data
         cb(response.data)
       })
     },
@@ -363,12 +372,12 @@ export const POS = {
     async searchClick() {
       const params = {
         product: this.searchProduct ? this.searchProduct : '',
-        brand: this.searchBrand ? this.searchBrand : '',
+        supplier: this.selectedSupplier ? this.selectedSupplier : '',
         category: this.searchCategory ? this.searchCategory : ''
       }
       await getPOSProductList(params).then(response => {
         this.itemList = response.data
-        console.log(this.itemList)
+        // console.log(this.itemList)
       })
     },
     change(val) {

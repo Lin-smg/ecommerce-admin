@@ -15,6 +15,7 @@ import branch from './modules/branch'
 import brand from './modules/brand'
 import product from './modules/product'
 import pos from './modules/pos'
+import purchase from './modules/purchase'
 
 Vue.use(Vuex)
 
@@ -33,7 +34,8 @@ const store = new Vuex.Store({
     branch,
     brand,
     product,
-    pos
+    pos,
+    purchase
   },
   getters
 

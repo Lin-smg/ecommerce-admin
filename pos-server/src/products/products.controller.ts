@@ -165,7 +165,7 @@ async getProduct(
 //@Permissions(PermissionsType.USERS)
 async getPOSProduct(
     @Query('product') product,
-    @Query('brand') brand,
+    @Query('supplier') supplier,
     @Query('category') category
 ) {
     try {
@@ -173,7 +173,7 @@ async getPOSProduct(
             OutProductsPosDto,
             await this.productsService.getPOSProducts({
                 product,
-                brand,
+                supplier,
                 category
             })
         );
@@ -183,6 +183,33 @@ async getPOSProduct(
 }
 
 
+//Find POS Product
+@HttpCode(HttpStatus.OK)
+@Get('All')
+//@Permissions(PermissionsType.USERS)
+async getAllProduct() {
+    try {
+        return plainToClass(
+            OutProductsPosDto,
+            await this.productsService.getAllProducts());
+    } catch (error) {
+        throw error;
+    }
+}
+
+//Find POS Product
+@HttpCode(HttpStatus.OK)
+@Get(':supplierId')
+//@Permissions(PermissionsType.USERS)
+async getProductWithSupplier(@Param('supplierId') supplierId) {
+    try {
+        return plainToClass(
+            OutProductsPosDto,
+            await this.productsService.getProductsWithSupplier(supplierId));
+    } catch (error) {
+        throw error;
+    }
+}
 
  //get Parent Units
 //  @HttpCode(HttpStatus.OK)
