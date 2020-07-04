@@ -55,6 +55,12 @@ export const Product = {
     }
   },
   methods: {
+    productQtyReOrder({ row, rowIndex }) {
+      if (row.unitQty <= row.reOrder) {
+        return 'row-color'
+      }
+      return ''
+    },
     async querySearchAsync(queryString, cb) {
       const params = {
         group: '',
@@ -77,6 +83,14 @@ export const Product = {
       this.createProductForm.supplierName = item.name
       this.selectedSupplier = item.name
     },
+    handleClear() {
+      this.createProductForm.supplierId = null
+      this.createProductForm.supplierName = ''
+    },
+    handleClearForUpdate() {
+      this.updateProductForm.supplierId = null
+      this.updateProductForm.supplierName = ''
+    },
     handleSelectForUpdate(item) {
       this.updateProductForm.supplierId = item.id
       this.updateProductForm.supplierName = item.name
@@ -97,6 +111,8 @@ export const Product = {
         supplierId: null,
         supplierName: '',
         unitPrice: 0,
+        unitCost: 0,
+        productQty: 0,
         description: '',
         reOrder: 0,
         taxPercent: 0,
@@ -134,6 +150,9 @@ export const Product = {
           var editData = this.selectedUnitForUpdate.find(x => x.unitId === obj.id)
           if (editData) {
             obj = editData
+          } else {
+            obj.unitId = obj.id
+            obj.id = null
           }
 
           this.updateProductForm.unit.push(obj)
@@ -189,7 +208,7 @@ export const Product = {
       }
       this.oldFileName = res.filename
       this.createProductForm.imgPath = `/shared/${res.filename}`
-      this.createProductForm.imgPath = `/shared/${res.filename}`
+      this.updateProductForm.imgPath = `/shared/${res.filename}`
       this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {
@@ -249,7 +268,13 @@ export const Product = {
       })
     },
     createReset() {
-
+      this.$refs['createForm'].resetFields()
+      this.createProductForm = this.initProductForm()
+      this.selectedUnit = ''
+      this.selectedCategory = ''
+      this.selectedBrand = ''
+      this.selectedSupplier = ''
+      this.imageUrl = ''
     },
 
     updateOk() {
@@ -282,7 +307,7 @@ export const Product = {
       })
     },
     updateReset() {
-
+      this.handleTab('view')
     },
 
     async editClick(data) {

@@ -3,12 +3,16 @@
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleTab(activeName)">
       <el-tab-pane label="All Customers" name="view">
         <div>
+          <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="el-icon-document" @click="handleDownload">
+            Export Excel
+          </el-button>
           <el-input
             v-model="searchValue"
             placeholder="Search..."
             style="width: 250px; float: right;margin-bottom: 10px;"
+            clearable
           >
-            <el-button slot="append" icon="el-icon-search" @click="searchClick" />
+           <el-button slot="append" icon="el-icon-search" @click="searchClick" />
           </el-input>
         </div>
         <div>
@@ -19,7 +23,7 @@
             style="width: 100%;background-color: #e9e3e3"
             highlight-current-row
           >
-            <el-table-column align="center">
+            <el-table-column align="center" min-width="200">
               <template slot="header">
                 <span>Name</span>
               </template>
@@ -28,16 +32,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center">
-              <template slot="header">
-                <span>E-Mail</span>
-              </template>
-              <template slot-scope="{row}">
-                <span>{{ row.email }}</span>
-              </template>
-            </el-table-column>
-
-            <el-table-column align="center">
+            <el-table-column align="center" min-width="200">
               <template slot="header">
                 <span>Phone Number</span>
               </template>
@@ -46,7 +41,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center">
+            <el-table-column align="center" min-width="200">
               <template slot="header">
                 <span>Address</span>
               </template>
@@ -55,7 +50,25 @@
               </template>
             </el-table-column>
 
+            <el-table-column align="center" min-width="200">
+              <template slot="header">
+                <span>City</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.city }}</span>
+              </template>
+            </el-table-column>
+
             <el-table-column align="center" width="200px">
+              <template slot="header">
+                <span>E-Mail</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.email }}</span>
+              </template>
+            </el-table-column>
+
+            <el-table-column align="center" width="200px" fixed="right">
               <template slot="header">
                 <span>Operations</span>
               </template>
@@ -161,7 +174,7 @@
 
           <el-form-item>
             <el-button type="primary" @click="createCustomers">Create</el-button>
-            <el-button @click="resetCreateCustomersForm">Reset</el-button>
+            <el-button @click="resetCreate">Reset</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>

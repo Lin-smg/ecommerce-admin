@@ -78,6 +78,19 @@ export class CustomersService {
         }
     }
 
+    async getAllCustomers(){
+      
+        let objects: [Customers[], number];
+        let qb = this.customersRepository.createQueryBuilder('customer');
+        qb = qb.where('customer.delFlg = :d' ,{
+            d: '0',
+        });
+        // eslint-disable-next-line prefer-const
+        objects = await qb.getManyAndCount();
+        return { data: await plainToClass(CustomersDto, objects[0]) };
+
+    }
+
     async getCustomers(options: { curPage: number; perPage: number; q: string; sort: string; group: number; }){
         try {
             let objects: [Customers[], number];
@@ -86,7 +99,7 @@ export class CustomersService {
                 d: '0'
             });
             if (options.q) {
-                qb = qb.where('customer.name like :q', {
+                qb = qb.andWhere('LOWER(customer.name) like LOWER(:q) OR LOWER(customer.city) like LOWER(:q)' , {
                     q: `%${options.q}%`,
                 });
             }

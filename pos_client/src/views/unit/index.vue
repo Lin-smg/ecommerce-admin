@@ -73,7 +73,7 @@
             :page-sizes="[5,10,20,30]"
             :page-size="pageSize"
             :page-index="pageIndex"
-            layout="sizes, prev, pager, next"
+            layout="total,sizes, prev, pager, next"
             :total="totalCount"
             style="float:right;"
             @size-change="handleSizeChange"

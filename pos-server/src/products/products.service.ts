@@ -122,9 +122,9 @@ export class ProductsService {
         try {
             await this.findByproductCode({ productCode: options.item.productCode });
             if(options.item.supplierName !== ''){
-            await this.isExistProductWithSupplier(options.item);
+            //await this.isExistProductWithSupplier(options.item);
             }
-            await this.productsUnitsService.checkIsExistProductUnit(options.item);
+            //await this.productsUnitsService.checkIsExistProductUnit(options.item);
             const queryRunner = this.connection.createQueryRunner();
             await queryRunner.connect();
             await queryRunner.startTransaction();
@@ -142,10 +142,14 @@ export class ProductsService {
                     unitId: options.item.unitId,
                     unitName: options.item.unitName,
                     unitPrice: options.item.unit[0].sellPrice,
+                    unitCost: options.item.unit[0].unitCost,
                     expDate: options.item.expDate,
                     taxPercent: options.item.taxPercent,
                     reOrder: options.item.reOrder,
                     description: options.item.description,
+                    type: options.item.type,
+                    packageSize: options.item.packageSize,
+                    productQty: options.item.productQty,
                     imgPath: options.item.imgPath
             }
             const pdata = await plainToClass(Products,toEntity);

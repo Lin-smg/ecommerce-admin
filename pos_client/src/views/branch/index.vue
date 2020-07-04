@@ -13,8 +13,8 @@
         </div>
         <div>
           <el-table
-            border
             v-loading="listLoading"
+            border
             :data="branchData"
             style="width: 100%;background-color: #e9e3e3"
             highlight-current-row
@@ -182,11 +182,11 @@
 </template>
 
 <script>
-import { User } from "../../mixinsFile/branch";
+import { User } from '../../mixinsFile/branch'
 export default {
-  name: "Index",
+  name: 'Index',
   mixins: [User]
-};
+}
 </script>
 
 <style scoped>

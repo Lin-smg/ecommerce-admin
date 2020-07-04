@@ -36,6 +36,14 @@ export class ProductsDto {
     @ApiPropertyOptional()
     unitPrice: number;
 
+    unitCost: number;
+
+    productQty: number;
+
+    type: string;
+
+    packageSize: string;
+
     @ApiPropertyOptional()
     expDate: Date;
     
@@ -50,7 +58,6 @@ export class ProductsDto {
     
     @ApiPropertyOptional()
     imgPath: string;
-
+   
     unit: ProductsUnitsDto[];
-    dataObj: { data: ProductsUnitsDto[]; };
 }

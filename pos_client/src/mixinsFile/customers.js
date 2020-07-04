@@ -1,4 +1,5 @@
-import { getCustomerList } from '@/api/customer'
+import { getCustomerList, exportExcelCustomerList } from '@/api/customer'
+import { parseTime } from '@/utils'
 export const User = {
   name: 'Index',
   data() {
@@ -11,6 +12,11 @@ export const User = {
       customersCreateForm: this.resetCreateCustomersForm(),
       customersUpdateForm: this.resetCreateCustomersForm(),
       searchValue: '',
+      downloadLoading: false,
+      filename: 'customerList',
+      autoWidth: true,
+      bookType: 'xlsx',
+      exportList: [],
       listLoading: false,
       customerRule: {
         name: [{ required: true, message: 'Please input Name', trigger: 'blur' }],
@@ -33,10 +39,56 @@ export const User = {
     handleTab(tab) {
       this.activeName = tab
       if (this.activeName === 'view') {
+        this.customersCreateForm = this.resetCreateCustomersForm()
         this.getCustomers()
       } else if (this.activeName === 'create') {
         this.resetCreateCustomersForm()
       }
+    },
+
+    async exportExcelCustomerList() {
+      await exportExcelCustomerList().then(response => {
+        var i = 1
+        for (const obj of response.data) {
+          obj.count = i
+          this.exportList.push(obj)
+          i = i + 1
+        }
+      })
+    },
+
+    async handleDownload() {
+      this.downloadLoading = true
+      await this.exportExcelCustomerList()
+      import('@/vendor/Export2Excel').then(excel => {
+        const tHeader = ['No', 'Name', 'Phone', 'Address', 'City']
+        const filterVal = ['count', 'name', 'phone', 'addressOne', 'city']
+        const list = this.exportList
+        const data = this.formatJson(filterVal, list)
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: this.filename,
+          autoWidth: this.autoWidth,
+          bookType: this.bookType
+        })
+        this.downloadLoading = false
+      })
+    },
+
+    formatJson(filterVal, jsonData) {
+      return jsonData.map(v => filterVal.map(j => {
+        if (j === 'timestamp') {
+          return parseTime(v[j])
+        } else {
+          return v[j]
+        }
+      }))
+    },
+
+    resetCreate() {
+      this.$refs['customersCreateForm'].resetFields()
+      this.customersCreateForm = this.resetCreateCustomersForm()
     },
 
     resetCreateCustomersForm() {

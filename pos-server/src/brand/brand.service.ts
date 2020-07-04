@@ -98,7 +98,7 @@ export class BrandService {
         d: '0',
       });
       if (options.q) {
-        qb = qb.andWhere('brand.brandCode like :q OR brand.brandName like :q', {
+        qb = qb.andWhere('brand.brandCode like :q OR LOWER(brand.brandName) like LOWER(:q)', {
           q: `%${options.q}%`,
         });
       }

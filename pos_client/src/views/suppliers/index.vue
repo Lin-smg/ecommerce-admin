@@ -3,6 +3,9 @@
     <el-tabs v-model="activeName" type="border-card" @tab-click="handleTab(activeName)">
       <el-tab-pane label="All Suppliers" name="view">
         <div>
+          <el-button :loading="downloadLoading" style="margin:0 0 20px 20px;" type="primary" icon="el-icon-document" @click="handleDownload">
+            Export Excel
+          </el-button>
           <el-input
             v-model="searchValue"
             placeholder="Search..."
@@ -19,7 +22,7 @@
             style="width: 100%;background-color: #e9e3e3"
             highlight-current-row
           >
-            <el-table-column align="center">
+            <el-table-column header-align="center" align="left" width="300">
               <template slot="header">
                 <span>Name</span>
               </template>
@@ -28,16 +31,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center">
-              <template slot="header">
-                <span>E-Mail</span>
-              </template>
-              <template slot-scope="{row}">
-                <span>{{ row.email }}</span>
-              </template>
-            </el-table-column>
-
-            <el-table-column align="center">
+            <el-table-column header-align="center" align="left" width="300">
               <template slot="header">
                 <span>Phone Number</span>
               </template>
@@ -46,7 +40,7 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center">
+            <el-table-column header-align="center" align="left" width="300">
               <template slot="header">
                 <span>Address</span>
               </template>
@@ -55,7 +49,34 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" width="200px">
+            <el-table-column header-align="center" align="left" width="300">
+              <template slot="header">
+                <span>Address</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.addressTwo }}</span>
+              </template>
+            </el-table-column>
+
+            <el-table-column header-align="center" align="left" width="300">
+              <template slot="header">
+                <span>Address</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.city }}</span>
+              </template>
+            </el-table-column>
+
+            <el-table-column header-align="center" align="left" width="300">
+              <template slot="header">
+                <span>E-Mail</span>
+              </template>
+              <template slot-scope="{row}">
+                <span>{{ row.email }}</span>
+              </template>
+            </el-table-column>
+
+            <el-table-column fixed="right" align="center" width="200px">
               <template slot="header">
                 <span>Operations</span>
               </template>
@@ -78,7 +99,7 @@
             :page-sizes="[5,10,20,30]"
             :page-size="pageSize"
             :page-index="pageIndex"
-            layout="sizes, prev, pager, next"
+            layout="total,sizes, prev, pager, next"
             :total="totalCount"
             style="float:right;"
             @size-change="handleSizeChange"
@@ -101,23 +122,6 @@
           <el-form-item label="Phone Number :" prop="phone">
             <el-input v-model="suppliersCreateForm.phone" type="text" autocomplete="off" />
           </el-form-item>
-
-          <!-- <el-form-item label="Select Image :" prop="image">
-            <el-upload
-              style=" border: 1px dashed #8c939d;border-radius: 6px;cursor: pointer;position: relative;overflow: hidden;"
-              action="#"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
-            >
-              <img
-                v-if="suppliersCreateForm.imageUrl"
-                :src="suppliersCreateForm.imageUrl"
-                class="avatar"
-              >
-              <i v-else class="el-icon-plus avatar-uploader-icon" />
-            </el-upload>
-          </el-form-item> -->
 
           <el-form-item label="Address 1 :" prop="addressOne">
             <el-input v-model="suppliersCreateForm.addressOne" type="textarea" autocomplete="off" />
@@ -161,7 +165,7 @@
 
           <el-form-item>
             <el-button type="primary" @click="createSupplier">Create</el-button>
-            <el-button @click="resetCreateSupplierForm">Reset</el-button>
+            <el-button @click="resetCreate">Reset</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
@@ -170,7 +174,7 @@
       <el-tab-pane label="Update Suppliers" name="update" :disabled="true">
         <el-form ref="suppliersUpdateForm" :model="suppliersUpdateForm" :rules="supplierRule" label-width="220px" style="width: 500px">
           <el-form-item label="Name :" prop="name">
-            <el-input v-model="suppliersUpdateForm.name" type="text" :disabled="true" autocomplete="off" />
+            <el-input v-model="suppliersUpdateForm.name" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item label="E-Mail :" prop="email">
@@ -180,23 +184,6 @@
           <el-form-item label="Phone Number :" prop="phone">
             <el-input v-model="suppliersUpdateForm.phone" type="text" autocomplete="off" />
           </el-form-item>
-
-          <!-- <el-form-item label="Select Image :" prop="image">
-            <el-upload
-              style=" border: 1px dashed #8c939d;border-radius: 6px;cursor: pointer;position: relative;overflow: hidden;"
-              action="#"
-              :show-file-list="false"
-              :on-success="handleAvatarSuccess"
-              :before-upload="beforeAvatarUpload"
-            >
-              <img
-                v-if="suppliersCreateForm.imageUrl"
-                :src="suppliersCreateForm.imageUrl"
-                class="avatar"
-              >
-              <i v-else class="el-icon-plus avatar-uploader-icon" />
-            </el-upload>
-          </el-form-item> -->
 
           <el-form-item label="Address 1 :" prop="addressOne">
             <el-input v-model="suppliersUpdateForm.addressOne" type="textarea" autocomplete="off" />
@@ -240,7 +227,7 @@
 
           <el-form-item>
             <el-button type="primary" @click="updateSupplierOk">Update</el-button>
-            <el-button @click="resetCreateSupplierForm">Reset</el-button>
+            <el-button @click="updateCancel">Cancel</el-button>
           </el-form-item>
         </el-form>
       </el-tab-pane>
