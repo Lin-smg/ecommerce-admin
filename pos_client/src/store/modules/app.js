@@ -6,7 +6,8 @@ const state = {
     withoutAnimation: false
   },
   device: 'desktop',
-  backHandle: false
+  backHandle: false,
+  newTab: false
 }
 
 const mutations = {
@@ -29,6 +30,9 @@ const mutations = {
   },
   SET_BACKHANDLE: (state, backHandle) => {
     state.backHandle = backHandle
+  },
+  SET_NEWTAB: (state, newTab) => {
+    state.newTab = newTab
   }
 }
 
@@ -44,6 +48,9 @@ const actions = {
   },
   setBackHandle({ commit }, backHandle) {
     commit('SET_BACKHANDLE', backHandle)
+  },
+  setNewTab({ commit }, newTab) {
+    commit('SET_NEWTAB', newTab)
   }
 }
 

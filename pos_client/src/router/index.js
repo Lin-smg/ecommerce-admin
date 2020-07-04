@@ -50,6 +50,7 @@ export const constantRoutes = [
     children: [{
       path: 'dashboard',
       name: 'Dashboard',
+      permission: 'M000B00',
       component: () => import('@/views/dashboard/index'),
       meta: { title: 'Dashboard', icon: 'dashboard' }
     }]
@@ -61,7 +62,7 @@ export const constantRoutes = [
     redirect: '/pos',
     children: [{
       path: 'index',
-      permission: 'M001',
+      permission: 'All',
       name: 'POS',
       component: () => import('@/views/pos/index'),
       meta: { title: 'POS', icon: 'supermarket' }
@@ -73,7 +74,7 @@ export const constantRoutes = [
     redirect: '/product',
     children: [{
       path: 'index',
-      permission: 'M001B00',
+      permission: 'M010B00',
       name: 'Product',
       component: () => import('@/views/product/index'),
       meta: { title: 'Product', icon: 'list' }
@@ -85,7 +86,7 @@ export const constantRoutes = [
     redirect: '/purchase',
     children: [{
       path: 'index',
-      permission: 'M001B00',
+      permission: 'All',
       name: 'Purchase',
       component: () => import('@/views/purchase/index'),
       meta: { title: 'Purchase', icon: 'purchase' }
@@ -97,6 +98,7 @@ export const constantRoutes = [
     redirect: '/dailyreport',
     children: [{
       path: 'index',
+      permission: 'All',
       name: 'Dailyreport',
       component: () => import('@/views/dailyreport/index'),
       meta: { title: 'Dailyreport', icon: 'chart' }
@@ -108,6 +110,7 @@ export const constantRoutes = [
     redirect: '/unit',
     children: [{
       path: 'index',
+      permission: 'M011B00',
       name: 'Units',
       component: () => import('@/views/unit/index'),
       meta: { title: 'Units', icon: 'cup-measuring' }
@@ -120,7 +123,7 @@ export const constantRoutes = [
     redirect: '/category',
     children: [{
       path: 'index',
-      permission: 'M001B00',
+      permission: 'M008B00',
       name: 'Category',
       component: () => import('@/views/category/index'),
       meta: { title: 'Category', icon: 'tree' }
@@ -133,7 +136,7 @@ export const constantRoutes = [
     redirect: '/brand',
     children: [{
       path: 'index',
-      permission: 'M001B00',
+      permission: 'M009B00',
       name: 'Brand',
       component: () => import('@/views/brand/index'),
       meta: { title: 'Brand', icon: 'list' }
@@ -146,6 +149,7 @@ export const constantRoutes = [
     redirect: '/customers',
     children: [{
       path: 'index',
+      permission: 'M004B00',
       name: 'Customers',
       component: () => import('@/views/customers/index'),
       meta: { title: 'Customers', icon: 'user' }
@@ -158,6 +162,7 @@ export const constantRoutes = [
     redirect: '/suppliers',
     children: [{
       path: 'index',
+      permission: 'M005B00',
       name: 'Suppliers',
       component: () => import('@/views/suppliers/index'),
       meta: { title: 'Suppliers', icon: 'user' }
@@ -169,6 +174,7 @@ export const constantRoutes = [
     redirect: '/user',
     children: [{
       path: 'index',
+      permission: 'M003B00',
       name: 'User',
       component: () => import('@/views/user/index'),
       meta: { title: 'User', icon: 'user' }
@@ -180,6 +186,7 @@ export const constantRoutes = [
     redirect: '/warehouse',
     children: [{
       path: 'index',
+      permission: 'M007B00',
       name: 'Warehouse',
       component: () => import('@/views/warehouse/index'),
       meta: { title: 'Warehouse', icon: 'factory' }
@@ -192,6 +199,7 @@ export const constantRoutes = [
     redirect: '/permission',
     children: [{
       path: 'index',
+      permission: 'M002B00',
       name: 'Permission Group',
       component: () => import('@/views/permission/index'),
       meta: { title: 'Permission Group', icon: 'shield' }
@@ -203,6 +211,7 @@ export const constantRoutes = [
     redirect: '/branch',
     children: [{
       path: 'index',
+      permission: 'M006B00',
       name: 'Branch',
       component: () => import('@/views/branch/index'),
       meta: { title: 'Branch', icon: 'tree' }

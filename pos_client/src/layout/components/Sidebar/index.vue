@@ -12,7 +12,7 @@
         :collapse-transition="false"
         mode="vertical"
       >
-        <sidebar-item v-for="route in routes" :key="route.path" :item="route" :base-path="route.path" />
+        <sidebar-item v-for="route in getPermissonRoutes(routes)" :key="route.path" :item="route" :base-path="route.path" />
       </el-menu>
     </el-scrollbar>
   </div>
@@ -50,6 +50,29 @@ export default {
     },
     isCollapse() {
       return !this.sidebar.opened
+    }
+  },
+  methods: {
+    getPermissonRoutes(routes) {
+      const permissionArr = JSON.parse(this.$store.getters.curUserInfo.permissions.replace('}', ']').replace('{', '['))
+      permissionArr.push('All')
+      const routeList = routes.slice(0)
+      const allowRoutes = []
+
+      for (const list of routeList) {
+        if (!list.children) {
+          allowRoutes.push(list)
+        } else {
+          const children = list.children.slice(0)
+          for (const child of children) {
+            if (permissionArr.indexOf(child.permission) >= 0) {
+              allowRoutes.push(list)
+            }
+          }
+        }
+      }
+      console.log(this.$store.getters.curUserInfo.permissions)
+      return allowRoutes
     }
   }
 }
