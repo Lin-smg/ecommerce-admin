@@ -179,15 +179,24 @@
                   <el-col :span="3" style="text-align: center">
                     <span>
 
-                      <el-button v-if="item.promoStatus===true" size="mini" type="success" @click="handleModifyStatus(item, item.promoStatus)">
+                      <el-tooltip :content="item.promoStatus? 'Promo On' : 'Promo Off'" placement="top">
+                        <el-switch
+                          v-model="item.promoStatus"
+                          active-color="#13ce66"
+                          inactive-color="#ff4949"
+                          @click="handleModifyStatus(item, item.promoStatus)"
+                        />
+                      </el-tooltip>
+
+                      <!-- <el-button v-if="item.promoStatus===true" size="mini" type="success" @click="handleModifyStatus(item, item.promoStatus)">
                         Publish
                       </el-button>
                       <el-button v-if="item.promoStatus===false" size="mini" @click="handleModifyStatus(item, item.promoStatus)">
                         Draft
-                      </el-button>
+                      </el-button> -->
 
                       <i class="el-icon-delete-solid" style="color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
-                      <i class="el-icon-s-home" style="color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
+                      <i class="el-icon-s-home" style="color: red; cursor: pointer;" @click="showWarehouse(item), setTotal()" />
                     </span>
                   </el-col>
                 </el-row>
@@ -269,7 +278,10 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog :visible.sync="print">
+    <el-dialog
+      :visible.sync="print"
+      width="80%"
+    >
       <div id="printMe">
         <div id="saleHeader" style="text-align:center; padding: 25px">
           <h3>Purchase</h3>
@@ -292,12 +304,13 @@
             <table style="width: 100%">
               <thead>
                 <tr style="text-align:center">
-                  <th style="width:10px;">No</th>
+                  <th style="width: 1%;">#</th>
                   <th style="width: 30%; text-align: left">Items</th>
-                  <th style="width: 30%;">Unit Cost</th>
+                  <th style="width: 15%;">Unit Cost</th>
                   <th style="width: 10%">Qty</th>
-                  <th style="width: 20%">Total</th>
-                  <th style="width: 20%">Promo-Qty</th>
+                  <th style="width: 16%">Total</th>
+                  <th style="width: 18%">Promo-Qty</th>
+                  <th style="width: 10%">Remarks</th>
                 </tr>
               </thead>
               <tbody>
@@ -313,6 +326,7 @@
                   <td>{{ item.qty }}</td>
                   <td>{{ item.unitCost * item.qty }} MMK</td>
                   <td>{{ item.promoQty }}</td>
+                  <td>{{ item.promoStatus? '**promo**' : '' }}</td>
                 </tr>
               </tbody>
             </table>
@@ -325,10 +339,28 @@
             </div>
           </div>
         </div>
-        <div style="height: 25px">
-          <el-button type="primary" style="float: right" @click="printData">Print</el-button>
-        </div>
-      </div></el-dialog>
+      </div>
+      <div style="height: 25px">
+        <el-button type="primary" style="float: right" @click="printData">Print</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="Warehouse" :visible.sync="warehouseListVisible">
+      <div>
+        <el-row v-for="(warehouse,i) of warehouseList" :key="i" style="margin: 5px; line-height: 35px">
+          <el-col :span="5" style="width: 40%">
+            <span>{{ warehouse.wareHouseName }}</span>
+          </el-col>
+          <el-col :span="10">
+            <el-input v-model="warehouse.qty" style="width: 60%" type="number" /> Qty
+          </el-col>
+        </el-row>
+      </div>
+      <div style="height: 25px">
+        <el-button type="danger" style="float: right" @click="warehouseListVisible=false">Cancel</el-button>
+        <el-button type="primary" style="float: right; margin-right: 10px" @click="saveWarehouse">Save</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 

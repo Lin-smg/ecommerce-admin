@@ -3,6 +3,7 @@ import { getBrandList } from '@/api/brand'
 import { getSupplierList } from '@/api/supplier'
 import { getProductList, getPOSProductList } from '@/api/product'
 import { savePurchaseData } from '@/api/purchase'
+import { getWarehouseList } from '@/api/warehouse'
 
 export const Purchase = {
   data: function() {
@@ -37,6 +38,7 @@ export const Purchase = {
       discount: 0,
       tax: 0,
       supplierCreateVisible: false,
+      warehouseListVisible: false,
       suppliersCreateForm: this.supplierFormInit(),
       savePurchaseData: '',
       print: false,
@@ -142,7 +144,7 @@ export const Purchase = {
     },
     // Print
     printData() {
-      this.sendPrintData()
+      // this.sendPrintData()
       this.$htmlToPaper('printMe')
     },
     // Save and Print
@@ -361,6 +363,35 @@ export const Purchase = {
     otherChargeDelete(data) {
       this.otherChargesList.splice(this.otherChargesList.indexOf(data), 1)
       this.setOtherTotal()
+    },
+
+    showWarehouse(item) {
+      this.warehouseListVisible = true
+      this.warehouseList = []
+      this.getWarehouse(item)
+    },
+
+    async getWarehouse(item) {
+      const params = {
+      }
+      await getWarehouseList(params).then(response => {
+        const list = response.data
+        for (const i in list) {
+          const ware = {
+            ...list[i],
+            qty: i === '0' ? item.qty + Number(item.promoQty) : 0,
+            productCode: item.productCode,
+            productName: item.productName
+          }
+          this.warehouseList.push(ware)
+        }
+
+        console.log(this.warehouseList)
+      })
+    },
+    saveWarehouse() {
+      this.warehouseListVisible = false
+      console.log('save warehouse', this.warehouseList)
     }
   }
 }
