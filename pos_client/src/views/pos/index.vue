@@ -141,8 +141,8 @@
                   <el-col :span="6" style="text-align: center">
                     <el-row>
                       <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click.stop="item.qty = item.qty==1 || item.qty <= 0 ? removeItem(i) : item.qty-1, setTotal()" />
-                      <input v-model="item.qty" :style="{width: device==='mobile'? '21px' : '69px'}" style="text-align: center; border: none;font-size: 18px;" type="number" @change="item.qty == 0 ? removeItem(i) : '', setTotal()">
-                      <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click.stop="item.qty++, setTotal()" />
+                      <input v-model="item.qty" :style="{width: device==='mobile'? '21px' : '69px'}" style="text-align: center; border: none;font-size: 18px;" type="number" @change="checkQty(item.qty,item.totalQty)? item.qty=item.totalQty:item.qty=item.qty, item.qty == 0 ? removeItem(i) : '', setTotal()">
+                      <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click.stop="checkQty(item.qty+1, item.totalQty)? item.qty=item.qty-1:item.qty=item.qty, item.qty++, setTotal()" />
 
                     </el-row>
 
