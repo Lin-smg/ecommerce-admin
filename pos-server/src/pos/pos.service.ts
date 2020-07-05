@@ -17,10 +17,12 @@ import { ProductsSale } from './products-sale.entity';
 import { TproductsSale } from './t-products-sale.entity';
 import { TProductsSaleDto } from './dto/t-products-sale.dto';
 import { OutProductsSaleDto } from './dto/out-products-sale.dto';
+import { ProductsSaleDto } from './dto/products-sale.dto';
+import { PageMetaDto } from '../common/dto/page_meta.dto';
 
 @Injectable()
 export class PosService {
-
+    
     constructor(
         @InjectRepository(ProductsPurchase)
         private readonly productsPurchaseRepository: Repository<ProductsPurchase>,
@@ -37,6 +39,47 @@ export class PosService {
         private connection: Connection,
         private readonly productsService: ProductsService,
     ) { }
+    async findDailySaleReport(options: { curPage: number; perPage: number; q: string; sort: string; group: number; }){
+        try {
+         let objects: [ProductsSale[], number];
+         let qb = this.productsSaleRepository.createQueryBuilder('productSale');
+         qb = qb.where('productSale.delFlg = :d',{
+             d: '0'
+         });
+         if (options.q) {
+             qb = qb.andWhere('productSale.date = :q ', {
+                 q: options.q
+             });
+         }
+         options.sort = options.sort && new ProductsSale().hasOwnProperty(options.sort.replace('-', '')) ? options.sort : '-id';
+         const field = options.sort.replace('-', '');
+         if (options.sort) {
+             if (options.sort[0] === '-') {
+                 qb = qb.orderBy('productSale.' + field, 'DESC');
+             } else {
+                 qb = qb.orderBy('productSale.' + field, 'ASC');
+             }
+         }
+         qb = qb.skip((options.curPage - 1) * options.perPage).take(options.perPage);
+         // eslint-disable-next-line prefer-const
+         objects = await qb.getManyAndCount();
+         const metaPage = {
+             perPage: options.perPage,
+             totalPages: options.perPage > objects[1] ? 1 : Math.ceil(objects[1] / options.perPage),
+             totalResults: objects[1],
+             curPage: options.curPage
+         }
+     
+         return {
+             data: plainToClass(ProductsSaleDto,objects[0]),
+             meta: plainToClass(PageMetaDto,metaPage)
+         };
+        } catch (error) {
+            throw new error;
+        } 
+     }
+ 
+
     async findByCustomerId(options: { item: number; }) {
         try {
             const qb = this.productsSaleRepository.createQueryBuilder('productSale')
@@ -286,7 +329,7 @@ export class PosService {
                     }
                     product.expDate = new Date(data.expDate);
                     product.lastChangedDateTime = new Date();
-                    product.productQty = product.productQty + data.qty;
+                    product.productQty = Number(product.productQty) + Number(data.qty);
                     if (data.promoStatus) {
                         product.productQty = product.productQty + Number(data.promoQty);
                     }

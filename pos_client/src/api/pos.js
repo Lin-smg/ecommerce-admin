@@ -22,3 +22,11 @@ export async function getCreditReceiptByCustomer(customerId) {
     method: 'get'
   })
 }
+
+export async function getDailySellReport(params) {
+  return request({
+    url: '/pos/dailySaleReport',
+    method: 'get',
+    params
+  })
+}

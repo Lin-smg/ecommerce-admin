@@ -10,7 +10,7 @@
           placeholder="Pick a day"
           :picker-options="pickerOptions"
         />
-        <el-button type="primary">Search</el-button>
+        <el-button type="primary" @click="getDailyReportData">Search</el-button>
 
         <el-button style="float: right; margin-left: 30px" type="primary">Export Excel</el-button>
 

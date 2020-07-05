@@ -27,7 +27,7 @@ export class ProductsService {
 
     async productPurchaseDataUpdate(product: Products) {
         try {
-            await this.productsRepository.update({id: product.id,delFlg: '0'},product);
+            await this.productsRepository.update({productCode: product.productCode,delFlg: '0'},product);
         } catch (error) {
            throw error; 
         }
