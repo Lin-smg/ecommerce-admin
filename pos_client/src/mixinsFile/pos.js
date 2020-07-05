@@ -192,6 +192,7 @@ export const POS = {
         this.setTotal()
         this.setOtherTotal()
         this.printOrder = true
+        this.getProductList()
       }).catch((error) => {
         this.$message({
           message: error,
@@ -239,6 +240,7 @@ export const POS = {
         this.printPay = true
         this.setTotal()
         this.setOtherTotal()
+        this.getProductList()
       }).catch((error) => {
         this.$message({
           message: error,
@@ -368,6 +370,14 @@ export const POS = {
         }
       }
     },
+    checkQty(qty, total) {
+      if (Number(total) - Number(qty) < 0) {
+        this.noStockdialogVisible = true
+        return true
+      } else {
+        return false
+      }
+    },
 
     addSaleItem(item, totalQty) {
       const selected = {
@@ -375,15 +385,18 @@ export const POS = {
         tax: this.selectedItem.taxPercent,
         discount: 0,
         qty: 1,
-        realSellPrice: item.sellPrice
+        realSellPrice: item.sellPrice,
+        totalQty: this.selectedItem.productQty
       }
+      console.log(this.selectedItem.productQty)
+      const self = this
       var exists = this.selectedItemList.some(function(field) {
         var flag = field.id === selected.id
-        if (Number(totalQty) - Number(field.qty) === 0) {
-          this.noStockdialogVisible = true
-        } else {
-          if (flag) {
-            field.qty += 1
+        if (flag) {
+          if (Number(totalQty) - Number(field.qty) <= 0) {
+            self.noStockdialogVisible = true
+          } else {
+            field.qty = Number(field.qty) + 1
           }
         }
         return flag
@@ -392,7 +405,6 @@ export const POS = {
         this.selectedItemList.push(selected)
       }
       this.dialogVisible = false
-      console.log('selectitem', selected)
       this.setTotal()
     },
 
