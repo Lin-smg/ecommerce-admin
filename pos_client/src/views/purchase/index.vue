@@ -179,7 +179,7 @@
                   <el-col :span="3" style="text-align: center">
                     <span>
 
-                      <el-tooltip :content="item.promoStatus? 'Promo On' : 'Promo Off'" placement="top">
+                      <el-tooltip :content="item.promoStatus? 'Promo Received' : 'Promo Not Received'" placement="top">
                         <el-switch
                           v-model="item.promoStatus"
                           active-color="#13ce66"
@@ -194,9 +194,10 @@
                       <el-button v-if="item.promoStatus===false" size="mini" @click="handleModifyStatus(item, item.promoStatus)">
                         Draft
                       </el-button> -->
-
-                      <i class="el-icon-delete-solid" style="color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
-                      <i class="el-icon-s-home" style="color: red; cursor: pointer;" @click="showWarehouse(item), setTotal()" />
+                     &nbsp;
+                      <i class="el-icon-delete-solid" style="font-size:20px;color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
+                     &nbsp;
+                      <i class="el-icon-s-home" style="font-size:20px;color: red; cursor: pointer;" @click="showWarehouse(item), setTotal()" />
                     </span>
                   </el-col>
                 </el-row>

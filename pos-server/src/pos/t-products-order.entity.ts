@@ -5,7 +5,7 @@ import { Entity, Column } from "typeorm";
 export class TproductsOrder extends BaseEntity {
 
     @Column({ name: 'receipt_no', nullable: false })
-    receiptNo: number;
+    receiptNo: string;
     
     @Column({ name: 'product_id', nullable: false })
     productId: number;

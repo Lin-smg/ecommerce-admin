@@ -1,8 +1,8 @@
-import { TProductsOrderDto } from "./t-products-order.dto";
+import { TProductsSaleDto } from "./t-products-sale.dto";
 
-export class ProductsOrderDto{
+export class InProductsSaleDto{
 
-    receiptNo: number;
+    receiptNo: string;
 
     customerId: number;
 
@@ -40,6 +40,8 @@ export class ProductsOrderDto{
 
     paymentStatus: string;
 
-    soldItemsList: TProductsOrderDto[]
+    soldItemsList: TProductsSaleDto[];
+
+    otherChargesList: [];
 
 }

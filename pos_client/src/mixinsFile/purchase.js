@@ -155,7 +155,7 @@ export const Purchase = {
         supplierId: this.saveSupplierData.id,
         supplierName: this.saveSupplierData.name,
         date: new Date(),
-        casherName: this.$store.getters.curUserInfo.name,
+        casherName: this.$store.getters.curUserInfo.username,
         total: this.total,
         status: '',
         remark: '',

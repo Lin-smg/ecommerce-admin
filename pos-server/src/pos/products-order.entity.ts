@@ -5,7 +5,7 @@ import { Entity, Column } from "typeorm";
 export class ProductsOrder extends BaseEntity {
 
     @Column({ name: 'receipt_no', nullable: false })
-    receiptNo: number;
+    receiptNo: string;
 
     @Column({ name: 'customer_id', nullable: true })
     customerId: number;
@@ -65,8 +65,10 @@ export class ProductsOrder extends BaseEntity {
     @Column({ name: 'status', default: 'open' })
     status: string;
 
-    @Column({ name: 'payment_type' })
+    @Column({ name: 'payment_type', nullable: true })
     paymentType: string;
 
+    @Column({ name: 'payment_status', nullable: true })
+    paymentStatus: string;
 
 }

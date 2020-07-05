@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 export async function createPOSPay(data) {
   return request({
-    url: '/posPay',
+    url: '/pos/posPay',
     method: 'post',
     data
   })
@@ -10,8 +10,15 @@ export async function createPOSPay(data) {
 
 export async function createPOSOrder(data) {
   return request({
-    url: '/posPending',
+    url: '/pos/posOrder',
     method: 'post',
     data
+  })
+}
+
+export async function getCreditReceiptByCustomer(customerId) {
+  return request({
+    url: '/pos/' + customerId,
+    method: 'get'
   })
 }

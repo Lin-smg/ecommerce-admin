@@ -1,6 +1,6 @@
-export class TproductsOrderDto {
+export class TProductsOrderDto {
 
-    receiptNo: number;
+    receiptNo: string;
     
     productId: number;
 

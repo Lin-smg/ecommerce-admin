@@ -1,6 +1,6 @@
-export class TproductsSaleDto {
+export class TProductsSaleDto {
 
-    receiptNo: number;
+    receiptNo: string;
     
     productId: number;
 
@@ -21,7 +21,7 @@ export class TproductsSaleDto {
     cost: number;
 
     sellPrice: number;
-    
+ 
     realSellPrice: number;
 
     qty: number;

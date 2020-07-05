@@ -1,13 +1,16 @@
+import { TProductsSaleDto } from "./t-products-sale.dto";
+
 export class ProductsSaleDto {
 
+   
     receiptNo: number;
 
     customerId: number;
 
     customerName: string;
-    
+
     date: Date;
-    
+
     casherName: string;
 
     subTotal: number;
@@ -17,7 +20,7 @@ export class ProductsSaleDto {
     totalTax: number;
 
     totalDiscount: number;
-
+ 
     total: number;
 
     oldCreditAmount: number;
@@ -35,5 +38,11 @@ export class ProductsSaleDto {
     status: string;
 
     paymentType: string;
+
+    paymentStatus: string;
+
+    soldItemsList: TProductsSaleDto[]
+
+    oldCreditList: []
 
 }

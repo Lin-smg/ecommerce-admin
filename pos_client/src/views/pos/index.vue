@@ -29,7 +29,7 @@
               style="width: 30%;padding: 5px 0;"
               clearable
               size="small"
-              @clear="handleClear"
+              @clear="handleSupplierClear"
               @select="handleSelectSupplier"
             >
               <template slot-scope="{ item }">
@@ -45,15 +45,29 @@
           <div style="overflow-y: scroll;height: 80vh">
             <el-card v-for="(item,i) in itemList" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 200px; height: 150px; float: left; margin: 5px; cursor: grab">
               <div style="text-align: center" @click="popShow(item)">
-                <el-image v-if="item.imgPath !== ''" :src="baseUrl+item.imgPath" fit="fill" style="height: 90px; width: 100px" />
+                <el-image v-if="item.imgPath !== ''" :src="baseUrl+item.imgPath" fit="fill" style="height: 100px; width: 100px" />
                 <el-image v-if="item.imgPath === ''" :src="baseUrl+'/shared/company_profile.jpg'" fit="fill" style="height: 90px; width: 100px" />
-                <div style="text-align: center; padding: 3px; background: #f1f1f1; font-size: 14px; height: 100px">
-                  <span>{{ item.productName }}</span><br>
+                <div style="text-align: center; padding: 3px; background: #f1f1f1; font-size: 12px; height: 150px">
+                  <span style="overflow-wrap: break-word;">{{ item.productName }}</span><br>
                   <span>{{ item.supplierName }}</span>
                 </div>
               </div>
             </el-card>
           </div>
+
+          <el-dialog
+            :visible.sync="noStockdialogVisible"
+            width="25%"
+            style="overflow-wrap: break-word;"
+          >
+            <el-row>
+              <span>These stock is soldOut. Please purchase stock.</span>
+            </el-row>
+            <span slot="footer" class="dialog-footer">
+              <!-- <el-button size="small" type="primary" @click="addSaleItem">Confirm</el-button>
+              <el-button size="small" @click="dialogVisible = false">Cancel</el-button> -->
+            </span>
+          </el-dialog>
 
           <el-dialog
             :visible.sync="dialogVisible"
@@ -63,7 +77,7 @@
           >
             <el-row>
               <el-card v-for="(item,i) in selectedItem.unit" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 150px; height: 85px; float: left; margin: 5px; cursor: grab; border: 2px solid #cedae2;">
-                <div style="text-align: center" @click="addSaleItem(item)">
+                <div style="text-align: center" @click="addSaleItem(item,selectedItem.productQty)">
                   <div style="text-align: center; padding: 5px; background: #f1f1f1; font-size: 14px; height: 30px">
                     <span style="overflow-wrap: break-word;">{{ item.unitName }}</span>
                   </div>
@@ -95,13 +109,14 @@
                   :highlight-first-item="true"
                   placeholder="Please Input"
                   style="width : 90%"
-                  :clearable="true"
-                  @select="handleSelect"
+                  clearable
+                  @clear="clearCustomer"
+                  @select="handleSelectCustomer"
                 >
                   <template slot="prepend"><span class="el-icon-user" /></template>
                   <template slot-scope="{ item }">
                     <div class="name">{{ item.name }}</div>
-                    <span class="phone">{{ item.phone }}&nbsp;&nbsp;{{ item.addressOne }}</span>
+                    <span class="phone">{{ item.city }}&nbsp;&nbsp;{{ item.phone }}</span>
                   </template>
                   <el-button slot="append" icon="el-icon-circle-plus-outline" @click="customerCreateVisible = true" />
                 </el-autocomplete>
@@ -111,7 +126,7 @@
                 <el-row>
                   <el-col :span="1" style="text-align: center"><span>#</span></el-col>
                   <el-col :span="6" style="text-align: center"><span>Name</span></el-col>
-                  <el-col :span="4" style="text-align: center"><span>Price</span></el-col>
+                  <el-col :span="4" style="text-align: center"><span>Unit Price</span></el-col>
                   <el-col :span="6" style="text-align: center"><span>Qty</span></el-col>
                   <el-col :span="6" style="text-align: center"><span>Total</span></el-col>
                   <el-col :span="1" />
@@ -119,23 +134,21 @@
                 <hr>
                 <el-row v-for="(item,i) of selectedItemList" :key="i" slot="reference" style="margin-bottom: 5px;line-height: 25px; cursor: pointer">
                   <el-col :span="1" style="text-align: center; color: #000000"><span>{{ i+1 }}.</span></el-col>
-                  <el-col :span="6"><div style="overflow-wrap: break-word;"> {{ item.data.productName }}</div></el-col>
-                  <el-col :span="4" style="text-align: center">
-                    <el-input v-model="item.data.sellPrice" size="mini" min="0" @change="setTotal" />
-                    <!-- <span>{{ item.data.sellPrice }}</span> -->
+                  <el-col :span="7"><div style="overflow-wrap: break-word;"> {{ item.productName }}&nbsp;({{ item.unitName }} )</div></el-col>
+                  <el-col :span="3" style="text-align: center">
+                    <input v-model="item.realSellPrice" type="number" style="padding: 2px;width: 100%;height: 28px;line-height: 28px;" size="mini" min="0" @input="setTotal">
                   </el-col>
                   <el-col :span="6" style="text-align: center">
                     <el-row>
-                      <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click.stop="item.count = item.count==1 || item.count <= 0 ? removeItem(i) : item.count-1, setTotal()" />
-                      <input v-model="item.count" :style="{width: device==='mobile'? '21px' : '69px'}" style="text-align: center; border: none;font-size: 18px;" type="number" @change="item.count == 0 ? removeItem(i) : '', setTotal()">
-                      <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click.stop="item.count++, setTotal()" />
+                      <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click.stop="item.qty = item.qty==1 || item.qty <= 0 ? removeItem(i) : item.qty-1, setTotal()" />
+                      <input v-model="item.qty" :style="{width: device==='mobile'? '21px' : '69px'}" style="text-align: center; border: none;font-size: 18px;" type="number" @change="item.qty == 0 ? removeItem(i) : '', setTotal()">
+                      <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click.stop="item.qty++, setTotal()" />
 
                     </el-row>
 
                   </el-col>
                   <el-col :span="6" style="text-align: center">
-                    <span>{{ item.count * parseFloat(item.data.sellPrice) - (item.count * parseFloat(item.data.sellPrice)* (item.discount/100)) }}</span>
-                    <!-- (item.count * parseFloat(item.data.sellPrice) * (item.tax/100))).toFixed(2) -->
+                    <span>{{ item.qty * parseFloat(item.realSellPrice)-(item.qty * parseFloat(item.realSellPrice) * (item.discount / 100)) }}</span>
                   </el-col>
                   <el-col :span="1" style="text-align: center">
                     <i class="el-icon-delete-solid" style="color: red; cursor: pointer;" @click="removeItem(i), setTotal()" />
@@ -178,7 +191,7 @@
               </div>
               <hr>
               <div>
-                <span>Total : </span>
+                <span>Sub Total : </span>
                 <span style="float:right;">{{ total }}</span>
               </div>
               <div>
@@ -222,7 +235,7 @@
               <hr>
 
               <div>
-                <span>Net Amount :</span>
+                <span>Total :</span>
                 <span style="float:right;">{{ netAmount.toFixed(2) }}</span>
               </div>
               <hr>
@@ -232,7 +245,7 @@
               </div>
               <hr>
               <div>
-                <span>Net Total Amount :</span>
+                <span>Grand Total :</span>
                 <span style="float:right;">{{ (netAmount+customerData.oldCreditAmount).toFixed(2) }}</span>
               </div>
               <hr>
@@ -244,11 +257,11 @@
                   <el-input v-model="payAmount" type="number" size="mini" min="0" style="width: 200px;" @click="setTotal" /> MMK
                 </span>
               </div>
-              <div v-if="payAmount >= (netAmount+customerData.oldCreditAmount).toFixed(2)" style="line-height: 35px">
+              <div v-if="payAmount >= (netAmount+customerData.oldCreditAmount).toFixed(2) || (payAmount - (netAmount+customerData.oldCreditAmount).toFixed(2)).toFixed(2) == 0.00" style="line-height: 35px">
                 <span>Change Amount :</span>
                 <span style="float:right;">{{ (payAmount - (netAmount+customerData.oldCreditAmount).toFixed(2)).toFixed(2) }} MMK</span>
               </div>
-              <div v-if="payAmount < (netAmount+customerData.oldCreditAmount).toFixed(2)" style="line-height: 35px">
+              <div v-if="payAmount < (netAmount+customerData.oldCreditAmount).toFixed(2) && ((netAmount+customerData.oldCreditAmount).toFixed(2) - payAmount).toFixed(2) > 0.00" style="line-height: 35px">
                 <span>Credit Amount :</span>
                 (Due Date:
                 <el-date-picker
@@ -273,8 +286,8 @@
                 >
                   <el-button slot="reference" type="danger">Cancel</el-button>
                 </el-popconfirm>
-                <el-button type="primary" @click="printClick(1)">Pay Now</el-button>
-                <el-button type="primary" @click="printClick(2)">Order</el-button>
+                <el-button type="primary" @click="payNow">Pay Now</el-button>
+                <el-button type="primary" @click="order">Order</el-button>
               </div>
             </el-card>
           </div>
@@ -354,13 +367,12 @@
         <div id="saleHeader" style="text-align:center; padding: 25px">
           <h3>Sale</h3>
           <div>Sale Receipt</div>
-          <h4>INVOICE</h4>
           <div style="margin: 5px; color: #000000; font-weight: 600">
-            <span style="float: left"> Invoice Id : {{ Date.now() }}</span>
+            <span style="float: left"> Invoice Id : {{ printSaleVaule.receiptNo }}</span>
             <span style="float: right">Date : {{ today.split(',')[0] }}</span>
           </div><br>
           <div style="margin: 5px; color: #000000; font-weight: 600">
-            <span style="float: left">Sold To : {{ customer }} </span>
+            <span style="float: left">Sold To : {{ printSaleVaule.customerName }} </span>
             <span style="float: right">Time : {{ today.split(',')[1] }}</span>
           </div><br>
           <div style="margin: 5px; color: #000000; font-weight: 600">
@@ -380,24 +392,22 @@
                 <th style="width: 30%; text-align: left">Items</th>
                 <th style="width: 10%">Qty</th>
                 <th style="width: 20%">Price</th>
-                <th style="width: 20%">Tax(%)</th>
                 <th style="width: 20%; text-align:right">Total</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item,i) of selectedItemList" id="trh" :key="i" style="text-align:center;border-bottom: 1px solid #dddddd;">
-                <td style="text-align: left">{{ item.data.productName }}({{ item.data.unitName }})</td>
-                <td>{{ item.count }}</td>
-                <td>{{ item.data.sellPrice }} MMK</td>
-                <td>{{ item.tax }}%</td>
-                <td style="text-align:right">{{ (item.count * parseFloat(item.data.sellPrice) - (item.count * parseFloat(item.data.sellPrice)* (item.discount/100))).toFixed(2) }} MMK</td>
+              <tr v-for="(item,i) of printSaleVaule.soldItemsList" id="trh" :key="i" style="text-align:center;border-bottom: 1px solid #dddddd;">
+                <td style="text-align: left">{{ item.productName }}({{ item.unitName }})</td>
+                <td>{{ item.qty }}</td>
+                <td>{{ item.realSellPrice }} MMK</td>
+                <td style="text-align:right">{{ (item.qty * parseFloat(item.realSellPrice) - (item.qty * parseFloat(item.realSellPrice)* (item.discount/100))).toFixed(2) }} MMK</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td style="color: #000000b5;font-weight: bolder;">Other Charges : </td>
                 <td colspan="4">
-                  <div v-for="(data,i) of otherChargesList" :key="i">
+                  <div v-for="(data,i) of printSaleVaule.otherChargesList" :key="i">
 
                     <span>{{ data.name }} : </span>
 
@@ -411,7 +421,7 @@
           <div id="footer" style="padding: 10px">
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Discount : </span>
-              <span style="float: right">{{ discount }} MMK</span>
+              <span style="float: right">{{ printSaleVaule.discount }} MMK</span>
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Tax : </span>
@@ -419,43 +429,43 @@
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Sub Total : </span>
-              <span style="float: right">{{ total }} MMK</span>
+              <span style="float: right">{{ printSaleVaule.subTotal }} MMK</span>
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Other Total : </span>
-              <span style="float: right">{{ OtherChargeTotal }} MMK</span>
+              <span style="float: right">{{ printSaleVaule.otherTotal }} MMK</span>
             </div><br>
             <div style="margin: 5px">
-              <span style="color: #000000b5;font-weight: bolder; float: left">Net Amount : </span>
-              <span style="float: right">{{ netAmount }} MMK</span>
+              <span style="color: #000000b5;font-weight: bolder; float: left">Total : </span>
+              <span style="float: right">{{ printSaleVaule.total }} MMK</span>
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Old Credit Amount :</span>
-              <span style="float:right;">{{ customerData.oldCreditAmount }} MMK</span>
+              <span style="float:right;">{{ printSaleVaule.oldCreditAmount }} MMK</span>
             </div>
             <br>
             <div style="margin: 5px">
-              <span style="color: #000000b5;font-weight: bolder; float: left">Net Total Amount :</span>
-              <span style="float:right;">{{ (netAmount+customerData.oldCreditAmount).toFixed(2) }} MMK</span>
+              <span style="color: #000000b5;font-weight: bolder; float: left">Grand Total :</span>
+              <span style="float:right;">{{ (printSaleVaule.total+printSaleVaule.oldCreditAmount).toFixed(2) }} MMK</span>
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Pay Amount : </span>
-              <span style="float: right">{{ payAmount }} MMK</span>
+              <span style="float: right">{{ printSaleVaule.paidAmount }} MMK</span>
             </div><br>
-            <div v-if="payAmount >= (netAmount+customerData.oldCreditAmount).toFixed(2)" style="line-height: 35px; margin: 5px">
+            <div v-if="printSaleVaule.change !== 0.00" style="line-height: 35px; margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Change Amount :</span>
-              <span style="float:right;">{{ (payAmount - (netAmount+customerData.oldCreditAmount).toFixed(2)).toFixed(2) }} MMK</span>
+              <span style="float:right;">{{ printSaleVaule.change }} MMK</span>
             </div>
-            <div v-if="payAmount < (netAmount+customerData.oldCreditAmount).toFixed(2)" style="line-height: 35px; margin:5px">
+            <div v-if="printSaleVaule.creditAmount !== 0.00" style="line-height: 35px; margin:5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Credit Amount :</span>
-              <span style="float:right;">{{ (netAmount+customerData.oldCreditAmount - payAmount).toFixed(2) }} MMK</span>
+              <span style="float:right;">{{ printSaleVaule.creditAmount }} MMK</span>
             </div>
           </div>
         </div>
       </div>
       <div style="height: 25px">
         <el-button size="small" type="danger" style="float: right; margin-left: 10px" @click="printPay = false">Cancel</el-button>
-        <el-button size="small" type="primary" style="float: right" @click="printData">Print Pay</el-button>
+        <el-button size="small" type="primary" style="float: right" @click="printData">Print</el-button>
       </div>
     </el-dialog>
 
@@ -468,22 +478,22 @@
           <div>Sale Order Receipt</div>
           <h4>INVOICE</h4>
           <div style="margin: 5px; color: #000000; font-weight: 600">
-            <span style="float: left"> Invoice Id : {{ Date.now() }}</span>
+            <span style="float: left"> Receipt No : {{ printOrderVaule.receiptNo }}</span>
             <span style="float: right">Date : {{ today.split(',')[0] }}</span>
           </div><br>
           <div style="margin: 5px; color: #000000; font-weight: 600">
-            <span style="float: left">Sold To : {{ customer }} </span>
+            <span style="float: left">Sold To : {{ printOrderVaule.customerName }} </span>
             <span style="float: right">Time : {{ today.split(',')[1] }}</span>
           </div><br>
           <div style="margin: 5px; color: #000000; font-weight: 600">
             <span style="float: left">Sold By : {{ $store.getters.curUserInfo.username }}</span>
           </div><br>
-          <div style="margin: 5px; color: #000000; font-weight: 600">
+          <!-- <div style="margin: 5px; color: #000000; font-weight: 600">
             <span style="float: left">Phone : </span>
           </div><br>
           <div style="margin: 5px; color: #000000; font-weight: 600">
             <span style="float: left">Address : </span>
-          </div><br>
+          </div><br> -->
         </div>
         <div style="margin: 25px">
           <table style="width: 100%">
@@ -492,24 +502,22 @@
                 <th style="width: 30%; text-align: left">Items</th>
                 <th style="width: 10%">Qty</th>
                 <th style="width: 20%">Price</th>
-                <th style="width: 20%">Tax(%)</th>
                 <th style="width: 20%; text-align:right">Total</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(item,i) of selectedItemList" id="trh" :key="i" style="text-align:center;border-bottom: 1px solid #dddddd;">
-                <td style="text-align: left">{{ item.data.productName }}({{ item.data.unitName }})</td>
-                <td>{{ item.count }}</td>
-                <td>{{ item.data.sellPrice }} MMK</td>
-                <td>{{ item.tax }}%</td>
-                <td style="text-align:right">{{ (item.count * parseFloat(item.data.sellPrice) - (item.count * parseFloat(item.data.sellPrice)* (item.discount/100))).toFixed(2) }} MMK</td>
+              <tr v-for="(item,i) of printOrderVaule.soldItemsList" id="trh" :key="i" style="text-align:center;border-bottom: 1px solid #dddddd;">
+                <td style="text-align: left">{{ item.productName }}({{ item.unitName }})</td>
+                <td>{{ item.qty }}</td>
+                <td>{{ item.realSellPrice }} MMK</td>
+                <td style="text-align:right">{{ (item.qty * parseFloat(item.realSellPrice) - (item.qty * parseFloat(item.realSellPrice)* (item.discount/100))).toFixed(2) }} MMK</td>
               </tr>
             </tbody>
             <tfoot>
               <tr>
                 <td style="color: #000000b5;font-weight: bolder;">Other Charges : </td>
                 <td colspan="4">
-                  <div v-for="(data,i) of otherChargesList" :key="i">
+                  <div v-for="(data,i) of printOrderVaule.otherChargesList" :key="i">
 
                     <span>{{ data.name }} : </span>
 
@@ -523,41 +531,41 @@
           <div id="footer" style="padding: 10px">
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Discount : </span>
-              <span style="float: right">{{ discount }} MMK</span>
+              <span style="float: right">{{ printOrderVaule.discount }} MMK</span>
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Tax : </span>
-              <span style="float: right"><s v-if="!taxInclude">{{ tax.toFixed(2) }} MMK</s> <span v-if="taxInclude">{{ tax.toFixed(2) }} MMK</span></span>
+              <span style="float: right"><s v-if="!taxInclude">{{ printOrderVaule.tax }} MMK</s> <span v-if="taxInclude">{{ printOrderVaule.tax }} MMK</span></span>
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Sub Total : </span>
-              <span style="float: right">{{ total }} MMK</span>
+              <span style="float: right">{{ printOrderVaule.subTotal }} MMK</span>
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Other Total : </span>
-              <span style="float: right">{{ OtherChargeTotal }} MMK</span>
+              <span style="float: right">{{ printOrderVaule.otherTotal }} MMK</span>
             </div><br>
             <div style="margin: 5px">
-              <span style="color: #000000b5;font-weight: bolder; float: left">Net Amount : </span>
-              <span style="float: right">{{ netAmount }} MMK</span>
+              <span style="color: #000000b5;font-weight: bolder; float: left">Total : </span>
+              <span style="float: right">{{ printOrderVaule.total }} MMK</span>
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Old Credit Amount :</span>
-              <span style="float:right;">{{ customerData.oldCreditAmount }} MMK</span>
+              <span style="float:right;">{{ printOrderVaule.oldCreditAmount }} MMK</span>
             </div>
             <br>
             <div style="margin: 5px">
-              <span style="color: #000000b5;font-weight: bolder; float: left">Net Total Amount :</span>
-              <span style="float:right;">{{ (netAmount+customerData.oldCreditAmount).toFixed(2) }} MMK</span>
+              <span style="color: #000000b5;font-weight: bolder; float: left">Grand Total :</span>
+              <span style="float:right;">{{ (printOrderVaule.total+printOrderVaule.oldCreditAmount).toFixed(2) }} MMK</span>
             </div><br>
-            <div style="margin: 5px">
+            <!-- <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Pay Amount : </span>
-              <span style="float: right">{{ payAmount }} MMK</span>
+              <span style="float: right">{{ printOrderVaule.payAmount }} MMK</span>
             </div><br>
             <div style="margin: 5px">
               <span style="color: #000000b5;font-weight: bolder; float: left">Left Amount : </span>
-              <span style="float: right">{{ (netAmount-payAmount).toFixed(2) }} MMK</span>
-            </div><br>
+              <span style="float: right">{{ (printOrderVaule.total-printOrderVaule.payAmount).toFixed(2) }} MMK</span>
+            </div><br> -->
           </div>
         </div>
       </div>

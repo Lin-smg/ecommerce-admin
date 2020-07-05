@@ -3,6 +3,7 @@ import { getCategory } from '@/api/category'
 import { getCustomerList } from '@/api/customer'
 import { getSupplierList } from '@/api/supplier'
 import { getPOSProductList } from '@/api/product'
+import { createPOSOrder, createPOSPay, getCreditReceiptByCustomer } from '@/api/pos'
 export const POS = {
   data: function() {
     return {
@@ -15,8 +16,8 @@ export const POS = {
       searchBrand: '',
       searchType: '',
       today: new Date().toLocaleString(),
-      customer: 'walk-in',
-      customerData: '',
+      customer: '',
+      customerData: this.initCustomer(),
       num: 0,
       otherChargesList: [],
       otherCharge: {
@@ -25,32 +26,7 @@ export const POS = {
       },
       name: '',
       amount: 0,
-      itemList: [
-        {
-          code: 'code1',
-          name: 'p1',
-          type: 'type',
-          price: 100
-        },
-        {
-          code: 'code2',
-          name: 'p2',
-          type: 'type',
-          price: 200
-        },
-        {
-          code: 'code1',
-          name: 'p1',
-          type: 'type',
-          price: 100
-        },
-        {
-          code: 'code2',
-          name: 'p2',
-          type: 'type',
-          price: 200
-        }
-      ],
+      itemList: [],
       categoryList: [],
       brandList: [],
       dialogVisible: false,
@@ -67,22 +43,7 @@ export const POS = {
       customerCreateVisible: false,
       netAmount: 0,
       dueDate: new Date(),
-      customersCreateForm: {
-        name: '',
-        email: '',
-        phone: '',
-        imageUrl: '',
-        addressOne: '',
-        addressTwo: '',
-        city: '',
-        stateOrProvince: '',
-        zipCode: '',
-        country: '',
-        comments: '',
-        internalNotes: '',
-        companyName: '',
-        account: ''
-      },
+      customersCreateForm: this.customerInitForm(),
       printDataValue: {
         invoiceId: Date.now(),
         customer: '',
@@ -99,9 +60,14 @@ export const POS = {
         payAmount: 0,
         netAmount: 0
       },
-
+      printOrderVaule: '',
+      printSaleVaule: '',
+      saveOrderData: '',
       printOrder: false,
-      printPay: false
+      printPay: false,
+      isCredit: false,
+      creditAmountList: [],
+      noStockdialogVisible: false
     }
   },
   created() {
@@ -114,67 +80,205 @@ export const POS = {
     }
   },
   methods: {
-    sendOrderData() {
-      this.printDataValue = {
-        invoiceId: Date.now(),
-        date: this.today.split(',')[0],
-        time: this.today.split(',')[1],
-        customer: this.customerData,
-        casher: this.$store.getters.curUserInfo,
+    initCustomer() {
+      return {
+        id: null,
+        name: '',
+        oldCreditAmount: 0
+      }
+    },
+    customerInitForm() {
+      return {
+        name: '',
+        email: '',
+        phone: '',
+        imageUrl: '',
+        addressOne: '',
+        addressTwo: '',
+        city: '',
+        stateOrProvince: '',
+        zipCode: '',
+        country: '',
+        comments: '',
+        internalNotes: '',
+        companyName: '',
+        account: ''
+      }
+    },
+    // sendOrderData() {
+    //   this.printDataValue = {
+    //     receiptNo: Date.now(),
+    //     date: this.today.split(',')[0],
+    //     time: this.today.split(',')[1],
+    //     customer: this.customerData,
+    //     casher: this.$store.getters.curUserInfo,
+    //     soldItemsList: this.selectedItemList,
+    //     otherChargesList: this.otherChargesList,
+    //     totalTax: this.tax,
+    //     totalDiscount: this.discount,
+    //     subTotal: this.total,
+    //     otherCharges: this.OtherChargeTotal,
+    //     netAmount: this.netAmount,
+    //     oldCreditAmount: this.oldCreditAmount,
+    //     netTotalAmount: (this.netAmount + this.customerData.oldCreditAmount).toFixed(2),
+    //     payAmount: this.payAmount,
+    //     creditAmount: (this.netAmount + this.customerData.oldCreditAmount - this.payAmount).toFixed(2),
+    //     changeAmount: (this.payAmount - (this.netAmount + this.customerData.oldCreditAmount).toFixed(2)).toFixed(2),
+    //     dueDate: this.dueDate
+    //   }
+    //   console.log('pend data', this.printDataValue)
+    //   this.$store
+    //     .dispatch('pos/createPOSOrder', this.printDataValue)
+    //     .then(() => {
+    //       this.print = false
+    //     })
+    //     .catch(() => {
+    //       console.log('print Error')
+    //     })
+    // },
+    // async payNow() {
+    //   this.printDataValue = {
+    //     receiptNo: '',
+    //     customer: this.customerData,
+    //     casher: this.$store.getters.curUserInfo,
+    //     soldItemsList: this.selectedItemList,
+    //     otherChargesList: this.otherChargesList,
+    //     totalTax: this.tax,
+    //     totalDiscount: this.discount,
+    //     subTotal: this.total,
+    //     otherCharges: this.OtherChargeTotal,
+    //     netAmount: this.netAmount,
+    //     oldCreditAmount: this.oldCreditAmount,
+    //     netTotalAmount: (this.netAmount + this.customerData.oldCreditAmount).toFixed(2),
+    //     payAmount: this.payAmount,
+    //     creditAmount: (this.netAmount + this.customerData.oldCreditAmount - this.payAmount).toFixed(2),
+    //     changeAmount: (this.payAmount - (this.netAmount + this.customerData.oldCreditAmount).toFixed(2)).toFixed(2)
+    //   }
+    // },
+    async order() {
+      this.saveOrderData = {
+        receiptNo: '',
+        customerId: this.customerData.id,
+        customerName: this.customerData.name,
+        casherName: this.$store.getters.curUserInfo.username,
         soldItemsList: this.selectedItemList,
         otherChargesList: this.otherChargesList,
+        subTotal: this.total,
+        otherTotal: this.OtherChargeTotal,
         totalTax: this.tax,
         totalDiscount: this.discount,
-        subTotal: this.total,
-        otherCharges: this.OtherChargeTotal,
-        netAmount: this.netAmount,
-        oldCreditAmount: this.oldCreditAmount,
-        netTotalAmount: (this.netAmount + this.customerData.oldCreditAmount).toFixed(2),
-        payAmount: this.payAmount,
-        creditAmount: (this.netAmount + this.customerData.oldCreditAmount - this.payAmount).toFixed(2),
-        changeAmount: (this.payAmount - (this.netAmount + this.customerData.oldCreditAmount).toFixed(2)).toFixed(2),
-        dueDate: this.dueDate
+        total: this.netAmount,
+        oldCreditAmount: this.customerData.oldCreditAmount,
+        grandtotal: (this.netAmount + this.customerData.oldCreditAmount).toFixed(2),
+        paidAmount: this.payAmount,
+        creditAmount: (this.netAmount + this.customerData.oldCreditAmount).toFixed(2),
+        change: 0,
+        dueDate: null,
+        paymentStatus: 'credit'
       }
-      console.log('pend data', this.printDataValue)
-      this.$store
-        .dispatch('pos/createPOSOrder', this.printDataValue)
-        .then(() => {
-          this.print = false
+      if (this.saveOrderData.soldItemsList.length === 0) {
+        this.$message({
+          message: 'Please select unit',
+          type: 'error',
+          duration: 5 * 1000
         })
-        .catch(() => {
-          console.log('print Error')
+        return false
+      }
+      this.loading = true
+      await createPOSOrder(this.saveOrderData).then(response => {
+        this.loading = false
+        this.selectedItemList = []
+        this.printOrderVaule = response.data
+        this.setTotal()
+        this.setOtherTotal()
+        this.printOrder = true
+      }).catch((error) => {
+        this.$message({
+          message: error,
+          type: 'error',
+          duration: 5 * 1000
         })
+        this.loading = false
+      })
     },
-    sendPrintData() {
-      this.printDataValue = {
-        invoiceId: Date.now(),
-        date: this.today.split(',')[0],
-        time: this.today.split(',')[1],
-        customer: this.customerData,
-        casher: this.$store.getters.curUserInfo,
+    async payNow() {
+      this.savePayNowData = {
+        receiptNo: '',
+        customerId: this.customerData.id,
+        customerName: this.customerData.name,
+        casherName: this.$store.getters.curUserInfo.name,
         soldItemsList: this.selectedItemList,
         otherChargesList: this.otherChargesList,
+        subTotal: this.total,
+        otherTotal: this.OtherChargeTotal,
         totalTax: this.tax,
         totalDiscount: this.discount,
-        subTotal: this.total,
-        otherCharges: this.OtherChargeTotal,
-        netAmount: this.netAmount,
-        oldCreditAmount: this.oldCreditAmount,
-        netTotalAmount: (this.netAmount + this.customerData.oldCreditAmount).toFixed(2),
-        payAmount: this.payAmount,
-        creditAmount: (this.netAmount + this.customerData.oldCreditAmount - this.payAmount).toFixed(2),
-        changeAmount: (this.payAmount - (this.netAmount + this.customerData.oldCreditAmount).toFixed(2)).toFixed(2)
+        total: this.netAmount,
+        oldCreditAmount: this.customerData.oldCreditAmount,
+        grandtotal: (this.netAmount + this.customerData.oldCreditAmount).toFixed(2),
+        paidAmount: this.payAmount,
+        creditAmount: (this.netAmount + this.customerData.oldCreditAmount) > this.payAmount ? (this.netAmount + this.customerData.oldCreditAmount - this.payAmount).toFixed(2) : 0,
+        change: (this.netAmount + this.customerData.oldCreditAmount) <= this.payAmount ? (this.payAmount - (this.netAmount + this.customerData.oldCreditAmount).toFixed(2)).toFixed(2) : 0,
+        dueDate: (this.netAmount + this.customerData.oldCreditAmount) > this.payAmount ? this.dueDate : null,
+        paymentStatus: (this.netAmount + this.customerData.oldCreditAmount) > this.payAmount ? 'credit' : 'paid'
       }
-      console.log('print data', this.printDataValue)
-      this.$store
-        .dispatch('pos/createPOSPay', this.printDataValue)
-        .then(() => {
-          this.print = false
+
+      if (this.savePayNowData.soldItemsList.length === 0) {
+        this.$message({
+          message: 'Please select unit',
+          type: 'error',
+          duration: 5 * 1000
         })
-        .catch(() => {
-          console.log('print Error')
+        return false
+      }
+      this.loading = true
+      await createPOSPay(this.savePayNowData).then(response => {
+        this.loading = false
+        this.selectedItemList = []
+        this.printSaleVaule = response.data
+        this.printPay = true
+        this.setTotal()
+        this.setOtherTotal()
+      }).catch((error) => {
+        this.$message({
+          message: error,
+          type: 'error',
+          duration: 5 * 1000
         })
+        this.loading = false
+      })
     },
+
+    // sendPrintData() {
+    //   this.printDataValue = {
+    //     receiptNo: Date.now(),
+    //     date: this.today.split(',')[0],
+    //     time: this.today.split(',')[1],
+    //     customer: this.customerData,
+    //     casher: this.$store.getters.curUserInfo,
+    //     soldItemsList: this.selectedItemList,
+    //     otherChargesList: this.otherChargesList,
+    //     totalTax: this.tax,
+    //     totalDiscount: this.discount,
+    //     subTotal: this.total,
+    //     otherCharges: this.OtherChargeTotal,
+    //     netAmount: this.netAmount,
+    //     oldCreditAmount: this.oldCreditAmount,
+    //     netTotalAmount: (this.netAmount + this.customerData.oldCreditAmount).toFixed(2),
+    //     payAmount: this.payAmount,
+    //     creditAmount: (this.netAmount + this.customerData.oldCreditAmount - this.payAmount).toFixed(2),
+    //     changeAmount: (this.payAmount - (this.netAmount + this.customerData.oldCreditAmount).toFixed(2)).toFixed(2)
+    //   }
+    //   console.log('print data', this.printDataValue)
+    //   this.$store
+    //     .dispatch('pos/createPOSPay', this.printDataValue)
+    //     .then(() => {
+    //       this.print = false
+    //     })
+    //     .catch(() => {
+    //       console.log('print Error')
+    //     })
+    // },
     async querySearchAsync(queryString, cb) {
       const params = {
         group: '',
@@ -196,8 +300,9 @@ export const POS = {
       this.selectedSupplier = item.name
       this.searchClick()
     },
-    handleClear() {
+    handleSupplierClear() {
       this.selectedSupplier = ''
+      this.searchClick()
     },
     openNewTab(name) {
       // this.$store.dispatch('app/setNewTab', true)
@@ -208,11 +313,11 @@ export const POS = {
       this.$refs[val][0].focus()
     },
     printData() {
-      this.sendPrintData()
+      // this.sendPrintData()
       this.$htmlToPaper('printMe')
     },
     printOrderData() {
-      this.sendOrderData()
+      // this.sendOrderData()
       this.$htmlToPaper('printMe')
     },
     clearItemList() {
@@ -252,25 +357,34 @@ export const POS = {
     },
 
     popShow(data) {
-      this.selectedItem = data
-      if (data.unit.length > 1) {
-        this.dialogVisible = true
+      if (data.productQty === 0 || data.productQty < 0) {
+        this.noStockdialogVisible = true
       } else {
-        this.addSaleItem(data.unit[0])
+        this.selectedItem = data
+        if (data.unit.length > 1) {
+          this.dialogVisible = true
+        } else {
+          this.addSaleItem(data.unit[0], data.productQty)
+        }
       }
     },
 
-    addSaleItem(item) {
+    addSaleItem(item, totalQty) {
       const selected = {
-        data: item,
+        ...item,
         tax: this.selectedItem.taxPercent,
         discount: 0,
-        count: 1
+        qty: 1,
+        realSellPrice: item.sellPrice
       }
       var exists = this.selectedItemList.some(function(field) {
-        var flag = field.data.id === selected.data.id
-        if (flag) {
-          field.count += 1
+        var flag = field.id === selected.id
+        if (Number(totalQty) - Number(field.qty) === 0) {
+          this.noStockdialogVisible = true
+        } else {
+          if (flag) {
+            field.qty += 1
+          }
         }
         return flag
       })
@@ -290,8 +404,8 @@ export const POS = {
       this.total = 0
       this.tax = 0
       for (const i of this.selectedItemList) {
-        this.total += (parseFloat(i.data.sellPrice) * i.count - (i.count * parseFloat(i.data.sellPrice) * (i.discount / 100))) // + ((parseFloat(i.data.sellPrice) * i.count) * i.tax / 100)
-        this.tax += (parseFloat(i.data.sellPrice) * i.tax / 100 * i.count)
+        this.total += (parseFloat(i.realSellPrice) * i.qty - (i.qty * parseFloat(i.realSellPrice) * (i.discount / 100))) // + ((parseFloat(i.realSellPrice) * i.count) * i.tax / 100)
+        this.tax += (parseFloat(i.realSellPrice) * i.tax / 100 * i.qty)
       }
 
       this.netAmount = this.total + this.OtherChargeTotal + (this.taxInclude ? Number(this.tax) : 0) - this.discount
@@ -384,11 +498,25 @@ export const POS = {
       console.log(val)
       console.log(this.categoryList[val])
     },
-    handleSelect(val) {
+    async handleSelectCustomer(val) {
       this.customerData = val
-      this.customerData.oldCreditAmount = 100
+      await getCreditReceiptByCustomer(val.id).then(response => {
+        const camtList = response.data
+        let total = 0
+        this.creditAmountList = []
+        for (const obj of camtList) {
+          this.creditAmountList.push(obj)
+          total = total + Number(obj.sum)
+        }
+        this.customerData.oldCreditAmount = Number(total)
+        // console.log(this.itemList)
+      })
       this.setTotal()
-      console.log(val)
+    },
+    clearCustomer(val) {
+      this.customerData = this.initCustomer()
+      this.customer = ''
+      this.setTotal()
     },
     addOtherCharges() {
       console.log(this.popVisible)
