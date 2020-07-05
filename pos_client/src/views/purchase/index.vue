@@ -327,7 +327,7 @@
                   <td>{{ item.qty }}</td>
                   <td>{{ item.unitCost * item.qty }} MMK</td>
                   <td>{{ item.promoQty }}</td>
-                  <td>{{ item.promoStatus? '**promo**' : '' }}</td>
+                  <td>{{ item.promoStatus? '**receive**' : 'not receive' }}</td>
                 </tr>
               </tbody>
             </table>
