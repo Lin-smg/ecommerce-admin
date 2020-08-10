@@ -67,7 +67,11 @@ export const POS = {
       printPay: false,
       isCredit: false,
       creditAmountList: [],
-      noStockdialogVisible: false
+      noStockdialogVisible: false,
+      noStockdialogVisible2: false,
+
+      noStockItem: null,
+      noStockTotal: 0
     }
   },
   created() {
@@ -357,22 +361,65 @@ export const POS = {
     chooseCatecory(data) {
       console.log('categor', data)
     },
+    noStockCheck(data){     
+      this.selectedItem = data
+      var noStock = false;
+      if (data.productQty === 0 || data.productQty < 0) {
+        noStock = true
+      } else {
+        let item = data.unit[0];
+        let totalQty = data.productQty;  
+        
+        const selected = {
+          ...item,
+          tax: this.selectedItem.taxPercent,
+          discount: 0,
+          qty: 1,
+          realSellPrice: item.sellPrice,
+          totalQty: this.selectedItem.productQty
+        }
+        console.log(this.selectedItem.productQty, item)
+        const self = this
+        noStock = this.selectedItemList.some(function(field) {
+          var flag = field.id === selected.id
+          if (flag) {
+            if (Number(totalQty) - Number(field.qty) <= 0) {
+              return true
+            } else {
+              return false
+            }
+          } else {
+            return false
+          }
+        });
+        
+      }
+      if(!noStock){
+        this.popShow(data);
+      } else {
+        this.noStockdialogVisible = true;
+      }
+
+      return noStock;
+    },
 
     popShow(data) {
-      if (data.productQty === 0 || data.productQty < 0) {
-        this.noStockdialogVisible = true
-      } else {
+      
         this.selectedItem = data
         if (data.unit.length > 1) {
           this.dialogVisible = true
         } else {
           this.addSaleItem(data.unit[0], data.productQty)
         }
-      }
+        
     },
-    checkQty(qty, total) {
-      if (Number(total) - Number(qty) < 0) {
-        this.noStockdialogVisible = true
+    checkQty(item) {
+      
+      this.selectedItem = item
+      let qty = item.qty;
+      let total = item.totalQty;
+      if (Number(total) - Number(qty) <= 0) {
+        this.noStockdialogVisible2 = true
         return true
       } else {
         return false
@@ -380,6 +427,7 @@ export const POS = {
     },
 
     addSaleItem(item, totalQty) {
+      
       const selected = {
         ...item,
         tax: this.selectedItem.taxPercent,
@@ -388,24 +436,29 @@ export const POS = {
         realSellPrice: item.sellPrice,
         totalQty: this.selectedItem.productQty
       }
-      console.log(this.selectedItem.productQty)
+      
       const self = this
+      
       var exists = this.selectedItemList.some(function(field) {
         var flag = field.id === selected.id
         if (flag) {
-          if (Number(totalQty) - Number(field.qty) <= 0) {
-            self.noStockdialogVisible = true
-          } else {
             field.qty = Number(field.qty) + 1
-          }
         }
         return flag
       })
       if (!exists) {
         this.selectedItemList.push(selected)
       }
-      this.dialogVisible = false
+      this.dialogVisible = false;
+      this.noStockdialogVisible2 = false
       this.setTotal()
+    },
+
+    addNoStockItem() {
+      this.popShow(this.selectedItem)
+      this.noStockdialogVisible = false;
+      this.noStockdialogVisible2 = false;
+
     },
 
     removeItem(i) {

@@ -44,7 +44,7 @@
 
           <div style="overflow-y: scroll;height: 80vh">
             <el-card v-for="(item,i) in itemList" :key="i" shadow="hover" :body-style="{ padding: '0px' }" style="width: 200px; height: 150px; float: left; margin: 5px; cursor: grab">
-              <div style="text-align: center" @click="popShow(item)">
+              <div style="text-align: center" @click="noStockCheck(item)">
                 <el-image v-if="item.imgPath !== ''" :src="baseUrl+item.imgPath" fit="fill" style="height: 100px; width: 100px" />
                 <el-image v-if="item.imgPath === ''" :src="baseUrl+'/shared/company_profile.jpg'" fit="fill" style="height: 90px; width: 100px" />
                 <div style="text-align: center; padding: 3px; background: #f1f1f1; font-size: 12px; height: 150px">
@@ -64,8 +64,22 @@
               <span>These stock is soldOut. Please purchase stock.</span>
             </el-row>
             <span slot="footer" class="dialog-footer">
-              <!-- <el-button size="small" type="primary" @click="addSaleItem">Confirm</el-button>
-              <el-button size="small" @click="dialogVisible = false">Cancel</el-button> -->
+              <el-button size="small" type="primary" @click="addNoStockItem">OK</el-button>
+              <el-button size="small" @click="noStockdialogVisible = false">Cancel</el-button>
+            </span>
+          </el-dialog>
+
+          <el-dialog
+            :visible.sync="noStockdialogVisible2"
+            width="25%"
+            style="overflow-wrap: break-word;"
+          >
+            <el-row>
+              <span>These stock is soldOut. Please purchase stock.</span>
+            </el-row>
+            <span slot="footer" class="dialog-footer">
+              <el-button size="small" type="primary" @click="addSaleItem(selectedItem)">OK</el-button>
+              <el-button size="small" @click="noStockdialogVisible2 = false">Cancel</el-button>
             </span>
           </el-dialog>
 
@@ -141,8 +155,8 @@
                   <el-col :span="6" style="text-align: center">
                     <el-row>
                       <span size="mini" class="el-icon-remove" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px; color: #8a7443; cursor: pointer;" @click.stop="item.qty = item.qty==1 || item.qty <= 0 ? removeItem(i) : item.qty-1, setTotal()" />
-                      <input v-model="item.qty" :style="{width: device==='mobile'? '21px' : '69px'}" style="text-align: center; border: none;font-size: 18px;" type="number" @change="checkQty(item.qty,item.totalQty)? item.qty=item.totalQty:item.qty=item.qty, item.qty == 0 ? removeItem(i) : '', setTotal()">
-                      <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click.stop="checkQty(item.qty+1, item.totalQty)? item.qty=item.qty-1:item.qty=item.qty, item.qty++, setTotal()" />
+                      <input v-model="item.qty" :style="{width: device==='mobile'? '21px' : '69px'}" style="text-align: center; border: none;font-size: 18px;" type="number" @change="checkQty(item)? '':item.qty=item.qty, item.qty == 0 ? removeItem(i) : '', setTotal()">
+                      <span size="mini" class="el-icon-circle-plus" :style="{fontSize: device==='mobile'? '18px' : '25px'}" style="font-size: 25px;color: #73c715 cursor: pointer;" @click.stop="checkQty(item)? item.qty=item.qty-1:item.qty=item.qty, item.qty++, setTotal()" />
 
                     </el-row>
 
