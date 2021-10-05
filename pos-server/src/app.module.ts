@@ -18,6 +18,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { BrandModule } from './brand/brand.module';
 import { ProductsModule } from './products/products.module';
 import { PosModule } from './pos/pos.module';
+import { ProductModule } from './client/product/product.module';
 
 @Module({
   imports: [   
@@ -57,7 +58,8 @@ import { PosModule } from './pos/pos.module';
     DashboardModule,
     BrandModule,
     ProductsModule,
-    PosModule
+    PosModule,
+    ProductModule
   ],
 exports: [TypeOrmModule]
 })

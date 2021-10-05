@@ -43,6 +43,6 @@ export class ProductsSaleDto {
 
     soldItemsList: TProductsSaleDto[]
 
-    oldCreditList: []
+    // oldCreditList: []
 
 }

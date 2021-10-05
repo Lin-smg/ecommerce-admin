@@ -15,7 +15,7 @@ import { OutProductsPosDto } from './dto/out-products-pos.dto';
 
 @Controller('products')
 @ApiTags('products')
-@UseGuards(JwtAuthGuard, PermissionsGuard)
+// @UseGuards(JwtAuthGuard, PermissionsGuard)
 @UseInterceptors(AuthUserInterceptor)
 @ApiBearerAuth()
 export class ProductsController {

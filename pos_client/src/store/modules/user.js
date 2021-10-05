@@ -55,6 +55,7 @@ const actions = {
   async getInfo({ commit, state }) {
     return await new Promise((resolve, reject) => {
       getInfo().then(response => {
+        console.log('User >>>>>>>>>>', response)
         commit('SET_USERID', response.user.userid)
         commit('SET_AVATAR', response.user.avatar)
         commit('SET_CURUSERINFO', response.user)

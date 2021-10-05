@@ -54,7 +54,11 @@ export default {
   },
   methods: {
     getPermissonRoutes(routes) {
+      console.log('permission >>> ', this.$store.getters.curUserInfo.permissions.split(','))
+      // return routes;
+      // const permissionArr = this.$store.getters.curUserInfo.permissions.split(',')
       const permissionArr = JSON.parse(this.$store.getters.curUserInfo.permissions.replace('}', ']').replace('{', '['))
+      //JSON.parse(this.$store.getters.curUserInfo.permissions.replace('}', ']').replace('{', '['))
       permissionArr.push('All')
       const routeList = routes.slice(0)
       const allowRoutes = []
@@ -71,7 +75,7 @@ export default {
           }
         }
       }
-      console.log(this.$store.getters.curUserInfo.permissions)
+      console.log(JSON.parse(this.$store.getters.curUserInfo.permissions.replace('}', ']').replace('{', '[')))
       return allowRoutes
     }
   }

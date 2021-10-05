@@ -42,6 +42,6 @@ export class InProductsOrderDto{
 
     soldItemsList: TProductsOrderDto[];
 
-    otherChargesList: [];
+    // otherChargesList: [];
 
 }
