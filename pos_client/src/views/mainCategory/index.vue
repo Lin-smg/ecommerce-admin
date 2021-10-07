@@ -40,15 +40,6 @@
 
           <el-table-column align="center">
             <template slot="header">
-              <span>Main Category Code</span>
-            </template>
-            <template slot-scope="{row}">
-              <span>{{ row.mainCategoryCode }}</span>
-            </template>
-          </el-table-column>
-
-          <el-table-column align="center">
-            <template slot="header">
               <span>description</span>
             </template>
             <template slot-scope="{row}">
@@ -94,7 +85,6 @@
       :title="dialog.title"
       :visible.sync="dialog.visible"
     >
-    
       <el-form ref="createForm" label-width="220px" style="width: 500px">
 
         <el-form-item label="Category Code" prop="code">
@@ -102,17 +92,6 @@
         </el-form-item>
         <el-form-item label="Category Name" prop="name">
           <el-input v-model="category.categoryName" type="text" placeholder="category name" autocomplete="off" />
-        </el-form-item>
-
-        <el-form-item label="Main Category" prop="category">
-          <el-select v-model="category.mainCategoryCode" value-key="categoryName" filterable clearable placeholder="Select" style="width: 280px">
-            <el-option
-              v-for="item of mainCategoryList"
-              :key="item.categoryCode"
-              :label="item.categoryName"
-              :value="item.categoryCode"
-            />
-          </el-select>
         </el-form-item>
 
         <el-form-item label="Description" prop="description">
@@ -131,11 +110,11 @@
 </template>
 
 <script>
-import { Category } from '../../mixinsFile/category'
+import { MainCategory } from '../../mixinsFile/mainCategory'
 
 export default {
   name: 'Index',
-  mixins: [Category]
+  mixins: [MainCategory]
 }
 </script>
 

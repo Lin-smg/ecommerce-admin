@@ -16,7 +16,7 @@ export class ProductService {
   constructor(
     @InjectRepository(Products)
     private readonly productsRepository: Repository<Products>,
-    
+
     private readonly productsUnitsService: ProductsUnitsService,
     private readonly brandService: BrandService,
     private readonly categoryService: CategoryService,
@@ -42,13 +42,29 @@ export class ProductService {
     return `This action removes a #${id} product`;
   }
 
-    async getAllProducts(){
-      try {
-         return {
-             data : await (await this.productsRepository.find({ where: {delFlg: '0'}, order: {productQty: Order.ASC}}))
-         } 
-      } catch (error) {
-       throw new error;   
+  async getAllProducts() {
+    try {
+      return {
+        data: await (await this.productsRepository.find({ where: { delFlg: '0' }, order: { productQty: Order.ASC } }))
       }
+    } catch (error) {
+      throw new error;
+    }
+  }
+
+  async getProductsByCategoryCode(code: string) {
+    try {
+      const products = await this.productsRepository.find({
+        where: {
+            categoryCode: code,
+            delFlg: '0'
+        },
+    });
+      return {
+        data: products
+      }
+    } catch (error) {
+      throw new error;
+    }
   }
 }

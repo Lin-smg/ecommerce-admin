@@ -10,5 +10,8 @@ export class CategoryDto {
 
     @ApiProperty()
     description: string;
+
+    @ApiProperty()
+    mainCategoryCode: string;
     
 }

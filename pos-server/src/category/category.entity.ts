@@ -12,4 +12,7 @@ export class Category extends BaseEntity {
 
     @Column({ name: 'description', nullable: true })
     description: string;    
+
+    @Column({ name: 'main_category_code', nullable: true })
+    mainCategoryCode: string;
 }

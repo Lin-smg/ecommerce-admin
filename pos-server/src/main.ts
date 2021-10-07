@@ -27,6 +27,7 @@ async function bootstrap() {
   // Server Port
   const port = process.env.PORT || configService.get('PORT');
   
+  console.log("Server is running port::",port)
   // Swagger
   if (configService.get('MODE') === 'development') {
     const document = SwaggerModule.createDocument(app, new DocumentBuilder()

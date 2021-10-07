@@ -118,6 +118,18 @@ export const constantRoutes = [
     }]
   },
   {
+    path: '/mainCategory',
+    component: Layout,
+    redirect: '/mainCategory',
+    children: [{
+      path: 'index',
+      permission: 'M008B00',
+      name: 'Category',
+      component: () => import('@/views/mainCategory/index'),
+      meta: { title: 'Main Category', icon: 'tree' }
+    }]
+  },
+  {
     path: '/category',
     component: Layout,
     redirect: '/category',

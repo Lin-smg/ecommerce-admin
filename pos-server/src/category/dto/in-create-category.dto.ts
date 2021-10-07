@@ -11,4 +11,7 @@ export class InCreateCategoryDto {
     @ApiProperty()
     readonly description: string;
 
+    @ApiProperty()
+    readonly mainCategoryCode: string;
+
 }

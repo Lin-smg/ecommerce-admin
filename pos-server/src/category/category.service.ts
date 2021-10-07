@@ -68,6 +68,18 @@ export class CategoryService {
             throw new NotFoundException(`This Category is not found`);
         }
     }
+    async findByMainCategoryCode(options: { mainCategoryCode: string; }) {
+        try {
+           
+            return await this.categoryRepository.findOneOrFail({
+                where: {
+                    mainCategoryCode: options.mainCategoryCode , delFlg: '0'
+                },
+            });    
+        } catch (error) {
+            return false
+        }
+    }
 //Find Category
     async getCategory(options: { curPage: number; perPage: number; q: string; sort: string; group: number; }){
        try {

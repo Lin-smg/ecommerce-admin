@@ -1,7 +1,6 @@
-import { getCategory } from '@/api/category'
 import { getMainCategory } from '@/api/mainCategory'
 
-export const Category = {
+export const MainCategory = {
   data() {
     return {
       pageSize: 10,
@@ -13,21 +12,18 @@ export const Category = {
       searchValue: '',
       category: this.initCategory(),
       categoryData: [],
-      mainCategoryList: [],
       isUpdate: false
     }
   },
   created() {
     this.getMainCategory()
-    this.getCategory()
   },
   methods: {
     initCategory() {
       return {
         categoryCode: '',
         categoryName: '',
-        description: '',
-        mainCategoryCode: ''
+        description: ''
       }
     },
     async getMainCategory() {
@@ -41,48 +37,32 @@ export const Category = {
 
       this.listLoading = true
       await getMainCategory(params).then(response => {
-        this.mainCategoryList = response.data
-      })
-    },
-    async getCategory() {
-      const params = {
-        group: '',
-        sort: '',
-        cur_page: this.pageIndex,
-        per_page: this.pageSize,
-        q: this.searchValue ? this.searchValue : ''
-      }
-
-      this.listLoading = true
-      await getCategory(params).then(response => {
         this.categoryData = response.data
         this.pageIndex = response.meta.curPage
         this.pageSize = response.meta.perPage
         this.totalCount = response.meta.totalResults
         this.category = this.initCategory()
         this.listLoading = false
-
-        console.log('cateory', this.categoryData)
       })
     },
     createCategory() {
       if (this.isUpdate) {
-        this.$store.dispatch('category/updateCategory', this.category)
+        this.$store.dispatch('mainCategory/updateMainCategory', this.category)
           .then(() => {
             this.dialog.visible = false
-            this.getCategory()
+            this.getMainCategory()
           })
           .catch(() => {
-            console.log('Create supplier error')
+            console.log('Update Category error')
           })
       } else {
-        this.$store.dispatch('category/createCategory', this.category)
+        this.$store.dispatch('mainCategory/createMainCategory', this.category)
           .then(() => {
             this.dialog.visible = false
-            this.getCategory()
+            this.getMainCategory()
           })
           .catch(() => {
-            console.log('Create supplier error')
+            console.log('Create Category error')
           })
       }
     },
@@ -103,13 +83,13 @@ export const Category = {
       }
     },
     searchClick() {
-      this.getCategory()
+      this.getMainCategory()
     },
 
     deleteCategory(data) {
-      this.$store.dispatch('category/deleteCategory', data)
+      this.$store.dispatch('mainCategory/deleteMainCategory', data)
         .then(() => {
-          this.getCategory()
+          this.getMainCategory()
         })
         .catch(() => {
           console.log('delete error')
@@ -118,12 +98,12 @@ export const Category = {
 
     handleSizeChange(val) {
       this.pageSize = val
-      this.getCategory()
+      this.getMainCategory()
     },
 
     handleCurrentChange(val) {
       this.pageIndex = val
-      this.getCategory()
+      this.getMainCategory()
     }
   }
 
