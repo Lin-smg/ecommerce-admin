@@ -3,23 +3,23 @@ import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
-import { ProductsModule } from 'src/products/products.module';
-import { ProductsService } from 'src/products/products.service';
 import { BrandModule } from 'src/brand/brand.module';
-import { CategoryModule } from 'src/category/category.module';
+import { ProductsModule } from 'src/products/products.module';
 import { UnitsModule } from 'src/units/units.module';
+import { CategoryModule } from 'src/category/category.module';
+import { OrderItem } from './entities/order-item.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Order
+      Order,OrderItem
     ]),
     ProductsModule,
     BrandModule,
-  CategoryModule,
-  UnitsModule
+    CategoryModule,
+    UnitsModule
   ],
   controllers: [OrderController],
-  providers: [OrderService, ProductsService]
+  providers: [OrderService]
 })
-export class ClientOrderModule {}
+export class OrderModule {}

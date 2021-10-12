@@ -61,6 +61,7 @@ export class ProductsController {
   @Post("delete")
   async delete( @Body() dto: InCreateProductsDto) {
     try {
+        console.log('delete')
         return plainToClass(
           OutProductsDto,
           await this.productsService.delete({

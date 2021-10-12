@@ -19,9 +19,10 @@ import { BrandModule } from './brand/brand.module';
 import { ProductsModule } from './products/products.module';
 import { PosModule } from './pos/pos.module';
 import { ProductModule } from './client/product/product.module';
-import { OrderModule } from './client/order/order.module';
+import { ClientOrderModule } from './client/order/order.module';
 import { ClientCategoryModule } from './client/category/category.module';
 import { MainCategoryModule } from './main-category/main-category.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [   
@@ -63,6 +64,7 @@ import { MainCategoryModule } from './main-category/main-category.module';
     ProductsModule,
     PosModule,
     ProductModule,
+    ClientOrderModule,
     OrderModule,
     ClientCategoryModule,
     MainCategoryModule

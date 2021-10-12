@@ -12,6 +12,6 @@ import { CategoryModule } from 'src/category/category.module';
   ],
   controllers: [MainCategoryController],
   providers: [MainCategoryService],
-  exports: [MainCategoryService]
+  exports: [MainCategoryService, TypeOrmModule]
 })
 export class MainCategoryModule {}

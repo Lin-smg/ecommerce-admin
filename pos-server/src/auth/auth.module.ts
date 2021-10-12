@@ -6,13 +6,15 @@ import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
 import { CryptoModule } from '../users/crypto/crypto.module';
 import { PermissionModule } from '../permission/permission.module';
+import { CustomersModule } from 'src/customers/customers.module';
 
 @Module({
     imports: [
         forwardRef(() => UsersModule),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         CryptoModule,
-        PermissionModule        
+        PermissionModule,
+        CustomersModule  
     ],
     controllers: [AuthController],
     providers: [AuthService, JwtStrategy],

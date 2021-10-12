@@ -45,14 +45,17 @@ export class MainCategoryService {
     try {
       const mainCategory = await this.findByCategoryCode(code);
       const category = await this.categoryService.findByMainCategoryCode({mainCategoryCode: mainCategory.categoryCode})
+      
       if (category) {
         throw new NotAcceptableException('Category is already used.')
       }
       mainCategory.delFlg = '1'
-      await this.mainCategoryRepository.update({ categoryCode: mainCategory.categoryCode }, mainCategory)
+      await this.mainCategoryRepository.update({ categoryCode: mainCategory.categoryCode, id: mainCategory.id }, mainCategory)
+      console.log('delete', mainCategory)
       return { data: mainCategory }
 
     } catch (error) {
+      console.log(error)
       throw error;
     }
   }
@@ -120,6 +123,28 @@ export class MainCategoryService {
         data: plainToClass(MainCategoryDto,objects[0]),
         meta: plainToClass(PageMetaDto,metaPage)
       }
+        
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async getAll() {
+    try {
+      let objects: [MainCategory[], number];
+      let qb = this.mainCategoryRepository.createQueryBuilder('mainCategory');
+
+      qb = qb.where('mainCategory.delFlg = :d', {
+        d: '0'
+      })
+
+      
+      // eslint-disable-next-line prefer-const
+      objects = await qb.getManyAndCount();
+ 
+
+      return plainToClass(MainCategoryDto,objects[0])
+      
         
     } catch (error) {
       throw error

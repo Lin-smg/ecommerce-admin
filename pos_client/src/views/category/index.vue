@@ -94,7 +94,7 @@
       :title="dialog.title"
       :visible.sync="dialog.visible"
     >
-    
+
       <el-form ref="createForm" label-width="220px" style="width: 500px">
 
         <el-form-item label="Category Code" prop="code">
@@ -113,6 +113,7 @@
               :value="item.categoryCode"
             />
           </el-select>
+          {{ category.mainCategoryCode }}
         </el-form-item>
 
         <el-form-item label="Description" prop="description">

@@ -67,4 +67,20 @@ export class ProductService {
       throw new error;
     }
   }
+
+  async getProductByProductCode(code: string) {
+    try {
+      const products = await this.productsRepository.find({
+        where: {
+            productCode: code,
+            delFlg: '0'
+        },
+    });
+      return {
+        data: products
+      }
+    } catch (error) {
+      throw new error;
+    }
+  }
 }

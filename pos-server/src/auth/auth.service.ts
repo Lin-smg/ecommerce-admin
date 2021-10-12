@@ -9,16 +9,19 @@ import { UsersDto } from '../users/dto/users.dto';
 import { ContextService } from '../common/providers/context.service';
 import { plainToClass } from 'class-transformer';
 import { CryptoService } from '../users/crypto/crypto.service';
+import { CustomersService } from 'src/customers/customers.service';
 
 
 @Injectable()
 export class AuthService {
     private static _authUserKey = 'user_key';
+    private static _authCustomerKey = 'customer_key';
 
     constructor(
         private readonly jwtService: JwtService,
         private readonly usersService: UsersService,
         private readonly cryptoService: CryptoService,
+        private readonly customerService: CustomersService
     ) { }
 
     async createToken(user: User | UsersDto): Promise<TokenPayloadDto> {

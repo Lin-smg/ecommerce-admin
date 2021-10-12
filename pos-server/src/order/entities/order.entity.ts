@@ -1,4 +1,4 @@
-import { BaseEntity } from "../../../common/base.entity";
+import { BaseEntity } from "../../common/base.entity";
 import { Entity, Column } from "typeorm";
 
 @Entity({ name: 'order' })
@@ -52,4 +52,12 @@ export class Order extends BaseEntity {
     @Column({ name: 'payment_status', nullable: true })
     paymentStatus: string;
 
+    @Column({ name: 'operator_account', nullable: true })
+    operatorName: string;
+
+    @Column({ name: 'operator_name', nullable: true })
+    operatorAccount: string;
+
+    @Column({ name: 'remark', nullable: true })
+    remark: string;
 }

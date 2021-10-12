@@ -130,6 +130,18 @@ export const constantRoutes = [
     }]
   },
   {
+    path: '/order',
+    component: Layout,
+    redirect: '/order',
+    children: [{
+      path: 'index',
+      permission: 'M008B00',
+      name: 'Order',
+      component: () => import('@/views/order/index'),
+      meta: { title: 'Order', icon: 'tree' }
+    }]
+  },
+  {
     path: '/category',
     component: Layout,
     redirect: '/category',

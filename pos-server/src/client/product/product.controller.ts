@@ -30,6 +30,14 @@ export class ProductController {
     )
   }
 
+  @Get('detail/:productCode')
+  async getProductByProductCode(@Param('productCode') code: string) {
+    return plainToClass(
+      OutProductDto,
+      await this.productService.getProductByProductCode(code)
+    )
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.productService.findOne(+id);

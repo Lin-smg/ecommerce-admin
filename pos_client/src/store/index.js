@@ -17,6 +17,7 @@ import product from './modules/product'
 import pos from './modules/pos'
 import purchase from './modules/purchase'
 import mainCategory from './modules/mainCategory'
+import order from './modules/order'
 
 Vue.use(Vuex)
 
@@ -37,7 +38,8 @@ const store = new Vuex.Store({
     product,
     pos,
     purchase,
-    mainCategory
+    mainCategory,
+    order
   },
   getters
 
