@@ -5,6 +5,7 @@ import { ProductsService } from 'src/products/products.service';
 import { Connection, Repository } from 'typeorm';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderItemDto } from './dto/order-item.dto';
+import { OutProductOrderAllDto } from './dto/out-product-order-all.dto';
 import { ProductOrderDto } from './dto/product-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { OrderItem } from './entities/order-item.entity';
@@ -15,7 +16,9 @@ export class OrderService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
-    
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepository: Repository<OrderItem>,
+
     private connection: Connection,
     private readonly productsService: ProductsService
   ) { }
@@ -45,7 +48,14 @@ export class OrderService {
           dueDate: new Date(productOrder.dueDate),
           status: productOrder.status,
           paymentType: productOrder.paymentType,
-          paymentStatus: productOrder.paymentStatus
+          paymentStatus: productOrder.paymentStatus,
+
+          fullName: productOrder.fullName,
+          address: productOrder.address,
+          phone: productOrder.phone,
+          city: productOrder.city,
+          region: productOrder.region,
+          note: productOrder.note
         }
 
         const orderEntity = await plainToClass(Order, orderData);
@@ -58,7 +68,11 @@ export class OrderService {
           product.lastChangedDateTime = new Date();
           product.productQty = product.productQty - data.qty;
           await this.productsService.productPurchaseDataUpdate(product);
+
           orderItem.orderNo = savedOrder.orderNo
+          orderItem.productId = product.id
+          orderItem.totalPrice = data.qty * product.unitPrice;
+          orderItem.productQty = data.qty;
           orderItem.categoryCode = product.categoryCode;
           orderItem.categoryName = product.categoryName;
           orderItem.brandCode = product.brandCode;
@@ -101,5 +115,62 @@ export class OrderService {
 
     return [year, month, day].join('-');
   }
+
+  async getOrderByOrderNo(orderNo) {
+    try {
+      let qb = this.orderRepository.createQueryBuilder('order');
+      qb = qb.where('order.delFlg = :d and order.orderNo = :no', {
+        d: '0',
+        no: orderNo
+      })
+
+      const order = await qb.getOne();
+      const result = {
+        ...order,
+        orderItems: []
+      }
+
+      result.orderItems = await this.orderItemRepository.find({ where: { orderNo: orderNo } });
+
+      return {
+        data: plainToClass(ProductOrderDto, result)
+      }
+    } catch (error) {
+      console.log(error)
+      throw error;
+    }
+  }
+
+  async getOrderByCustomerId(customerId: number) {
+    try {      
+      let objects: [Order[], number];
+      let qb = this.orderRepository.createQueryBuilder('order');
+      qb = qb.where('order.delFlg = :d and order.customerId = :id', {
+        d: '0',
+        id: customerId
+      })
+
+      // eslint-disable-next-line prefer-const
+      objects = await qb.getManyAndCount();
+      const result = []
+      const orderList = plainToClass(ProductOrderDto, objects[0])
+      for(const data of orderList) {
+        const obj = data;
+        obj.orderItems = plainToClass(OrderItemDto, await this.orderItemRepository.find({ where: {orderNo: data.orderNo }}))
+        result.push(obj)
+      }
+      
+      // result.orderItems = await this.orderItemRepository.find({ where: { orderNo: objects[0] } });
+
+      return {
+        data: result //plainToClass(ProductOrderDto, result)
+      }
+    } catch (error) {
+      console.log(error)
+      throw error;
+    }
+  }
+
+  
 
 }

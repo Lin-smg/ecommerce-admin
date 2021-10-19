@@ -9,6 +9,9 @@ export class InCreateCustomersDto {
 
     @ApiProperty()
     email: string;
+
+    @ApiProperty()
+    password: string;
     
     @ApiProperty()
     phone: string;
@@ -46,5 +49,6 @@ export class InCreateCustomersDto {
     @ApiProperty()
     account: string;
 
-
+    @ApiProperty()
+    role: string;
 }

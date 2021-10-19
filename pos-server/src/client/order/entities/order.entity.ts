@@ -24,6 +24,10 @@ export class Order extends BaseEntity {
     @Column('numeric',{ precision: 10, scale: 2, default: 0})
     otherTotal: number;
 
+    @Column({name: 'shipping', nullable: true})
+    @Column('numeric',{ precision: 10, scale: 2, default: 0 })
+    shipping: number;
+
     @Column({name: 'total_tax', nullable: true})
     @Column('numeric',{ precision: 10, scale: 2, default: 0 })
     totalTax: number;
@@ -51,5 +55,28 @@ export class Order extends BaseEntity {
 
     @Column({ name: 'payment_status', nullable: true })
     paymentStatus: string;
+
+    @Column({ name: 'shipping_id', nullable: true })
+    shippingId: number;
+    
+    
+    @Column({nullable: true })
+    fullName: string;
+
+    @Column({nullable: true })
+    address: string;
+
+    @Column({ nullable: true})
+    city: string;
+
+    @Column({nullable: true })
+    region: string;
+
+    @Column({  nullable: true})
+    phone: string;
+
+    @Column({ nullable: true})
+    note: string;
+
 
 }

@@ -9,6 +9,9 @@ export class Customers extends BaseEntity {
     @Column({nullable: false })
     email: string;
 
+    @Column({nullable: true })
+    password: string;
+
     @Column({  nullable: true})
     phone: string;
 
@@ -45,6 +48,7 @@ export class Customers extends BaseEntity {
     @Column({ nullable: true})
     account: string;
 
-
+    @Column({ nullable: true})
+    role: string;
     
 }

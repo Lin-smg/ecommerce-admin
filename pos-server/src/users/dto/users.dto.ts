@@ -40,4 +40,7 @@ export class UsersDto {
     @ApiPropertyOptional()
     imagePath: string;
 
+    @ApiProperty()
+    role: string;
+
 }

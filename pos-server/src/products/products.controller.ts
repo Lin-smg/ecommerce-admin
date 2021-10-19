@@ -12,11 +12,13 @@ import { OutProductsPageDto } from './dto/out-products-page.dto';
 // import { ProductsUnitsDto } from './dto/products-units.dto';
 import { ProductsUnitsService } from './products-units.service';
 import { OutProductsPosDto } from './dto/out-products-pos.dto';
-
+import { AuthGuard } from '@nestjs/passport';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 @Controller('products')
 @ApiTags('products')
-// @UseGuards(JwtAuthGuard, PermissionsGuard)
-@UseInterceptors(AuthUserInterceptor)
+@UseGuards(JwtAuthGuard, RolesGuard)
+// @UseInterceptors(AuthCustomerInterceptor)
 @ApiBearerAuth()
 export class ProductsController {
  //Servie Constructor
@@ -136,6 +138,7 @@ export class ProductsController {
     description: 'Group id for filter data by group. (default: empty)'
 })
 @Get()
+@Roles('admin')
 //@Permissions(PermissionsType.USERS)
 async getProduct(
     @Query('cur_page', new DefaultValuePipe(1), ParseIntPipe) curPage,
@@ -145,6 +148,7 @@ async getProduct(
     @Query('sort') sort
 ) {
     try {
+        console.log('getProduct')
         return plainToClass(
             OutProductsPageDto,
             await this.productsService.getProducts({
@@ -156,6 +160,7 @@ async getProduct(
             })
         );
     } catch (error) {
+        console.log(error)
         throw error;
     }
 }

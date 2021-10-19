@@ -6,9 +6,10 @@ import { ProductOrderDto } from './dto/product-order.dto';
 import { plainToClass } from 'class-transformer';
 import { OutProductOrderDto } from './dto/out-product-order.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { OutProductOrderAllDto } from './dto/out-product-order-all.dto';
 
 @Controller('client/order')
-@ApiTags('client-order')
+@ApiTags('clientOrder')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
@@ -22,6 +23,32 @@ export class OrderController {
       
     } catch (error) {
       console.log(error)
+      throw error
+    }
+  }
+
+  @Get(':orderNo')
+  async getOrderByOrderNo(@Param('orderNo') orderNo: string) {
+    try {
+      return plainToClass(
+        OutProductOrderDto,
+        await this.orderService.getOrderByOrderNo(orderNo)
+      )
+    } catch (error) {
+      console.log(error);
+      throw error
+    }
+  }
+
+  @Get('/customer/:customerId')
+  async getOrderByCustomerId(@Param('customerId') id: number) {
+    try {
+      return plainToClass(
+        OutProductOrderAllDto,
+        await this.orderService.getOrderByCustomerId(id)
+      )
+    } catch (error) {
+      console.log(error);
       throw error
     }
   }

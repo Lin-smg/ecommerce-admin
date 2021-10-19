@@ -46,4 +46,7 @@ export class InCreateUsersDto {
     @IsOptional()
     readonly imagePath: string;
 
+    @ApiProperty()
+    readonly role: string;
+
 }

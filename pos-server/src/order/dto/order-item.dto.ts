@@ -7,32 +7,45 @@ export class OrderItemDto {
     productCode: string;
 
     productName: string;
-
-    categoryCode: string;
-    categoryName: string;
-    brandCode: string;
-    brandName: string;
         
+    categoryCode: string;
+
+    categoryName: string;
+
+    brandCode: string;
+
+    brandName: string;
+
+    supplierId: number;
+
+    supplierName: string;
+
     unitId: number;
 
     unitName: string;
 
-    childUnitId: number;
-
-    childUnitName: string;
-
-    unitCost: number;
-
-    cost: number;
-
-    sellPrice: number;
- 
-    realSellPrice: number;
+    productQty: number;
 
     qty: number;
 
-    price: number;
+    unitPrice: number;
 
-    realPrice: number;
+    unitCost: number;
+
+    reOrder: number;
+
+    taxPercent: number;
+
+    expDate: Date;
+    
+    description: string;
+    
+    imgPath: string;
+
+    type: string;
+
+    packageSize: string;
+
+    totalPrice: number;
 
 }

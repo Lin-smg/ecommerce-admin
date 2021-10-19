@@ -17,6 +17,8 @@ export class ProductOrderDto{
     totalTax: number;
 
     totalDiscount: number;
+    
+    shipping: number;
  
     total: number;
 
@@ -30,6 +32,20 @@ export class ProductOrderDto{
 
     paymentStatus: string;
 
-    orderItems: OrderItemDto[]
+    shippingId: number;
+
+    orderItems: OrderItemDto[];
+
+    fullName: string;
+
+    address: string;
+
+    city: string; 
+
+    region: string;
+    
+    phone: string;
+
+    note: string;
 
 }

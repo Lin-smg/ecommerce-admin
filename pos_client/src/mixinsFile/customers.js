@@ -24,6 +24,10 @@ export const User = {
         phone: [{ required: true, message: 'Please input Phone', trigger: 'blur' }],
         addressOne: [{ required: true, message: 'Please input Address', trigger: 'blur' }]
 
+      },
+      shipping: {
+        visible: false,
+        data: {}
       }
     }
   },
@@ -36,6 +40,11 @@ export const User = {
     }
   },
   methods: {
+    showShipping(data) {
+      this.shipping.visible = true
+      this.shipping.data = data
+      console.log(data)
+    },
     handleTab(tab) {
       this.activeName = tab
       if (this.activeName === 'view') {
@@ -97,6 +106,7 @@ export const User = {
       return { id: null,
         name: '',
         email: '',
+        password: '',
         phone: '',
         imageUrl: '',
         addressOne: '',

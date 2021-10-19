@@ -10,6 +10,9 @@ import { ContextService } from '../common/providers/context.service';
 import { plainToClass } from 'class-transformer';
 import { CryptoService } from '../users/crypto/crypto.service';
 import { CustomersService } from 'src/customers/customers.service';
+import { Customers } from 'src/customers/customers.entity';
+import { CustomersDto } from 'src/customers/dto/customers.dto';
+import { CustomerLoginDto } from './dto/customer-login.dto';
 
 
 @Injectable()
@@ -27,8 +30,15 @@ export class AuthService {
     async createToken(user: User | UsersDto): Promise<TokenPayloadDto> {
         return new TokenPayloadDto({
             expiresIn: parseInt(jwtConstants.EXPIRE_IN.toString()),
-            accessToken: await this.jwtService.signAsync({ id: user.userid }),
+            accessToken: await this.jwtService.signAsync({ id: user.userid, type: 'user' }),
         });
+    }
+
+    async createCustomerToken(customer: Customers | CustomersDto): Promise<TokenPayloadDto> {
+        return new TokenPayloadDto({
+            expiresIn: parseInt(jwtConstants.EXPIRE_IN.toString()),
+            accessToken: await this.jwtService.signAsync({id: customer.email, type: 'customer'})
+        })
     }
 
     async validateUser(userLoginDto: UserLoginDto): Promise<User> {
@@ -45,11 +55,36 @@ export class AuthService {
 
     }
 
+    async validateCustomer(customerLoginDto: CustomerLoginDto): Promise<Customers> {
+        try {
+            const customer = await this.customerService.getCustomerByEmail(customerLoginDto.email);
+            if (!customer) {
+                throw new UnauthorizedException(`Email is not registered`);                
+            }
+            const isValid = await this.cryptoService.compare(customerLoginDto.password, customer.password);
+            if (!isValid) {
+                throw new UnauthorizedException(`Email or Password is wrong`);                
+            }
+            return plainToClass(Customers, customer)
+        } catch (error) {
+            throw (error);
+        }
+
+    }
+
     static setAuthUser(user: User) {
         ContextService.set(AuthService._authUserKey, user);
     }
 
+    static setAuthCustomer(customer: Customers) {
+        ContextService.set(AuthService._authCustomerKey, customer)
+    }
+
     static getAuthUser(): User {
         return ContextService.get(AuthService._authUserKey);
+    }
+
+    static getAuthCustomer(): Customers {
+        return ContextService.get(AuthService._authCustomerKey);
     }
 }

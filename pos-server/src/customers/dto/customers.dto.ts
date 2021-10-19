@@ -7,6 +7,9 @@ export class CustomersDto {
 
     @ApiProperty()
     email: string;
+
+    @ApiProperty()
+    password: string;
     
     @ApiProperty()
     phone: string;
@@ -44,5 +47,7 @@ export class CustomersDto {
     @ApiProperty()
     account: string;
 
+    @ApiProperty()
+    role: string;
 
 }

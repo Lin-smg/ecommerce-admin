@@ -8,6 +8,13 @@ export function getCustomerList(params) {
   })
 }
 
+export function getShippingByCustomerId(id) {
+  return request({
+    url: `/customers/shipping/${id}`,
+    method: 'get'
+  })
+}
+
 export async function exportExcelCustomerList() {
   return request({
     url: '/customers/All',

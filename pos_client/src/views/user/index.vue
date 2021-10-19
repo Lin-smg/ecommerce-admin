@@ -161,6 +161,17 @@
             <el-input v-model="userCreateForm.position" type="text" placeholder="position" autocomplete="off" />
           </el-form-item>
 
+          <el-form-item label="Role" prop="Role">
+            <el-select v-model="userCreateForm.role" placeholder="Select" style="width: 280px">
+              <el-option
+                v-for="item in roles"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
+          </el-form-item>
+
           <el-form-item label="Branch" prop="Branch">
             <el-select v-model="selectDeptObject" value-key="name" placeholder="Select" style="width: 280px">
               <el-option
@@ -261,6 +272,17 @@
           </el-form-item>
           <el-form-item label="Position" prop="position">
             <el-input v-model="userUpdateForm.position" type="text" placeholder="position" autocomplete="off" />
+          </el-form-item>
+
+          <el-form-item label="Role" prop="Role">
+            <el-select v-model="userUpdateForm.role" placeholder="Select" style="width: 280px">
+              <el-option
+                v-for="item in roles"
+                :key="item"
+                :label="item"
+                :value="item"
+              />
+            </el-select>
           </el-form-item>
 
           <el-form-item label="Branch" prop="Branch">

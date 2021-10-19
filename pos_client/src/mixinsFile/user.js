@@ -41,7 +41,8 @@ export const User = {
           { required: true, message: 'Please input Branch', trigger: 'blur' },
           { min: 6, message: 'Length should be minium 6', trigger: 'blur' }
         ]
-      }
+      },
+      roles: ['admin']
     }
   },
   created() {
@@ -98,7 +99,8 @@ export const User = {
         departmentname: '',
         departmentpermissions: [],
         permissions: ['M000B00'],
-        imagePath: ''
+        imagePath: '',
+        role: ''
       }
     },
     setPermissionGroupValue() {
@@ -148,6 +150,7 @@ export const User = {
         this.totalCount = response.meta.totalResults
         if (response.data !== '') {
           for (const data of response.data) {
+            console.log(data)
             let obj = this.initUserForm()
             obj = data
             if (data.imagePath && data.imagePath !== null && data.imagePath !== '') {
@@ -176,6 +179,7 @@ export const User = {
             obj.departmentpermissionsname = this.getDepartmentNameListFromCode(deptdataList)
             this.usersData.push(obj)
           }
+          console.log(this.usersData)
           this.listLoading = false
         }
       })
@@ -303,6 +307,7 @@ export const User = {
       this.userUpdateForm.email = data.email
       this.userUpdateForm.phone = data.phone
       this.userUpdateForm.position = data.position
+      this.userUpdateForm.role = data.role
       const obj = {
         code: data.department,
         name: data.departmentname

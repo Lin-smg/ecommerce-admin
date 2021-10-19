@@ -59,12 +59,9 @@ export class CategoryService {
 
   async getMainSubCategory() {
     try {
-      console.log('DDDD>>>>>>>>')
       const mainCatObj = await this.mainCategoryService.getAll()
       const resultObj = []
-      for (const data of mainCatObj) {
-        console.log(data)
-        
+      for (const data of mainCatObj) {        
         const obj = {
           categoryCode: data.categoryCode,
           categoryName: data.categoryName,
@@ -76,7 +73,6 @@ export class CategoryService {
         obj.subCategoryList = await this.getByMainCategoryCode(data.categoryCode);
         resultObj.push(obj);
       }
-      console.log('data', resultObj)
       return {
         data: plainToClass(
           MainSubCategoryDto,

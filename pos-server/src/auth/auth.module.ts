@@ -7,17 +7,19 @@ import { UsersModule } from '../users/users.module';
 import { CryptoModule } from '../users/crypto/crypto.module';
 import { PermissionModule } from '../permission/permission.module';
 import { CustomersModule } from 'src/customers/customers.module';
+import { RolesGuard } from 'src/common/guards/roles.guard';
 
 @Module({
     imports: [
-        forwardRef(() => UsersModule),
-        PassportModule.register({ defaultStrategy: 'jwt' }),
+        // forwardRef(() => UsersModule),
+        PassportModule.register({ defaultStrategy: 'local' }),
         CryptoModule,
         PermissionModule,
+        UsersModule,
         CustomersModule  
     ],
     controllers: [AuthController],
     providers: [AuthService, JwtStrategy],
-    exports: [PassportModule.register({ defaultStrategy: 'jwt' }), AuthService],
+    exports: [PassportModule.register({ defaultStrategy: 'local' }), AuthService],
 })
 export class AuthModule {}

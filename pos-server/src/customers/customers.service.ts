@@ -5,6 +5,8 @@ import { Repository } from 'typeorm';
 import { CustomersDto } from './dto/customers.dto';
 import { plainToClass } from 'class-transformer';
 import { PageMetaDto } from '../common/dto/page_meta.dto';
+import { CryptoService } from 'src/users/crypto/crypto.service';
+import { ShippingService } from './shipping.service';
 
 @Injectable()
 export class CustomersService {
@@ -12,20 +14,57 @@ export class CustomersService {
     constructor(
         @InjectRepository(Customers)
         private readonly customersRepository: Repository<Customers>,
-
+        private readonly cryptoService: CryptoService,
     ) { }
 
     async getCustomerCount() {
        return await this.customersRepository.count({ delFlg: '0' });
     }
 
-    async create(options: { item: Customers; }): Promise<any> {
-       
+    async isExistCustomerEmail(email: string) {
         try {
+            const item = await this.customersRepository.findOne({
+                where: {
+                    email: email,
+                    delFlg: '0'
+                },
+            });
+
+            if (item) {
+                return true
+            } else {
+                return false;
+            }
+        } catch (error) {
             
+        }        
+    }
+
+    async getCustomerByEmail(email: string) {
+        try {
+            return await this.customersRepository.findOne({
+                where: {
+                    email: email,
+                    delFlg: '0'
+                },
+            });
+        } catch (error) {
+            throw new NotFoundException(`Customer with email "${email}" not founded`);
+        }
+    }
+
+    async create(options: { item: Customers; }): Promise<any> {       
+        try {
+            const exist = await this.isExistCustomerEmail(options.item.email)
+
+            if(exist) {
+                throw new NotAcceptableException('Customer Email is already Exists')
+            }
+            const password = await this.cryptoService.hash(options.item.password);
+            options.item.password = password;
             options.item.createDateTime = new Date();
-            return await this.customersRepository.save(options.item);
-         
+            options.item.role = 'customer'
+            return await this.customersRepository.save(options.item);        
 
         }  catch (error) {
             if(error.code === '23505'){
@@ -34,9 +73,6 @@ export class CustomersService {
             throw error;
         }   
     }
-
-
-
 
     async update(options: { id: any; item: Customers; }): Promise<any> {
       

@@ -82,7 +82,7 @@
             <span>Sell Price</span>
           </template>
           <template slot-scope="{ row }">
-            <span>{{ row.sellPrice }}</span>
+            <span>{{ row.unitPrice }}</span>
           </template>
         </el-table-column>
 
@@ -91,7 +91,7 @@
             <span>Qty</span>
           </template>
           <template slot-scope="{ row }">
-            <span>{{ row.qty }}</span>
+            <span>{{ row.productQty }}</span>
           </template>
         </el-table-column>
 
@@ -100,7 +100,7 @@
             <span>Price</span>
           </template>
           <template slot-scope="{ row }">
-            <span>{{ row.price }}</span>
+            <span>{{ row.totalPrice }}</span>
           </template>
         </el-table-column>
 
@@ -163,6 +163,12 @@ export default {
       editData: {},
       orderData: {},
       message: 'Copy These Text'
+    }
+  },
+
+  watch: {
+    orderNo() {
+      this.getOrderByOrderNo()
     }
   },
 

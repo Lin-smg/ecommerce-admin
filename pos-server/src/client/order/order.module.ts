@@ -8,11 +8,13 @@ import { ProductsService } from 'src/products/products.service';
 import { BrandModule } from 'src/brand/brand.module';
 import { CategoryModule } from 'src/category/category.module';
 import { UnitsModule } from 'src/units/units.module';
+import { OrderItem } from './entities/order-item.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      Order
+      Order,
+      OrderItem
     ]),
     ProductsModule,
     BrandModule,

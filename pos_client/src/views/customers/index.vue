@@ -73,6 +73,7 @@
                 <span>Operations</span>
               </template>
               <template slot-scope="{row}">
+                <el-button size="mini" @click="showShipping(row)">shippings</el-button>
                 <el-button size="mini" @click="updateCustomers(row)">update</el-button>
                 <el-popconfirm
                   confirm-button-text="OK"
@@ -109,6 +110,10 @@
 
           <el-form-item ref="email" label="E-Mail :" prop="email">
             <el-input ref="email" v-model="customersCreateForm.email" type="email" autocomplete="off" />
+          </el-form-item>
+
+          <el-form-item ref="password" label="Password :" prop="password">
+            <el-input ref="password" v-model="customersCreateForm.password" type="text" autocomplete="off" />
           </el-form-item>
 
           <el-form-item ref="phone" label="Phone Number :" prop="phone">
@@ -190,6 +195,10 @@
             <el-input v-model="customersUpdateForm.email" type="email" autocomplete="off" />
           </el-form-item>
 
+          <el-form-item ref="password" label="Password :" prop="password">
+            <el-input ref="password" v-model="customersUpdateForm.password" type="text" autocomplete="off" />
+          </el-form-item>
+
           <el-form-item label="Phone Number :" prop="phone">
             <el-input v-model="customersUpdateForm.phone" type="text" autocomplete="off" />
           </el-form-item>
@@ -258,13 +267,19 @@
         </el-form>
       </el-tab-pane>
     </el-tabs>
+
+    <el-dialog :visible.sync="shipping.visible" fullscreen>
+      <Shipping :customer-id="shipping.data.id" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { User } from '../../mixinsFile/customers'
+import Shipping from '../../components/Shipping/index.vue'
 export default {
   name: 'Index',
+  components: { Shipping },
   mixins: [User]
 }
 </script>
