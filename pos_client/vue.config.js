@@ -32,7 +32,7 @@ module.exports = {
   devServer: {
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
-        target: 'http://localhost:3000', // 'https://nest-server-capital.herokuapp.com', // https://nest-server-capital.herokuapp.com
+        target: 'https://nest-server-capital.herokuapp.com', // https://nest-server-capital.herokuapp.com
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
@@ -44,8 +44,8 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: false
-    }// ,
-  //  after: require('./mock/mock-server.js')
+    }, // ,
+    after: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
