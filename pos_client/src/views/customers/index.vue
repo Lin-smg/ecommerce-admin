@@ -74,6 +74,7 @@
               </template>
               <template slot-scope="{row}">
                 <el-button size="mini" @click="showShipping(row)">shippings</el-button>
+                <el-button size="mini" @click="showOrder(row)">Orders</el-button>
                 <el-button size="mini" @click="updateCustomers(row)">update</el-button>
                 <el-popconfirm
                   confirm-button-text="OK"
@@ -271,15 +272,21 @@
     <el-dialog :visible.sync="shipping.visible" fullscreen>
       <Shipping :customer-id="shipping.data.id" />
     </el-dialog>
+
+    <el-dialog :visible.sync="order.visible" fullscreen>
+      <Order :customer-id="order.data.id" />
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
 import { User } from '../../mixinsFile/customers'
 import Shipping from '../../components/Shipping/index.vue'
+import Order from '../../components/Order/index.vue'
 export default {
   name: 'Index',
-  components: { Shipping },
+  components: { Shipping, Order },
   mixins: [User]
 }
 </script>

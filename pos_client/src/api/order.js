@@ -15,6 +15,13 @@ export function getOrderByOrderNo(orderNo) {
   })
 }
 
+export function getOrderByCustomerId(id) {
+  return request({
+    url: `/client/order/customer/${encodeURIComponent(id)}`,
+    method: 'get'
+  })
+}
+
 export function getOrderItemByOrderNo(orderNo) {
   return request({
     url: `/order/orderItem/${encodeURIComponent(orderNo)}`,

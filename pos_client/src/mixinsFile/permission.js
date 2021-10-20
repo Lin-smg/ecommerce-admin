@@ -27,6 +27,7 @@ export const PermissionGroup = {
     getPermissionNameFromCode(data) {
       const result = []
       const allPermission = this.$store.getters.allPermission
+      console.log('allp', allPermission)
       for (const obj of data) {
         result.push(allPermission.find(({ permissionCode }) => permissionCode === obj).permissionName)
       }
@@ -68,6 +69,7 @@ export const PermissionGroup = {
       this.listLoading = true
       await getPermissionGroupList(params).then(response => {
         this.permissionGroupData = []
+        console.log('ppp', JSON.stringify(response))
         if (response.data !== '') {
           for (const data of response.data) {
             var str = data.permissions.replace('{', '[')

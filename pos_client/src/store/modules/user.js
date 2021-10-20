@@ -2,6 +2,8 @@ import { getInfo, login, createUser, updateUser, deleteUser } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
+const data = require('@/utils/permission').permission
+
 const getDefaultState = () => {
   return {
     token: getToken(),
@@ -15,7 +17,7 @@ const getDefaultState = () => {
 const state = getDefaultState()
 
 const mutations = {
-  RESET_STATE: (state) => {
+  RESET_STATE: state => {
     Object.assign(state, getDefaultState())
   },
   SET_TOKEN: (state, token) => {
@@ -40,66 +42,76 @@ const actions = {
   login({ commit }, userInfo) {
     const { userid, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ userid: userid.trim(), password: password }).then(response => {
-        commit('SET_TOKEN', response.token.accessToken)
-        setToken(response.token.accessToken)
-        resolve()
-      }).catch(error => {
-        console.log(error)
-        reject(error)
-      })
+      login({ userid: userid.trim(), password: password })
+        .then(response => {
+          commit('SET_TOKEN', response.token.accessToken)
+          setToken(response.token.accessToken)
+          resolve()
+        })
+        .catch(error => {
+          console.log(error)
+          reject(error)
+        })
     })
   },
 
   // get user info
   async getInfo({ commit, state }) {
     return await new Promise((resolve, reject) => {
-      getInfo().then(response => {
-        console.log('User >>>>>>>>>>', response)
-        commit('SET_USERID', response.user.userid)
-        commit('SET_AVATAR', response.user.avatar)
-        commit('SET_CURUSERINFO', response.user)
-        commit('SET_ALLPERMISSION', response.permission)
-        resolve(response)
-      }).catch(error => {
-        reject(error)
-      })
+      getInfo()
+        .then(response => {
+          console.log('User >>>>>>>>>>', JSON.stringify(data))
+          commit('SET_USERID', response.user.userid)
+          commit('SET_AVATAR', response.user.avatar)
+          commit('SET_CURUSERINFO', response.user)
+          commit('SET_ALLPERMISSION', response.permission.length !== 0 ? response.permission : data)
+          resolve(response)
+        })
+        .catch(error => {
+          reject(error)
+        })
     })
   },
 
   // Create User
   async createUser({ commit }, userForm) {
     return await new Promise((resolve, reject) => {
-      createUser(userForm).then(response => {
-        resolve(resolve)
-      }).catch(error => {
-        console.log(error)
-        reject(error)
-      })
+      createUser(userForm)
+        .then(response => {
+          resolve(resolve)
+        })
+        .catch(error => {
+          console.log(error)
+          reject(error)
+        })
     })
   },
 
   // Delete User
   async deleteUser({ commit }, userForm) {
     return await new Promise((resolve, reject) => {
-      deleteUser(userForm).then(response => {
-        resolve(resolve)
-      }).catch(error => {
-        console.log(error)
-        reject(error)
-      })
+      deleteUser(userForm)
+        .then(response => {
+          resolve(resolve)
+        })
+        .catch(error => {
+          console.log(error)
+          reject(error)
+        })
     })
   },
 
   // Create User
   async updateUser({ commit }, userForm) {
     return await new Promise((resolve, reject) => {
-      updateUser(userForm.userid, userForm).then(response => {
-        resolve(resolve)
-      }).catch(error => {
-        console.log(error)
-        reject(error)
-      })
+      updateUser(userForm.userid, userForm)
+        .then(response => {
+          resolve(resolve)
+        })
+        .catch(error => {
+          console.log(error)
+          reject(error)
+        })
     })
   },
 
@@ -131,7 +143,6 @@ const actions = {
   setAllPermission({ commit }, permission) {
     commit('SET_ALLPERMISSION', permission)
   }
-
 }
 
 export default {
@@ -140,4 +151,3 @@ export default {
   mutations,
   actions
 }
-

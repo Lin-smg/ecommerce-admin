@@ -32,7 +32,7 @@ module.exports = {
   devServer: {
     proxy: {
       [process.env.VUE_APP_BASE_API]: {
-        target: 'http://localhost:3000',
+        target: 'https://nest-server-capital.herokuapp.com', // https://nest-server-capital.herokuapp.com
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

@@ -28,6 +28,10 @@ export const User = {
       shipping: {
         visible: false,
         data: {}
+      },
+      order: {
+        visible: false,
+        data: {}
       }
     }
   },
@@ -43,6 +47,11 @@ export const User = {
     showShipping(data) {
       this.shipping.visible = true
       this.shipping.data = data
+      console.log(data)
+    },
+    showOrder(data) {
+      this.order.visible = true
+      this.order.data = data
       console.log(data)
     },
     handleTab(tab) {
