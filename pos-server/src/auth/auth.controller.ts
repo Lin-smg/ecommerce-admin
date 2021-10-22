@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post} from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post} from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginPayloadDto } from './dto/login-payload.dto';
@@ -61,5 +61,16 @@ export class AuthController {
          throw error;   
         }
                
+    }
+
+    @Get('create')
+    async createDefaultUser() {
+        try {
+            return await this.authService.createDefaultUser();
+            
+        } catch (error) {
+            console.log(error)
+            throw error
+        }
     }
 }

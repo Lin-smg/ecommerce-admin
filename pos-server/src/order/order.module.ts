@@ -20,6 +20,7 @@ import { OrderItem } from './entities/order-item.entity';
     UnitsModule
   ],
   controllers: [OrderController],
-  providers: [OrderService]
+  providers: [OrderService],
+  exports: [OrderService]
 })
 export class OrderModule {}

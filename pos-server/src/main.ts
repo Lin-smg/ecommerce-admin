@@ -25,7 +25,7 @@ async function bootstrap() {
   }
 
   // Server Port
-  const port = process.env.PORT || configService.get('PORT');
+  const port = process.env.PORT || 3000 //configService.get('PORT');
   
   console.log("Server is running port::",port)
   // Swagger

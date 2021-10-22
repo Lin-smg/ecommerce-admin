@@ -10,5 +10,8 @@ export class DashboardDto {
     
     @ApiProperty({ type: Number })
     totalProductCount: number;
+
+    @ApiProperty({ type: Number })
+    totalOrderCount: number;
     
 }

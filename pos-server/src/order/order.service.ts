@@ -114,7 +114,7 @@ export class OrderService {
       console.log('update')
       const orderData = plainToClass(ProductOrderDto, orderDataDto)
       const item = await this.orderRepository.preload({ orderNo: orderNo, delFlg: '0', ...orderData });
-      if(item) {
+      if (item) {
         return this.orderRepository.save(item);
       } else {
         throw new NotFoundException(`Order ${orderNo} not found`)
@@ -127,30 +127,34 @@ export class OrderService {
 
   async deleteOrder(orderNo: string) {
     try {
-      const item =  await this.findOrderByOrderNo(orderNo)
+      const item = await this.findOrderByOrderNo(orderNo)
       item.delFlg = '1'
-      return await this.orderRepository.update({orderNo: orderNo}, item)
+      return await this.orderRepository.update({ orderNo: orderNo }, item)
     } catch (error) {
       throw error
     }
   }
 
-  async findOrderByOrderNo(orderNo){
+  async findOrderByOrderNo(orderNo) {
     try {
-       
-        const item = await this.orderRepository.findOneOrFail({
-            where: {
-                orderNo: orderNo,
-                delFlg: '0'
-            },
-        });
 
-        return item;
+      const item = await this.orderRepository.findOneOrFail({
+        where: {
+          orderNo: orderNo,
+          delFlg: '0'
+        },
+      });
+
+      return item;
 
     } catch (error) {
-        throw new NotFoundException(`This "${orderNo}"is not founded`);
+      throw new NotFoundException(`This "${orderNo}"is not founded`);
     }
-}
+  }
+
+  async getOrderCount() {
+    return await this.orderRepository.count({delFlg: '0'})
+ }
 
 
 }

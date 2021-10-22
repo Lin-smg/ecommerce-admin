@@ -36,7 +36,13 @@ import { OrderModule } from './order/order.module';
         })],
         useFactory: (configService: ConfigService) => (
           {
+            // url: "postgres://lzyhbljifnbsnb:a1b86fe044c5b3ac77182e8a39615bf28897cd4cf89bda9d5ee5f37cce069c64@ec2-3-213-41-172.compute-1.amazonaws.com:5432/d7rp0hpj3a8so4",
             type: "postgres",
+            // extra: {
+            //   ssl: {
+            //     rejectUnauthorized: false
+            //   }
+            // },
             host: configService.get<string>('POSTGRES_HOST'),
             port: configService.get<number>('POSTGRES_PORT'),
             username: configService.get<string>('POSTGRES_USER'),

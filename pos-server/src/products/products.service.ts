@@ -306,4 +306,8 @@ export class ProductsService {
         }
     }
 
+    async getProductCount() {
+        return await this.productsRepository.count({ delFlg: '0' })
+      }
+
 }
