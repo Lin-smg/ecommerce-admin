@@ -48,6 +48,7 @@ export class UsersService {
             await this.isExistWithUserId({ userid: options.item.userid });
             const password = await this.cryptoService.hash(options.item.password);
             options.item.password = password;
+            options.item.permissions = JSON.stringify(options.item.permissions)
             const user = await this.userRepository.save(options.item);
             return {data: plainToClass(UsersDto, user) };
 
@@ -60,10 +61,13 @@ export class UsersService {
     async update(options: { userid: string; item: User; }){
         try {
          const user = await this.findByUserId({ userid: options.userid });  
-         if(user.password !== options.item.password ){
+         if(options.item.password ){
             const password = await this.cryptoService.hash(options.item.password);
             options.item.password = password; 
+         } else {
+             options.item.password = user.password
          }
+         options.item.permissions = JSON.stringify(options.item.permissions)
          await this.userRepository.update({userid: options.userid, delFlg: '0'},options.item);
          return  {data: await this.findByUserId({ userid: options.item.userid })};
         } catch (error) {
@@ -120,8 +124,8 @@ export class UsersService {
                 q: '0'
             });
             if (options.q) {
-                qb = qb.andWhere('user.username like :q or user.position like :q or user.userid = :id', {
-                    q: `%${options.q}%`,
+                qb = qb.andWhere('user.username like :q1 or user.position like :q1 or user.userid = :id', {
+                    q1: `%${options.q}%`,
                     id: +options.q
                 });
             }

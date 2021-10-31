@@ -166,7 +166,9 @@ export const User = {
             var str = data.permissions.replace('{', '')
             str = str.replace('}', '')
             str = str.replace(/"/g, '')
-            const pdataList = str.split(',')
+            console.log('ppppp', data.permissions)
+            const pdataList = JSON.parse(data.permissions) // str.split(',')
+            
             obj.permissions = pdataList
             obj.permissionNames = this.getPermissionNameFromCode(pdataList)
 
@@ -188,6 +190,7 @@ export const User = {
     getPermissionNameFromCode(data) {
       const result = []
       const allPermission = this.$store.getters.allPermission
+      console.log('all permission', allPermission)
       for (const obj of data) {
         result.push(allPermission.find(({ permissionCode }) => permissionCode === obj).permissionName)
       }

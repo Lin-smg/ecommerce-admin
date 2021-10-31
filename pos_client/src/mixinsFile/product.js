@@ -298,6 +298,8 @@ export const Product = {
         this.productData = response.data
         this.listLoading = false
       })
+
+      console.log('uuuu', this.unitList)
     },
 
     searchClick() {
@@ -321,6 +323,7 @@ export const Product = {
       this.oldFileName = res.filename
       this.createProductForm.imgPath = `/shared/${res.filename}`
       this.updateProductForm.imgPath = `/shared/${res.filename}`
+      console.log('raw', file.raw)
       this.imageUrl = URL.createObjectURL(file.raw)
     },
     beforeAvatarUpload(file) {

@@ -102,6 +102,7 @@ export class BrandService {
           q: `%${options.q}%`,
         });
       }
+      // console.log('QQQQ', qb)
       options.sort =
         options.sort &&
         new Brand().hasOwnProperty(options.sort.replace('-', ''))

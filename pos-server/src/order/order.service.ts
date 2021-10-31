@@ -153,8 +153,8 @@ export class OrderService {
   }
 
   async getOrderCount() {
-    return await this.orderRepository.count({delFlg: '0'})
- }
+    return await this.orderRepository.count({ delFlg: '0' })
+  }
 
 
 }

@@ -273,6 +273,7 @@
           <el-form-item label="Tax %" prop="reOrder">
             <el-input v-model="createProductForm.taxPercent" type="number" min="0" placeholder="0" autocomplete="off" style="width: 280px" />
           </el-form-item>
+              {{imageUrl}} >>>>>
 
           <el-form-item label="image" prop="image">
             <el-upload

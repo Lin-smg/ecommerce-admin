@@ -148,7 +148,7 @@ async getProduct(
     @Query('sort') sort
 ) {
     try {
-        console.log('getProduct')
+        console.log('getProduct', q)
         return plainToClass(
             OutProductsPageDto,
             await this.productsService.getProducts({

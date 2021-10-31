@@ -159,6 +159,7 @@ export class UsersController {
                 })
             );
         } catch (error) {
+            console.log(error)
             throw error;
         }
     }

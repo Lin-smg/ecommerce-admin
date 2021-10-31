@@ -214,6 +214,7 @@
                 </div>
               </el-checkbox-group>
             </div>
+            {{userCreateForm.permissions}}
           </div>
           <!-- <PermissionList v-model="userCreateForm.permission" :user-create-form="userCreateForm" /> -->
 
