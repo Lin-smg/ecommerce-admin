@@ -130,6 +130,7 @@ export const PermissionGroup = {
       // this.$refs.userCreateForm.validate(valid => {
       //   if (valid) {
       this.loading = true
+      console.log('permissiono', this.groupPermissionCreateForm)
       this.$store.dispatch('permission/createPermissionGroup', this.groupPermissionCreateForm).then(() => {
         this.handleTab('view')
         this.getPermissionGruop()

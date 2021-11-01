@@ -9,6 +9,7 @@ import { OutPermissionGroupPageDto } from './dto/out-permission-group-page.dto';
 import { JwtAuthGuard } from '../common/guards/auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
 import { AuthUserInterceptor } from '../common/interceptors/auth-user-interceptor.service';
+import { PermissionService } from './permission.service';
 
 @Controller('permission')
 @ApiTags('permission')
@@ -17,7 +18,19 @@ import { AuthUserInterceptor } from '../common/interceptors/auth-user-intercepto
 @ApiBearerAuth()
 export class PermissionController {
 
-    constructor(private readonly permissionGroupService:PermissionGroupService){}
+    constructor(private readonly permissionGroupService:PermissionGroupService,
+        private readonly permissionService: PermissionService){}
+
+    // Create Main Permission
+    @Get('main/create')
+    async createMainPermission() {
+        try {
+            return await this.permissionService.createDefaultPermission()
+        } catch (error) {
+            console.log(error);
+            throw error
+        }
+    }
 
     //Create Permission Group
     @HttpCode(HttpStatus.OK)

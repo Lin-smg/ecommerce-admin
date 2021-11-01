@@ -77,6 +77,9 @@ export class PermissionGroupService {
     async update(options: { groupcode: string; item: PermissionGroup; }): Promise<any> {
         try {
             await this.findByGroupCodeData({ parameter: options.item.groupCode });
+
+            options.item.permissions = JSON.stringify(options.item.permissions)
+            
             await this.permissionGroupRepository.update({ groupCode: options.groupcode }, options.item);
             return options.item;
         } catch (error) {
@@ -122,6 +125,7 @@ export class PermissionGroupService {
                 groupCode: options.item.groupCode,
                 groupName: options.item.groupName
             });
+            options.item.permissions = JSON.stringify(options.item.permissions)
 
             options.item = await this.permissionGroupRepository.save(options.item);
 
