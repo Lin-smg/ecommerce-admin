@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { plainToClass } from 'class-transformer';
 import { BrandService } from 'src/brand/brand.service';
 import { CategoryService } from 'src/category/category.service';
 import { Order } from 'src/common/constants/order';
+import { ProductsDto } from 'src/products/dto/products.dto';
 import { ProductsUnitsService } from 'src/products/products-units.service';
 import { Products } from 'src/products/products.entity';
 import { UnitsService } from 'src/units/units.service';
@@ -56,10 +58,10 @@ export class ProductService {
     try {
       const products = await this.productsRepository.find({
         where: {
-            categoryCode: code,
-            delFlg: '0'
+          categoryCode: code,
+          delFlg: '0'
         },
-    });
+      });
       return {
         data: products
       }
@@ -70,14 +72,18 @@ export class ProductService {
 
   async getProductByProductCode(code: string) {
     try {
-      const products = await this.productsRepository.find({
+      const products = await this.productsRepository.findOne({
         where: {
-            productCode: code,
-            delFlg: '0'
+          productCode: code,
+          delFlg: '0'
         },
-    });
+      });
+      const resObj = await plainToClass(ProductsDto,products);
+      resObj.unit = await this.productsUnitsService.findByProduct(code)
+      
+      // resObj.unit = await this.productsUnitsService.findByProduct(data.productCode);
       return {
-        data: products
+        data: resObj
       }
     } catch (error) {
       throw new error;

@@ -7,6 +7,7 @@ import { plainToClass } from 'class-transformer';
 import { OutProductDto } from './dto/out-products.dto';
 import { ProductsService } from 'src/products/products.service';
 import { OutProductsDto } from 'src/products/dto/out-products.dto';
+import { OutProductDetailDto } from './dto/out-product-detail.dto';
 
 @Controller('client/product')
 @ApiTags('clientProduct')
@@ -33,7 +34,7 @@ export class ProductController {
   @Get('detail/:productCode')
   async getProductByProductCode(@Param('productCode') code: string) {
     return plainToClass(
-      OutProductDto,
+      OutProductDetailDto,
       await this.productService.getProductByProductCode(code)
     )
   }
