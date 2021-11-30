@@ -78,7 +78,7 @@ export default {
 
   watch: {
     customerId() {
-      this.getShippingByCustomerId()
+      this.getShipping()
     }
   },
 

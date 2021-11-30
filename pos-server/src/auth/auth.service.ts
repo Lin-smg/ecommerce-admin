@@ -90,10 +90,10 @@ export class AuthService {
 
     async createDefaultUser() {
         const dto = {
-        userid: "tester",
+        userid: "admin",
     
-        username: "tester",
-        password: "tester",
+        username: "admin",
+        password: "admin",
         isActive: true,
     
         permissions: ["M000B00","M003B00","M003B01","M003B02","M003B03","M002B00","M001B00","M004B00","M005B00","M006B00","M007B00","M008B00","M009B00","M010B00","M011B00","M001B01","M002B01","M001B02","M002B02","M005B01","M004B01","M004B02","M001B03","M002B03","M004B03","M005B03","M005B02","M006B02","M007B02","M008B02","M009B02","M010B02","M011B02","M011B01","M010B01","M009B01","M008B01","M007B01","M006B01","M006B03","M007B03","M008B03","M009B03","M010B03","M011B03"],

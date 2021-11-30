@@ -1,8 +1,11 @@
-import { BaseEntity } from "../common/base.entity";
+import { BaseEntity } from "../../common/base.entity";
 import { Entity, Column } from "typeorm";
 
-@Entity({ name: 'products_units' })
-export class ProductsUnits extends BaseEntity {
+@Entity({ name: 'purchase_items' })
+export class PurchaseItems extends BaseEntity {
+    
+    @Column({ name: 'invoice_no', nullable: false })
+    invoiceNo: string;
 
     @Column({ name: 'product_id', nullable: false })
     productId: number;

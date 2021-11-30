@@ -55,6 +55,31 @@ export class ProductsUnitsService {
         }
     }
 
+    async getProductUnitById(id) {
+        try {
+            const item = await this.productsUnitRepository.findOneOrFail({
+                where: {
+                    id: id,
+                    delFlg: '0'
+                },
+            });
+
+            return item;
+        } catch (error) {
+            console.log(error)
+            throw error
+        }
+    }
+
+    async updateProductUnitById(id,unit) {
+        try {
+            await this.productsUnitRepository.update({id:id, productCode: unit.productCode,delFlg: '0'},unit)
+            
+        } catch (error) {
+            
+        }
+    }
+
     async updateProductUnit(productCode: string, item: InCreateProductsDto, queryRunner: QueryRunner) {
         for (const obj of item.unit) {
             const data = plainToClass(ProductsUnits,obj);

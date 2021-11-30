@@ -23,6 +23,7 @@ async function bootstrap() {
   if (configService.get('MODE') === 'development') {
     app.enableCors();
   }
+  app.enableCors();
 
   // Server Port
   const port = process.env.PORT || 3000 //configService.get('PORT');

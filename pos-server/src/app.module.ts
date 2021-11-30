@@ -23,6 +23,7 @@ import { ClientOrderModule } from './client/order/order.module';
 import { ClientCategoryModule } from './client/category/category.module';
 import { MainCategoryModule } from './main-category/main-category.module';
 import { OrderModule } from './order/order.module';
+import { PurchaseProductModule } from './purchase-product/purchase-product.module';
 
 @Module({
   imports: [   
@@ -37,6 +38,7 @@ import { OrderModule } from './order/order.module';
         useFactory: (configService: ConfigService) => (
           {
             // url: "postgres://lzyhbljifnbsnb:a1b86fe044c5b3ac77182e8a39615bf28897cd4cf89bda9d5ee5f37cce069c64@ec2-3-213-41-172.compute-1.amazonaws.com:5432/d7rp0hpj3a8so4",
+            // url: "postgres://pvmzfdtohfizee:a80a72b4c21fe0738fd464b9c9937705445b306a4153b9aa75753e9b3b66e831@ec2-3-230-199-240.compute-1.amazonaws.com:5432/d1ped2kkn7bkf6",
             type: "postgres",
             // extra: {
             //   ssl: {
@@ -48,6 +50,7 @@ import { OrderModule } from './order/order.module';
             username: configService.get<string>('POSTGRES_USER'),
             password: configService.get<string>('POSTGRES_PASSWORD'),
             database: configService.get<string>('POSTGRES_DATABASE'),
+
             entities: [__dirname + '/**/*.entity{.ts,.js}'],
             synchronize: configService.get<boolean>('SYNCHRONIZE'),
 
@@ -73,7 +76,8 @@ import { OrderModule } from './order/order.module';
     ClientOrderModule,
     OrderModule,
     ClientCategoryModule,
-    MainCategoryModule
+    MainCategoryModule,
+    PurchaseProductModule
   ],
 exports: [TypeOrmModule]
 })

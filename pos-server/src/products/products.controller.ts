@@ -138,7 +138,7 @@ export class ProductsController {
     description: 'Group id for filter data by group. (default: empty)'
 })
 @Get()
-@Roles('admin')
+// @Roles('admin')
 //@Permissions(PermissionsType.USERS)
 async getProduct(
     @Query('cur_page', new DefaultValuePipe(1), ParseIntPipe) curPage,
@@ -147,8 +147,8 @@ async getProduct(
     @Query('group') group,
     @Query('sort') sort
 ) {
+    console.log('getProduct', q)
     try {
-        console.log('getProduct', q)
         return plainToClass(
             OutProductsPageDto,
             await this.productsService.getProducts({
@@ -195,6 +195,7 @@ async getPOSProduct(
 //@Permissions(PermissionsType.USERS)
 async getAllProduct() {
     try {
+        console.log('alllll')
         return plainToClass(
             OutProductsPosDto,
             await this.productsService.getAllProducts());

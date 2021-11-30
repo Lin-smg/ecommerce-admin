@@ -139,6 +139,7 @@ export class ProductsService {
                 units: await this.unitService.getSmallestUnit()
             };
         } catch (error) {
+            console.log(error)
             throw error;
         }
 
